@@ -192,10 +192,10 @@ header {
 
 
 /* Cursos */
-.cursos {
+/* .cursos {
   background: url('../images/bg-cursos.jpg') center center / cover no-repeat;
   background-attachment: fixed;
-}
+} */
 
 .cursos h2 {
   color: hsl(0, 0%, 1%);

@@ -1,5 +1,10 @@
-document.addEventListener("DOMContentLoaded", () => {
-  document.getElementById("footer").innerHTML = `
+// js/footer.js
+// Inyección dinámica del footer con logo y rutas adaptativas
+document.addEventListener('DOMContentLoaded', () => {
+  const isPages = window.location.pathname.includes('/pages/');
+  const base = isPages ? '../' : '';
+
+  document.getElementById('footer').innerHTML = `
     <footer class="footer text-white pt-5">
       <div class="footer-top container">
         <div class="row">
@@ -29,7 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       <div class="footer-bottom text-center py-3">
         <div class="container">
-          <img src="images/LOGO-SIN-FONDO-min.png" alt="Logo" height="60" class="mb-2">
+          <img src="${base}images/LOGO-SIN-FONDO-min.png" alt="Logo" height="60" class="mb-2">
           <p class="mb-0">&copy; 2025 <strong>SIV Consulting S.A.</strong> | Todos los derechos reservados. <a href="#">Política de Privacidad</a> | <a href="#">Términos y Condiciones</a></p>
         </div>
       </div>
