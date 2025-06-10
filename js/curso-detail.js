@@ -25,9 +25,9 @@
             <p class="text-muted mb-2"><i class="bi bi-tags-fill me-1"></i><strong>Categoría:</strong> ${curso.categoria}</p>
             <p class="text-muted mb-2"><i class="bi bi-calendar-event-fill me-1"></i><strong>Fecha:</strong> ${fecha}</p>
             <p class="text-muted mb-4"><i class="bi bi-currency-dollar me-1"></i><strong>Precio:</strong> $${curso.precio.toFixed(2)}</p>
-            <p class="mb-4">${curso.descripcion}</p>
+            <p class="mb-4 description-curso">${curso.descripcion}</p>
             <a href="contacto.html" class="btn btn-custom me-2 mb-2">Inscribirse Ahora</a>
-            <a href="tienda.html" class="btn btn-outline-light mb-2">Volver a Tienda</a>
+            <a href="tienda.html" class="btn btn-outline-light mb-2 btnVolverAtienda">Volver a Tienda</a>
           </div>
         </div>
       `;

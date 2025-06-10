@@ -7,7 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.getElementById('navbar').innerHTML = `
   <nav class="navbar navbar-expand-lg navbar-dark bg-black">
-    <div class="container-fluid">
+    <div class="container">
       <a class="navbar-brand" href="${base}index.html">
         <img src="${base}images/LOGO-SIN-FONDO-min.png" alt="Logo" height="60">
       </a>
