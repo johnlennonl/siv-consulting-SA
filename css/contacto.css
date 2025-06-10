@@ -1,0 +1,82 @@
+/* css/contacto.css */
+
+
+/* Contenedor flex con panel e imagen */
+.contact-wrapper {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+  max-width: 960px;
+  width: 100%;
+  background: #000;
+  /* Estos son los dos lineamientos clave: */
+  margin: 2rem auto;    /* 2rem arriba y abajo, auto a los lados */
+}
+
+/* Panel izquierdo */
+.contact-panel {
+  flex: 1 1 400px;
+  padding: 2rem;
+  color: #fff;
+}
+/* Logo y título */
+.contact-logo {
+  display: block;
+  height: 80px;
+  margin: 0 auto 1rem;
+}
+.contact-title {
+  text-align: center;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+}
+
+/* Inputs estilo login */
+.form-control {
+  background: #2b2b2b;
+  border: none;
+  color: #fff;
+}
+.form-control::placeholder {
+  color: #777;
+}
+.form-select {
+  background: #2b2b2b;
+  border: none;
+  color: #fff;
+}
+.form-label {
+  color: #ddd;
+}
+
+/* Botón dorado */
+.btn-custom {
+  background: #d5af49;
+  border: none;
+  color: #000;
+  padding: 0.75rem;
+  font-weight: 600;
+}
+.btn-custom:hover {
+  background: #b99030;
+}
+
+/* Panel derecho: imagen de fondo */
+.contact-image {
+  flex: 1 1 560px;
+  background: url('https://safehub.io/wp-content/uploads/2022/11/Safehub_OilGas_CaseStudy-img2.jpg') center/cover no-repeat;
+}
+
+/* Responsive: apilar en móvil */
+@media (max-width: 768px) {
+  .contact-wrapper {
+    flex-direction: column;
+  }
+  .contact-image {
+    height: 200px;
+    flex: none;
+  }
+}
+
+
