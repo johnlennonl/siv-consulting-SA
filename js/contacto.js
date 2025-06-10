@@ -33,20 +33,17 @@ document.addEventListener("DOMContentLoaded", () => {
     </div>
   `;
 
-  // Manejo del submit
-  document.getElementById("contact-form").addEventListener("submit", async e => {
+  document.getElementById("contact-form").addEventListener("submit", async (e) => {
     e.preventDefault();
-
-    // Recopila datos del formulario
     const data = {
-      nombre:  e.target.nombre.value,
+      nombre:   e.target.nombre.value,
       telefono: e.target.telefono.value,
       email:    e.target.email.value,
       asunto:   e.target.asunto.value,
       mensaje:  e.target.mensaje.value
     };
 
-    // Ventana de confirmación
+    // Confirmación
     const { isConfirmed } = await Swal.fire({
       title: "¿Confirmar tus datos?",
       html: `
@@ -63,8 +60,11 @@ document.addEventListener("DOMContentLoaded", () => {
       confirmButtonColor: "#d5af49"
     });
 
-    if (isConfirmed) {
-      // Éxito
+    if (!isConfirmed) return;
+
+    try {
+      // Aquí enviamos realmente el email
+      await emailjs.send("service_a9qaclf", "template_45rlxfj", data);
       await Swal.fire({
         title: "¡Mensaje enviado!",
         text: "Gracias por contactarnos. Te responderemos pronto.",
@@ -72,6 +72,14 @@ document.addEventListener("DOMContentLoaded", () => {
         confirmButtonColor: "#d5af49"
       });
       e.target.reset();
+    } catch (err) {
+      console.error("EmailJS error:", err);
+      await Swal.fire({
+        title: "Error",
+        text: "Ocurrió un problema al enviar tu mensaje. Por favor, inténtalo de nuevo.",
+        icon: "error",
+        confirmButtonColor: "#d5af49"
+      });
     }
   });
 });
