@@ -1,0 +1,39 @@
+[
+  {
+    "id": 1,
+    "titulo": "Fracturamiento Hidráulico",
+    "instructor": "Ing. Carlos Martínez",
+    "imagen": "images/fracking.jpg",
+    "duracion": "2 días",
+    "modalidad": "Online",
+    "categoria": "Petrolero",
+    "temario": [
+      "Introducción al Fracturamiento Hidráulico",
+      "Propiedades de fluidos",
+      "Diseño de tratamientos",
+      "Monitoreo y evaluación"
+    ],
+    "metodologia": "Teórico–Práctico",
+    "dirigido": "Ingenieros y técnicos de campo",
+    "objetivos": "Comprender el proceso y diseñar un plan de fracturamiento"
+  },
+  {
+    "id": 2,
+    "titulo": "Estaciones de Flujo",
+    "instructor": "Lic. Ana Rivas",
+    "imagen": "images/baterias.jpg",
+    "duracion": "3 días",
+    "modalidad": "Presencial",
+    "categoria": "Industrial",
+    "temario": [
+      "Componentes de la estación de flujo",
+      "Medición de caudal y presión",
+      "Seguridad operacional",
+      "Mantenimiento preventivo"
+    ],
+    "metodologia": "Aula + Prácticas en campo",
+    "dirigido": "Supervisores y operadores",
+    "objetivos": "Dominar el montaje, operación y mantenimiento"
+  }
+  
+]

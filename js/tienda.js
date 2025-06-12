@@ -26,7 +26,7 @@ function renderCursos(lista) {
         <p class="small mb-1"><strong>Modalidad:</strong> ${curso.modalidad}</p>
         <p class="small mb-3"><strong>Fecha:</strong> ${fecha}</p>
         <span class="precio-curso mb-3 fw-bold">$${curso.precio.toFixed(2)}</span>
-        <a href="curso.html?id=${curso.id}" class="btn btn-custom btn-sm">Información</a>
+        <a href="curso.html?id=${curso.id}" class="btn btn-custom btn-sm">Inscribirse</a>
       </div>
     `;
     contenedorCursos.appendChild(card);
