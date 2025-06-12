@@ -1,4 +1,3 @@
-// js/login.js
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("login-container");
   container.innerHTML = `
@@ -6,9 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
       <div class="login-panel">
         <img src="../images/LOGO-SIN-FONDO-min.png" alt="SIV Consulting" class="login-logo">
         <h2 class="login-title">SIV Consulting S.A</h2>
-
         <div class="divider"><span>O</span></div>
-
         <form id="auth-form">
           <div class="form-group mb-3">
             <label for="email">Correo electrónico</label>
@@ -21,26 +18,49 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <button type="submit" class="btn btn-custom w-100">Iniciar sesión</button>
         </form>
-
-        <div class="login-footer">
-          <a href="#" class="link-light">¿Olvidaste tu contraseña?</a>
+       <div class="login-footer">
+          <a href="#" id="resetPwd" class="link-light">¿Olvidaste tu contraseña?</a>
           <a href="#" class="link-light">Necesito ayuda</a>
         </div>
       </div>
-      <!-- Nueva columna de imagen -->
       <div class="login-image"></div>
     </div>
   `;
 
-  // Toggle password visibility
+  // Restablecer contraseña desde el login
+document.getElementById("resetPwd").addEventListener("click", (e) => {
+  e.preventDefault();
+  Swal.fire({
+    title: "Restablecer contraseña",
+    input: "email",
+    inputLabel: "Ingresa tu correo",
+    inputPlaceholder: "correo@ejemplo.com",
+    showCancelButton: true,
+    confirmButtonText: "Enviar enlace",
+  }).then((result) => {
+    if (result.isConfirmed && result.value) {
+      firebase.auth().sendPasswordResetEmail(result.value)
+        .then(() => {
+          Swal.fire("¡Enviado!", "Revisa tu correo para cambiar tu contraseña.", "success");
+        })
+        .catch((error) => {
+          Swal.fire("Error", error.message, "error");
+        });
+    }
+  });
+});
+
+
+
   document.getElementById("togglePwd").addEventListener("click", () => {
     const pwd = document.getElementById("password");
     pwd.type = pwd.type === "password" ? "text" : "password";
   });
 
-  // Placeholder submit handler
-  document.getElementById("auth-form").addEventListener("submit", e => {
+  document.getElementById("auth-form").addEventListener("submit", (e) => {
     e.preventDefault();
-    alert("Autenticando…");
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+    loginUser(email, password);
   });
 });

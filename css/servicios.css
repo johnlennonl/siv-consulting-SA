@@ -1,0 +1,87 @@
+/* css/servicios.css */
+
+/* Banner de servicios */
+.banner-servicios {
+  position: relative;
+  color: #fff;
+}
+.banner-servicios .overlay {
+  position: relative;
+  z-index: 1;
+}
+.banner-servicios::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 0;
+}
+.banner-servicios h1 {
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.7);
+}
+.banner-servicios .lead {
+  font-size: 1.125rem;
+  text-shadow: 1px 1px 6px rgba(0,0,0,0.6);
+}
+.banner-servicios .btn-custom {
+  background-color: #d5af49;
+  color: #000;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+.banner-servicios .btn-custom:hover {
+  background-color: #b99030;
+}
+
+/* Sección de cards */
+#cotizacion {
+  background: #f8f9fa;
+  margin-bottom: 1,4rem ;
+}
+#cotizacion h2 {
+   font-size: 2.25rem;
+  font-weight: 800;
+  color: #d5af49;           /* dorado de la marca */
+  margin-bottom: 1rem;
+}
+.card {
+  border: none;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.card-img-top {
+  height: 300px;
+  object-fit: cover;
+}
+.card-body {
+  background: #fff;
+}
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #222;
+}
+.card-text {
+  font-size: 0.95rem;
+  color: #555;
+  line-height: 1.5;
+}
+
+/* Ajustes responsive */
+@media (max-width: 768px) {
+  .banner-servicios h1 {
+    font-size: 2rem;
+  }
+  .banner-servicios .lead {
+    font-size: 1rem;
+  }
+  #cotizacion .card-img-top {
+    height: 180px;
+  }
+}
+
+
