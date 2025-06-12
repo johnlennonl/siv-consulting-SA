@@ -6,41 +6,56 @@
   <title>SIV Alumno</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/plataforma.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="icon" href="../images/LOGO-FONDO NEGRO.jpg" type="image/x-icon">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
 </head>
 <body>
-
   <!-- Loader -->
   <div id="loader-wrapper">
     <div class="loader"></div>
   </div>
 
   <!-- Navbar -->
-  <nav class="plataforma-nav">
-    <div class="nav-container container">
-      <div class="logo-nav">
-        <img src="../images/LOGO-SIN-FONDO-min.png" class="logotipo" height="60" />
-        <span>SIV Plataforma Estudiante </span>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+        <img src="../images/LOGO-SIN-FONDO-min.png" alt="Logo" height="40">
+        <span>SIV Alumno</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAlumno">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarAlumno">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-book-reader"></i> Mis Cursos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-tasks"></i> Tareas</a></li>
+          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-clipboard-list"></i> Evaluaciones</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" id="changePwdBtn"><i class="fas fa-key"></i> Cambiar contraseña</a></li>
+          <li class="nav-item"><a class="nav-link" href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Salir</a></li>
+        </ul>
       </div>
-      <ul class="nav-links">
-        <li><a href="#">Mis Cursos</a></li>
-        <li><a href="#">Tareas</a></li>
-        <li><a href="#">Evaluaciones</a></li>
-        <li><a href="#" id="logout">Salir</a></li>
-      </ul>
     </div>
   </nav>
 
-  <!-- Bienvenida -->
+  <!-- Bienvenida y contenido -->
   <div class="container mt-4 text-center">
     <h1 id="bienvenida">¡Bienvenido!</h1>
-     <button class="btn btn-warning mt-3" id="changePwdBtn">Cambiar contraseña</button>
+    <p class="text-muted">Sin cursos actualmente.</p>
   </div>
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
   <script>
     const firebaseConfig = {
@@ -54,29 +69,26 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    // Verificar sesión y rol alumno
     firebase.auth().onAuthStateChanged(user => {
       if (!user) {
         window.location.href = "login.html";
       } else {
         db.collection("usuarios").doc(user.uid).get().then(doc => {
-  if (doc.exists && doc.data().rol === "alumno") {
-    const nombre = doc.data().nombre || user.email; // fallback al correo si no tiene nombre
-    document.getElementById("bienvenida").textContent = `¡Bienvenido, ${nombre}! 👋🏻 `;
-  } else {
-    window.location.href = "login.html";
-  }
-});
+          if (doc.exists && doc.data().rol === "alumno") {
+            const nombre = doc.data().nombre || user.email;
+            document.getElementById("bienvenida").textContent = `¡Bienvenido, ${nombre}! 👋🏻`;
+          } else {
+            window.location.href = "login.html";
+          }
+        });
       }
     });
 
-    // Logout
     document.getElementById("logout").onclick = (e) => {
       e.preventDefault();
       firebase.auth().signOut().then(() => window.location.href = "login.html");
     };
 
-    // Loader
     window.addEventListener('load', () => {
       const loader = document.getElementById('loader-wrapper');
       loader.style.opacity = '1';
@@ -87,7 +99,6 @@
       setTimeout(() => loader.style.display = 'none', 1000);
     });
 
-    // Cambiar contraseña
     document.getElementById("changePwdBtn").addEventListener("click", () => {
       Swal.fire({
         title: 'Confirma tu contraseña actual',
@@ -100,8 +111,7 @@
       }).then(result => {
         if (result.isConfirmed && result.value) {
           const user = firebase.auth().currentUser;
-          const email = user.email;
-          const credential = firebase.auth.EmailAuthProvider.credential(email, result.value);
+          const credential = firebase.auth.EmailAuthProvider.credential(user.email, result.value);
 
           user.reauthenticateWithCredential(credential)
             .then(() => {
@@ -127,11 +137,6 @@
         }
       });
     });
-
-
   </script>
-
-  
-
 </body>
 </html>

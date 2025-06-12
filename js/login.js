@@ -28,29 +28,27 @@ document.addEventListener("DOMContentLoaded", () => {
   `;
 
   // Restablecer contraseña desde el login
-document.getElementById("resetPwd").addEventListener("click", (e) => {
-  e.preventDefault();
-  Swal.fire({
-    title: "Restablecer contraseña",
-    input: "email",
-    inputLabel: "Ingresa tu correo",
-    inputPlaceholder: "correo@ejemplo.com",
-    showCancelButton: true,
-    confirmButtonText: "Enviar enlace",
-  }).then((result) => {
-    if (result.isConfirmed && result.value) {
-      firebase.auth().sendPasswordResetEmail(result.value)
-        .then(() => {
-          Swal.fire("¡Enviado!", "Revisa tu correo para cambiar tu contraseña.", "success");
-        })
-        .catch((error) => {
-          Swal.fire("Error", error.message, "error");
-        });
-    }
+  document.getElementById("resetPwd").addEventListener("click", (e) => {
+    e.preventDefault();
+    Swal.fire({
+      title: "Restablecer contraseña",
+      input: "email",
+      inputLabel: "Ingresa tu correo",
+      inputPlaceholder: "correo@ejemplo.com",
+      showCancelButton: true,
+      confirmButtonText: "Enviar enlace",
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        firebase.auth().sendPasswordResetEmail(result.value)
+          .then(() => {
+            Swal.fire("¡Enviado!", "Revisa tu correo para cambiar tu contraseña.", "success");
+          })
+          .catch((error) => {
+            Swal.fire("Error", error.message, "error");
+          });
+      }
+    });
   });
-});
-
-
 
   document.getElementById("togglePwd").addEventListener("click", () => {
     const pwd = document.getElementById("password");
@@ -64,3 +62,50 @@ document.getElementById("resetPwd").addEventListener("click", (e) => {
     loginUser(email, password);
   });
 });
+
+function loginUser(email, password) {
+  firebase.auth().signInWithEmailAndPassword(email, password)
+    .then((userCredential) => {
+      const uid = userCredential.user.uid;
+      firebase.firestore().collection("usuarios").doc(uid).get()
+        .then((doc) => {
+          const rol = doc.data()?.rol || "";
+          if (rol === "admin") {
+            window.location.href = "admin.html";
+          } else if (rol === "alumno") {
+            window.location.href = "alumno.html";
+          } else {
+            Swal.fire("Error", "Rol no autorizado.", "error");
+            firebase.auth().signOut();
+          }
+        });
+    })
+    .catch(() => {
+      Swal.fire({
+        title: '<img src="../images/LOGO-SIN-FONDO-min.png" alt="Logo" style="width:80px;margin-bottom:10px;"><br>Credenciales incorrectas',
+        html: `
+          <div style="font-size:15px;text-align:left;">
+            <p>Hola 👋🏻, parece que has ingresado alguna credencial incorrecta.</p>
+            <p>Si aún no tienes usuario con nosotros, debes <strong>contactarnos </strong> para registrarte.</p>
+          </div>
+        `,
+        
+        confirmButtonText: 'Entendido',
+        footer: `
+          <div class="swal2-footer-custom" style="font-size:14px;">
+            <a href="https://wa.me/584141234567" target="_blank" style="color:#25D366;text-decoration:none;font-weight:bold;">
+              <i class="fab fa-whatsapp"></i> Contactar por WhatsApp
+            </a>
+            &nbsp;|&nbsp;
+            <a href="mailto:soporte@sivconsulting.com" target="_blank" style="color:#007BFF;text-decoration:none;font-weight:bold;">
+              <i class="fas fa-envelope"></i> Enviar correo
+            </a>
+          </div>
+        `,
+        customClass: {
+          popup: 'swal2-border-radius-xl',
+          title: 'swal2-title-custom'
+        }
+      });
+    });
+}
