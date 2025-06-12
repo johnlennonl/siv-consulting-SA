@@ -44,7 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
           </li>
           <li class="nav-item"><a class="nav-link" href="${base}pages/contacto.html">Contacto</a></li>
           <li class="nav-item"><a class="nav-link" href="${base}pages/tienda.html">Tienda</a></li>
-          <li class="nav-item"><a class="nav-link" href="${base}pages/mi-cuenta.html">Mi Cuenta</a></li>
+          <li class="nav-item"><a class="nav-link" href="${base}pages/login.html">Mi Cuenta</a></li>
         </ul>
       </div>
     </div>
