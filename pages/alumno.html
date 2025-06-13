@@ -152,6 +152,43 @@
       e.preventDefault();
       firebase.auth().signOut().then(() => location.href = "login.html");
     };
+    
+    document.getElementById("changePwdBtn").addEventListener("click", () => {
+      Swal.fire({
+        title: 'Confirma tu contraseña actual',
+        input: 'password',
+        inputLabel: 'Por seguridad, ingresa tu contraseña actual',
+        inputPlaceholder: '••••••••',
+        inputAttributes: { minlength: 6 },
+        showCancelButton: true,
+        confirmButtonText: "Continuar",
+      }).then(result => {
+        if (result.isConfirmed && result.value) {
+          const user = firebase.auth().currentUser;
+          const credential = firebase.auth.EmailAuthProvider.credential(user.email, result.value);
+          user.reauthenticateWithCredential(credential).then(() => {
+            Swal.fire({
+              title: 'Nueva contraseña',
+              input: 'password',
+              inputLabel: 'Ingresa tu nueva contraseña',
+              inputPlaceholder: 'Nueva contraseña',
+              inputAttributes: { minlength: 6 },
+              showCancelButton: true,
+              confirmButtonText: "Actualizar",
+            }).then(r2 => {
+              if (r2.isConfirmed && r2.value) {
+                user.updatePassword(r2.value)
+                  .then(() => Swal.fire("¡Éxito!", "Contraseña actualizada correctamente.", "success"))
+                  .catch(err => Swal.fire("Error", err.message, "error"));
+              }
+            });
+          }).catch(error => {
+            Swal.fire("Error", "Contraseña actual incorrecta: " + error.message, "error");
+          });
+        }
+      });
+    });
+    
 
     window.addEventListener("load", () => {
       const loader = document.getElementById("loader-wrapper");
