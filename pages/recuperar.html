@@ -9,25 +9,69 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <style>
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: 'Montserrat', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    .reset-container {
+      background-color: #111;
+      padding: 2rem;
+      border-radius: 12px;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+      max-width: 400px;
+      width: 100%;
+      text-align: center;
+    }
+    .reset-logo {
+      max-width: 120px;
+      margin-bottom: 1rem;
+    }
+    .form-control {
+      background-color: #222;
+      color: #fff;
+      border: 1px solid #444;
+    }
+    .form-control::placeholder {
+      color: #aaa;
+    }
+    .btn-primary {
+      background-color: #d5af49;
+      border: none;
+    }
+    .btn-primary:hover {
+      background-color: #c19c3d;
+    }
+  </style>
 </head>
-<body style="font-family: 'Montserrat', sans-serif;">
-  <div class="container mt-5">
-    <h2 class="text-center mb-4">Restablecer tu contraseña</h2>
-    <form id="reset-password-form" class="mx-auto" style="max-width: 400px;">
-      <div class="mb-3">
+<body>
+     <div id="loader-wrapper">
+    <div class="loader"></div>
+  </div>
+
+  <div class="reset-container">
+    <img src="../images/LOGO-SIN-FONDO-min.png" alt="SIV Consulting" class="reset-logo">
+    <h2 class="mb-4">Restablecer tu contraseña</h2>
+    <form id="reset-password-form">
+      <div class="mb-3 text-start">
         <label for="new-password" class="form-label">Nueva contraseña</label>
-        <input type="password" id="new-password" class="form-control" required>
+        <input type="password" id="new-password" class="form-control" placeholder="••••••••" required>
       </div>
-      <div class="mb-3">
+      <div class="mb-4 text-start">
         <label for="confirm-password" class="form-label">Confirmar contraseña</label>
-        <input type="password" id="confirm-password" class="form-control" required>
+        <input type="password" id="confirm-password" class="form-control" placeholder="••••••••" required>
       </div>
       <button type="submit" class="btn btn-primary w-100">Restablecer</button>
     </form>
   </div>
 
   <script>
-    // Configurar Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCHrHjd6GaJDHk23cvW8oTl496Zaw-wmYM",
       authDomain: "siv-consulting.firebaseapp.com",
@@ -69,5 +113,19 @@
         });
     });
   </script>
+
+   <script>
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader-wrapper');
+      loader.style.opacity = '1';
+      setTimeout(() => {
+        loader.style.transition = 'opacity 0.5s ease';
+        loader.style.opacity = '0';
+      }, 500);
+      setTimeout(() => loader.style.display = 'none', 1000);
+    });
+  </script>
+
+
 </body>
 </html>
