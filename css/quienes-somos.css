@@ -1,0 +1,38 @@
+/* css/quienes-somos.css */
+
+#qs-container img {
+  /* Ajusta el tamaño del logo */
+  max-width: 180px;
+}
+
+#qs-container h1 {
+  font-size: 2.5rem;
+}
+
+#qs-container p.lead {
+  font-size: 1.25rem;
+  color: #555;
+}
+
+#qs-container .text-justify p {
+  margin-bottom: 1rem;
+  line-height: 1.7;
+  color: #333;
+}
+
+
+/* Para las imágenes de Quiénes Somos */
+.quienes-img {
+  width: 100%;           /* ya lo fuerza w-100, pero lo repetimos por si acaso */
+  height: 100%;   /* altura grande, ajusta a tu gusto */
+  object-fit: cover;     /* recorta y mantiene proporción */
+  display: block;        /* evita espacios extra */
+  border-radius: 0.5rem; /* mantiene tu sombra/redondeo */
+}
+
+/* En pantallas más pequeñas, bajamos un poco la altura */
+@media (max-width: 768px) {
+  .quienes-img {
+    height: 250px;
+  }
+}

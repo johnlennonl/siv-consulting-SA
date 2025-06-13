@@ -15,7 +15,14 @@
   <link rel="stylesheet" href="../css/contacto.css"/>
 </head>
 <body style="font-family: 'Montserrat', sans-serif; background-color: #1f1f1f;">
+
+  <!-- Loader -->
+  <div id="loader-wrapper">
+    <div class="loader"></div>
+  </div>
+
   <div id="navbar"></div>
+
 
     
          <main id="contacto-container"></main>
@@ -36,6 +43,18 @@
   emailjs.init("lG1j1fSNUvKU4_Upr"); // pon aquí tu User ID real
 </script>
 
+<script>
+  
+    window.addEventListener('load', () => {
+      const loader = document.getElementById('loader-wrapper');
+      loader.style.opacity = '1';
+      setTimeout(() => {
+        loader.style.transition = 'opacity 0.3s ease';
+        loader.style.opacity = '0';
+      }, 500);
+      setTimeout(() => loader.style.display = 'none', 1000);
+    });
+</script>  
 
   <!-- Lógica de contacto -->
   <script src="../js/contacto.js"></script>
