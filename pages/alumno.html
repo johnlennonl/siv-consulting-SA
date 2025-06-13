@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIV Alumno</title>
+  <title>Alumno | SIV Consulting</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/plataforma.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -53,7 +53,7 @@
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center gap-2" href="#">
         <img src="../images/LOGO-SIN-FONDO-min.png" alt="Logo" height="40">
-        <span>SIV Alumno</span>
+        <span>Alumno SIV Consulting</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAlumno">
         <span class="navbar-toggler-icon"></span>
@@ -72,6 +72,8 @@
 
   <div class="container mt-4 text-center">
     <h1 id="bienvenida">¡Bienvenido!</h1>
+    <div id="fechaHora" class="text-muted small"></div>
+
     <div id="cursos-container" class="row justify-content-center mt-4"></div>
   </div>
 
@@ -108,43 +110,47 @@
         container.innerHTML = "<p class='text-muted'>No tienes cursos asignados aún.</p>";
       } else {
         cursos.forEach(async id => {
-          const cursoDoc = await db.collection("cursos").doc(id).get();
-          if (cursoDoc.exists) {
-            const curso = cursoDoc.data();
-            const card = document.createElement("div");
-            card.className = "card p-4 m-3 shadow-sm";
-            card.style.maxWidth = "700px";
+  const cursoDoc = await db.collection("cursos").doc(id).get();
+  if (!cursoDoc.exists) return;
+  const curso = cursoDoc.data();
 
-            const recursosHTML = Array.isArray(curso.recursos)
-              ? curso.recursos.map(r => `<a class='recurso-btn' href='${r.url}' target='_blank'>${r.nombre}</a>`).join("")
-              : "<p class='text-muted'>No hay recursos disponibles.</p>";
+  // 1) Creamos la columna
+  const col = document.createElement("div");
+  col.className = "col-12 col-md-6 mb-4 d-flex";
 
-            card.innerHTML = `
-              <h4><i class="fas fa-book"></i> ${curso.titulo}</h4>
-              <p><i class="fas fa-calendar-alt"></i> Inicio: ${curso.fechaInicio}</p>
-              <p><i class="fas fa-clock"></i> Hora de clase: ${curso.horaClase}</p>
-              <p><i class="fas fa-calendar-day"></i> Días de clase: ${curso.diasClase.join(", ")}</p>
-              <div class="my-3">
-                <img src="../images/${curso.fotoDocente}" alt="docente" class="docente-img">
-                <p><i class="fas fa-chalkboard-teacher"></i> ${curso.docente}</p>
-              </div>
-              <a class="btn btn-warning mb-3" href="${curso.linkZoom}" target="_blank">
-                <i class="fas fa-video"></i> Entrar a la clase
-              </a>
-              <div class="mt-3">
-                <h5><i class="fas fa-folder-open"></i> Recursos</h5>
-                <div class="d-flex flex-wrap justify-content-center">
-                  ${recursosHTML}
-                </div>
-              </div> 
-              <div class="mt-4 video-container">
-              <h5 class="mt-4 mb-4"><i class="fas fa-video"></i> Video Tutorial </h5>
-                <iframe src="https://www.youtube.com/embed/${curso.videoTutorial}" frameborder="0" allowfullscreen></iframe>
-              </div>
-            `;
-            container.appendChild(card);
-          }
-        });
+  // 2) Dentro, la tarjeta que ocupa todo el ancho de la columna
+  const card = document.createElement("div");
+  card.className = "card flex-fill shadow-sm";
+  card.innerHTML = `
+    <div class="card-body">
+      <h4 class="card-title"><i class="fas fa-book"></i> ${curso.titulo}</h4>
+      <p><i class="fas fa-calendar-alt"></i> <strong>Inicio:</strong> ${curso.fechaInicio}</p>
+      <p><i class="fas fa-clock"></i> <strong>Hora:</strong> ${curso.horaClase}</p>
+      <p><i class="fas fa-calendar-day"></i> <strong>Días:</strong> ${curso.diasClase.join(", ")}</p>
+      <div class="my-3 text-center">
+        <img src="../images/${curso.fotoDocente}" alt="docente" class="img-fluid rounded-circle" style="width:120px;height:120px;object-fit:cover">
+        <p class="mt-2"><i class="fas fa-chalkboard-teacher"></i> ${curso.docente}</p>
+      </div>
+      <a class="btn btn-warning w-100 mb-3" href="${curso.linkZoom}" target="_blank">
+        <i class="fas fa-video"></i> Entrar a clase
+      </a>
+      <h5><i class="fas fa-folder-open"></i> Recursos</h5>
+      <div class="d-flex flex-wrap justify-content-center mb-3">
+        ${Array.isArray(curso.recursos)
+           ? curso.recursos.map(r => `<a class="btn btn-sm btn-outline-secondary m-1" href="${r.url}" target="_blank">${r.nombre}</a>`).join("")
+           : `<p class="text-muted">No hay recursos.</p>`}
+      </div>
+      <h5><i class="fas fa-play-circle"></i> Video Tutorial</h5>
+      <div class="ratio ratio-16x9">
+        <iframe src="https://www.youtube.com/embed/${curso.videoTutorial}" allowfullscreen></iframe>
+      </div>
+    </div>
+  `;
+
+  // 3) Anidamos y metemos al contenedor
+  col.appendChild(card);
+  container.appendChild(col);
+});
       }
     });
 
@@ -188,7 +194,7 @@
         }
       });
     });
-    
+
 
     window.addEventListener("load", () => {
       const loader = document.getElementById("loader-wrapper");
@@ -200,5 +206,25 @@
       }, 500);
     });
   </script>
+  <script>
+  // función para formatear fecha y hora en español con segundos
+  function actualizarFechaHora() {
+    const now = new Date();
+    const opciones = {
+      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
+      hour: '2-digit', minute: '2-digit', second: '2-digit',
+      hour12: false
+    };
+    document.getElementById("fechaHora").textContent =
+      now.toLocaleDateString('es-ES', opciones);
+  }
+
+  // Arranca y programa la actualización cada segundo
+  window.addEventListener("DOMContentLoaded", () => {
+    actualizarFechaHora();
+    setInterval(actualizarFechaHora, 1000);
+  });
+</script>
+
 </body>
 </html>
