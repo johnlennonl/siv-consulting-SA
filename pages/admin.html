@@ -3,55 +3,37 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIV Alumno</title>
+  <title>SIV Tutor</title>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/plataforma.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="icon" href="../images/LOGO-SIN-FONDO-min.png" type="image/png"/>
   <style>
-    body {
-      margin: 0;
-      padding: 0;
-    }
+    body { margin: 0; padding: 0; }
     #loader-wrapper {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: #fff;
-      z-index: 9999;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: #fff; z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
     }
     .loader {
-      border: 5px solid #f3f3f3;
-      border-top: 5px solid #d5af49;
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      border: 5px solid #f3f3f3; border-top: 5px solid #d5af49;
+      border-radius: 50%; width: 50px; height: 50px;
       animation: spin 1s linear infinite;
     }
-    @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
   <!-- Loader -->
-  <div id="loader-wrapper">
-    <div class="loader"></div>
-  </div>
+  <div id="loader-wrapper"><div class="loader"></div></div>
 
   <!-- Navbar -->
   <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
       <a class="navbar-brand d-flex align-items-center gap-2" href="#">
         <img src="../images/LOGO-SIN-FONDO-min.png" alt="Logo" height="40">
-        <span>SIV Tutor </span>
+        <span>SIV Tutor</span>
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAlumno">
         <span class="navbar-toggler-icon"></span>
@@ -68,13 +50,30 @@
     </div>
   </nav>
 
-  <!-- Bienvenida y contenido -->
   <div class="container mt-4 text-center">
     <h1 id="bienvenida">¡Bienvenido!</h1>
-    <p class="text-muted">Sin cursos actualmente.</p>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <h4 class="my-4">Asignar Curso a Alumno</h4>
+        <form id="asignar-curso-form">
+          <div class="mb-3">
+            <select id="alumnoSelect" class="form-select" required>
+              <option value="" selected disabled>Seleccionar alumno</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <select id="cursoSelect" class="form-select" required>
+              <option value="" selected disabled>Seleccionar curso</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn-warning">Asignar Curso</button>
+        </form>
+      </div>
+    </div>
+    <div id="cursos-container" class="row justify-content-center mt-4"></div>
   </div>
 
-  <!-- Firebase -->
+  <!-- Scripts Firebase y Bootstrap -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
@@ -93,35 +92,30 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    firebase.auth().onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "login.html";
-      } else {
-        db.collection("usuarios").doc(user.uid).get().then(doc => {
-          if (doc.exists && doc.data().rol === "admin") {
-            const nombre = doc.data().nombre || user.email;
-            document.getElementById("bienvenida").textContent = `¡Bienvenido, ${nombre}! 👋🏻`;
-          } else {
-            window.location.href = "login.html";
-          }
-        });
-      }
+    window.addEventListener("load", () => {
+      const loader = document.getElementById("loader-wrapper");
+      loader.style.opacity = "1";
+      setTimeout(() => {
+        loader.style.transition = "opacity 0.5s ease";
+        loader.style.opacity = "0";
+        setTimeout(() => loader.style.display = "none", 500);
+      }, 500);
+    });
+
+    firebase.auth().onAuthStateChanged(async user => {
+      if (!user) return location.href = "login.html";
+
+      const doc = await db.collection("usuarios").doc(user.uid).get();
+      if (!doc.exists || doc.data().rol !== "admin") return location.href = "login.html";
+
+      const nombre = doc.data().nombre || user.email;
+      document.getElementById("bienvenida").textContent = `¡Bienvenido, ${nombre}! 👋🏻`;
     });
 
     document.getElementById("logout").onclick = (e) => {
       e.preventDefault();
-      firebase.auth().signOut().then(() => window.location.href = "login.html");
+      firebase.auth().signOut().then(() => location.href = "login.html");
     };
-
-    window.addEventListener('load', () => {
-      const loader = document.getElementById('loader-wrapper');
-      loader.style.opacity = '1';
-      setTimeout(() => {
-        loader.style.transition = 'opacity 0.5s ease';
-        loader.style.opacity = '0';
-      }, 500);
-      setTimeout(() => loader.style.display = 'none', 1000);
-    });
 
     document.getElementById("changePwdBtn").addEventListener("click", () => {
       Swal.fire({
@@ -136,30 +130,78 @@
         if (result.isConfirmed && result.value) {
           const user = firebase.auth().currentUser;
           const credential = firebase.auth.EmailAuthProvider.credential(user.email, result.value);
-
-          user.reauthenticateWithCredential(credential)
-            .then(() => {
-              Swal.fire({
-                title: 'Nueva contraseña',
-                input: 'password',
-                inputLabel: 'Ingresa tu nueva contraseña',
-                inputPlaceholder: 'Nueva contraseña',
-                inputAttributes: { minlength: 6 },
-                showCancelButton: true,
-                confirmButtonText: "Actualizar",
-              }).then(r2 => {
-                if (r2.isConfirmed && r2.value) {
-                  user.updatePassword(r2.value)
-                    .then(() => Swal.fire("¡Éxito!", "Contraseña actualizada correctamente.", "success"))
-                    .catch(err => Swal.fire("Error", err.message, "error"));
-                }
-              });
-            })
-            .catch(error => {
-              Swal.fire("Error", "Contraseña actual incorrecta: " + error.message, "error");
+          user.reauthenticateWithCredential(credential).then(() => {
+            Swal.fire({
+              title: 'Nueva contraseña',
+              input: 'password',
+              inputLabel: 'Ingresa tu nueva contraseña',
+              inputPlaceholder: 'Nueva contraseña',
+              inputAttributes: { minlength: 6 },
+              showCancelButton: true,
+              confirmButtonText: "Actualizar",
+            }).then(r2 => {
+              if (r2.isConfirmed && r2.value) {
+                user.updatePassword(r2.value)
+                  .then(() => Swal.fire("¡Éxito!", "Contraseña actualizada correctamente.", "success"))
+                  .catch(err => Swal.fire("Error", err.message, "error"));
+              }
             });
+          }).catch(error => {
+            Swal.fire("Error", "Contraseña actual incorrecta: " + error.message, "error");
+          });
         }
       });
+    });
+
+    // Cargar cursos
+    db.collection("cursos").get().then(snapshot => {
+      const select = document.getElementById("cursoSelect");
+      snapshot.forEach(doc => {
+        const option = document.createElement("option");
+        option.value = doc.id;
+        option.textContent = doc.data().titulo;
+        select.appendChild(option);
+      });
+    });
+
+    // Cargar alumnos
+    db.collection("usuarios").where("rol", "==", "alumno").get().then(snapshot => {
+      const alumnoSelect = document.getElementById("alumnoSelect");
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        const option = document.createElement("option");
+        option.value = data.email;
+        option.textContent = `${data.nombre} (${data.email})`;
+        alumnoSelect.appendChild(option);
+      });
+    });
+
+    document.getElementById("asignar-curso-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = document.getElementById("alumnoSelect").value;
+      const cursoID = document.getElementById("cursoSelect").value;
+
+      try {
+        const query = await db.collection("usuarios").where("email", "==", email).where("rol", "==", "alumno").get();
+        if (query.empty) return Swal.fire("Error", "Usuario no encontrado o no es un alumno.", "error");
+
+        const userDoc = query.docs[0];
+        const uid = userDoc.id;
+        const cursosInscritos = userDoc.data().cursosInscritos || [];
+
+        if (cursosInscritos.includes(cursoID)) {
+          return Swal.fire("Info", "Este curso ya está asignado al alumno.", "info");
+        }
+
+        cursosInscritos.push(cursoID);
+        await db.collection("usuarios").doc(uid).update({ cursosInscritos });
+
+        Swal.fire("¡Éxito!", "Curso asignado correctamente.", "success");
+        document.getElementById("asignar-curso-form").reset();
+      } catch (error) {
+        console.error("Error al asignar curso:", error);
+        Swal.fire("Error", "Hubo un problema al asignar el curso.", "error");
+      }
     });
   </script>
 </body>
