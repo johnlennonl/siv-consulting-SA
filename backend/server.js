@@ -1,15 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import admin from 'firebase-admin';
-import { readFileSync } from 'fs';
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// Credenciales del servicio
+// Credenciales del servicio desde variable de entorno
 const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
-
 
 // Inicializar Firebase Admin
 admin.initializeApp({
@@ -17,7 +15,12 @@ admin.initializeApp({
 });
 const db = admin.firestore();
 
-// Endpoint para crear alumno
+// ✅ Endpoint de prueba
+app.get('/', (req, res) => {
+  res.send('✅ Backend SIV operativo correctamente 🚀');
+});
+
+// 📩 Endpoint para crear alumno
 app.post('/crear-alumno', async (req, res) => {
   const { nombre, email, clave } = req.body;
 
@@ -26,7 +29,7 @@ app.post('/crear-alumno', async (req, res) => {
   }
 
   try {
-    // Crear usuario en Auth
+    // Crear usuario en Firebase Auth
     const userRecord = await admin.auth().createUser({
       email,
       password: clave,
@@ -48,7 +51,7 @@ app.post('/crear-alumno', async (req, res) => {
   }
 });
 
-// Iniciar servidor
+// 🚀 Iniciar servidor
 app.listen(3000, () => {
   console.log('Servidor corriendo en http://localhost:3000');
 });
