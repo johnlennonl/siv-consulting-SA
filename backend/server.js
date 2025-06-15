@@ -8,9 +8,8 @@ app.use(cors());
 app.use(express.json());
 
 // Credenciales del servicio
-const serviceAccount = JSON.parse(
-  readFileSync('./serviceAccountKey.json', 'utf8')
-);
+const serviceAccount = JSON.parse(process.env.SERVICE_ACCOUNT_KEY);
+
 
 // Inicializar Firebase Admin
 admin.initializeApp({
