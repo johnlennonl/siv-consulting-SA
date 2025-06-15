@@ -4,44 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alumno | SIV Consulting</title>
-  <link rel="stylesheet" href="../css/style.css">
-  <link rel="stylesheet" href="../css/plataforma.css">
+  
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css">
   <link rel="icon" href="../images/LOGO-SIN-FONDO-min.png" type="image/png"/>
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/plataforma.css">
   <style>
-    body { margin: 0; padding: 0; }
-    #loader-wrapper {
-      position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-      background: #fff; z-index: 9999;
-      display: flex; align-items: center; justify-content: center;
-    }
-    .loader {
-      border: 5px solid #f3f3f3; border-top: 5px solid #d5af49;
-      border-radius: 50%; width: 50px; height: 50px;
-      animation: spin 1s linear infinite;
-    }
-    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-    .recurso-btn {
-      margin: 5px;
-      border-radius: 30px;
-      background-color: #d5af49;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-    }
-    .docente-img {
-      width: 250px;
-      height: 300px;
-      object-fit: cover;
-      
-      margin-bottom: 10px;
-    }
-    .video-container iframe {
-      width: 100%;
-      height: 400px;
-      border-radius: 10px;
-    }
+    
   </style>
 </head>
 <body>
@@ -70,161 +40,21 @@
     </div>
   </nav>
 
+  <!-- Contenido -->
   <div class="container mt-4 text-center">
     <h1 id="bienvenida">¡Bienvenido!</h1>
-    <div id="fechaHora" class="text-muted small"></div>
+    <div id="fechaHora" class="text-muted small mb-4"></div>
 
-    <div id="cursos-container" class="row justify-content-center mt-4"></div>
+    <div id="cursos-container" class="row justify-content-center"></div>
   </div>
 
+  <!-- Scripts -->
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
-   <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCHrHjd6GaJDHk23cvW8oTl496Zaw-wmYM",
-      authDomain: "siv-consulting.firebaseapp.com",
-      projectId: "siv-consulting",
-      storageBucket: "siv-consulting.appspot.com",
-      messagingSenderId: "851037351245",
-      appId: "1:851037351245:web:c7cd6ad46c5ab891251b04"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-
-    firebase.auth().onAuthStateChanged(async user => {
-      if (!user) return location.href = "login.html";
-      const uid = user.uid;
-      const doc = await db.collection("usuarios").doc(uid).get();
-      if (!doc.exists || doc.data().rol !== "alumno") return location.href = "login.html";
-      const nombre = doc.data().nombre || user.email;
-      document.getElementById("bienvenida").textContent = `¡Bienvenido, ${nombre}! 👋🏻`;
-
-      const cursos = doc.data().cursosInscritos || [];
-      const container = document.getElementById("cursos-container");
-
-      if (cursos.length === 0) {
-        container.innerHTML = "<p class='text-muted'>No tienes cursos asignados aún.</p>";
-      } else {
-        cursos.forEach(async id => {
-  const cursoDoc = await db.collection("cursos").doc(id).get();
-  if (!cursoDoc.exists) return;
-  const curso = cursoDoc.data();
-
-  // 1) Creamos la columna
-  const col = document.createElement("div");
-  col.className = "col-12 col-md-6 mb-4 d-flex";
-
-  // 2) Dentro, la tarjeta que ocupa todo el ancho de la columna
-  const card = document.createElement("div");
-  card.className = "card flex-fill shadow-sm";
-  card.innerHTML = `
-    <div class="card-body">
-      <h4 class="card-title"><i class="fas fa-book"></i> ${curso.titulo}</h4>
-      <p><i class="fas fa-calendar-alt"></i> <strong>Inicio:</strong> ${curso.fechaInicio}</p>
-      <p><i class="fas fa-clock"></i> <strong>Hora:</strong> ${curso.horaClase}</p>
-      <p><i class="fas fa-calendar-day"></i> <strong>Días:</strong> ${curso.diasClase.join(", ")}</p>
-      <div class="my-3 text-center">
-        <img src="../images/${curso.fotoDocente}" alt="docente" class="img-fluid rounded-circle" style="width:120px;height:120px;object-fit:cover">
-        <p class="mt-2"><i class="fas fa-chalkboard-teacher"></i> ${curso.docente}</p>
-      </div>
-      <a class="btn btn-warning w-100 mb-3" href="${curso.linkZoom}" target="_blank">
-        <i class="fas fa-video"></i> Entrar a clase
-      </a>
-      <h5><i class="fas fa-folder-open"></i> Recursos</h5>
-      <div class="d-flex flex-wrap justify-content-center mb-3">
-        ${Array.isArray(curso.recursos)
-           ? curso.recursos.map(r => `<a class="btn btn-sm btn-outline-secondary m-1" href="${r.url}" target="_blank">${r.nombre}</a>`).join("")
-           : `<p class="text-muted">No hay recursos.</p>`}
-      </div>
-      <h5><i class="fas fa-play-circle"></i> Video Tutorial</h5>
-      <div class="ratio ratio-16x9">
-        <iframe src="https://www.youtube.com/embed/${curso.videoTutorial}" allowfullscreen></iframe>
-      </div>
-    </div>
-  `;
-
-  // 3) Anidamos y metemos al contenedor
-  col.appendChild(card);
-  container.appendChild(col);
-});
-      }
-    });
-
-    document.getElementById("logout").onclick = (e) => {
-      e.preventDefault();
-      firebase.auth().signOut().then(() => location.href = "login.html");
-    };
-    
-    document.getElementById("changePwdBtn").addEventListener("click", () => {
-      Swal.fire({
-        title: 'Confirma tu contraseña actual',
-        input: 'password',
-        inputLabel: 'Por seguridad, ingresa tu contraseña actual',
-        inputPlaceholder: '••••••••',
-        inputAttributes: { minlength: 6 },
-        showCancelButton: true,
-        confirmButtonText: "Continuar",
-      }).then(result => {
-        if (result.isConfirmed && result.value) {
-          const user = firebase.auth().currentUser;
-          const credential = firebase.auth.EmailAuthProvider.credential(user.email, result.value);
-          user.reauthenticateWithCredential(credential).then(() => {
-            Swal.fire({
-              title: 'Nueva contraseña',
-              input: 'password',
-              inputLabel: 'Ingresa tu nueva contraseña',
-              inputPlaceholder: 'Nueva contraseña',
-              inputAttributes: { minlength: 6 },
-              showCancelButton: true,
-              confirmButtonText: "Actualizar",
-            }).then(r2 => {
-              if (r2.isConfirmed && r2.value) {
-                user.updatePassword(r2.value)
-                  .then(() => Swal.fire("¡Éxito!", "Contraseña actualizada correctamente.", "success"))
-                  .catch(err => Swal.fire("Error", err.message, "error"));
-              }
-            });
-          }).catch(error => {
-            Swal.fire("Error", "Contraseña actual incorrecta: " + error.message, "error");
-          });
-        }
-      });
-    });
-
-
-    window.addEventListener("load", () => {
-      const loader = document.getElementById("loader-wrapper");
-      loader.style.opacity = "1";
-      setTimeout(() => {
-        loader.style.transition = "opacity 0.5s ease";
-        loader.style.opacity = "0";
-        setTimeout(() => loader.style.display = "none", 500);
-      }, 500);
-    });
-  </script>
-  <script>
-  // función para formatear fecha y hora en español con segundos
-  function actualizarFechaHora() {
-    const now = new Date();
-    const opciones = {
-      weekday: 'long', year: 'numeric', month: 'long', day: 'numeric',
-      hour: '2-digit', minute: '2-digit', second: '2-digit',
-      hour12: false
-    };
-    document.getElementById("fechaHora").textContent =
-      now.toLocaleDateString('es-ES', opciones);
-  }
-
-  // Arranca y programa la actualización cada segundo
-  window.addEventListener("DOMContentLoaded", () => {
-    actualizarFechaHora();
-    setInterval(actualizarFechaHora, 1000);
-  });
-</script>
-
+  <script src="../js/administracion/alumno.js"> </script>
 </body>
 </html>
