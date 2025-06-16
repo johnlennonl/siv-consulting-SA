@@ -37,12 +37,13 @@ app.post('/crear-alumno', async (req, res) => {
     });
 
     // Guardar en Firestore
-    await db.collection('usuarios').doc(userRecord.uid).set({
-      nombre,
-      email,
-      rol: 'alumno',
-      cursosInscritos: [],
-    });
+   await db.collection('usuarios').doc(userRecord.uid).set({
+  nombre,
+  email,
+  rol: 'alumno',
+  cursosInscritos: [],
+  fechaRegistro: admin.firestore.FieldValue.serverTimestamp() // ⏱️ este campo es la clave
+});
 
     res.json({ success: true, uid: userRecord.uid });
   } catch (err) {

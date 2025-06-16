@@ -5,8 +5,11 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Cursos Técnicos | SIV Consulting</title>
   <link rel="icon" href="../images/LOGO-SIN-FONDO-min.png" type="image/png"/>
-  <!-- Bootstrap, Montserrat, tu CSS: cursos.css -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css"/>
+  <!-- Google Font Montserrat -->  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet"/>
   <link rel="stylesheet" href="../css/cursos.css">
   <link rel="stylesheet" href="../css/style.css">
   <link href="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.css" rel="stylesheet">
@@ -14,10 +17,14 @@
 <body>
 
    <!-- Loader -->
+  <!-- Loader -->
   <div id="loader-wrapper">
-    <div class="loader"></div>
+    <div class="loader2">
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+  <div class="bubble"></div>
+</div>
   </div>
-
 
   <div id="navbar"></div>
 
@@ -41,6 +48,10 @@
       <button id="btn-ver-mas" class="btn btn-custom mt-4 mb-4 ">Ver más cursos</button>
     </div>
   </div>
+  
+   <button id="scrollTopBtn" title="Ir arriba">
+  <i class="bi bi-arrow-up"></i>
+</button>
 
   <div id="footer"></div>
 
@@ -51,6 +62,7 @@
   <script src="../js/footer.js"></script>
   <script src="../js/cursos-data.js"></script>
 <script src="../js/cursos.js"></script>
+<script src="../js/scroll.js"></script>
  <!--Loader -->
 <script>
   

@@ -17,7 +17,17 @@ document.addEventListener('DOMContentLoaded', () => {
       cancelButtonText: 'No, gracias',
       allowOutsideClick: false,
       allowEscapeKey: false,
-      backdrop: true
+      backdrop: true,
+      background: 'white',
+  color: 'black',
+  iconColor: '#00ffcc',
+  customClass: {
+    popup: 'rounded-4 montserrat-font',
+    confirmButton: ' btn-success px-4 fw-bold'
+  },
+  showClass: { popup: 'animate__animated animate__fadeInDown' },
+  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+
     }).then((result) => {
       if (result.isConfirmed) {
         localStorage.setItem('aceptoTerminos', 'true');
@@ -25,7 +35,14 @@ document.addEventListener('DOMContentLoaded', () => {
           icon: 'success',
           title: 'Gracias por aceptar',
           text: '¡Disfruta tu visita en SIV Consulting!',
-          confirmButtonColor: '#d5af49'
+          confirmButtonColor: '#d5af49',
+          background: 'white',
+          color: '#black',
+          iconColor: '#00ffcc',
+          customClass: {
+            popup: 'rounded-4 montserrat-font',
+            confirmButton: ' btn-success px-4 fw-bold'
+          }
         });
       } else {
         window.location.href = 'https://google.com'; // Redirige si no acepta (puedes quitar esto)

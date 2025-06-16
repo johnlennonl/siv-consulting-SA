@@ -23,7 +23,10 @@
     const fh = document.getElementById("fechaHora");
     const tick = ()=>{
       const d=new Date();
-      fh.textContent = d.toLocaleDateString("es-ES")+" | "+d.toLocaleTimeString("es-ES");
+      const opcionesFecha = { day: 'numeric', month: 'long', year: 'numeric' };
+const fechaFormateada = d.toLocaleDateString('es-ES', opcionesFecha).replace(" de ", " de ").replace(" de ", " del ");
+fh.textContent = fechaFormateada + " | " + d.toLocaleTimeString('es-ES');
+
     };
     tick(); setInterval(tick,1000);
   });
@@ -63,7 +66,17 @@
     Swal.fire({
       title:'Confirma tu contraseña actual',
       input:'password', inputLabel:'Por seguridad ingresa tu contraseña actual',
-      showCancelButton:true, confirmButtonText:'Continuar'
+      background: '#252836',
+  color: '#f1f1f1',
+  iconColor: '#00ffcc',
+  confirmButtonColor: '#00c2a8',
+  confirmButtonText: 'Entendido',
+  customClass: {
+    popup: 'rounded-4 montserrat-font',
+    confirmButton: ' btn-success px-4 fw-bold'
+  },
+  showClass: { popup: 'animate__animated animate__fadeInDown' },
+  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
     }).then(r=>{
       if(!r.isConfirmed || !r.value) return;
       const user=firebase.auth().currentUser,
@@ -72,7 +85,17 @@
         .then(()=> Swal.fire({
           title:'Nueva contraseña',
           input:'password', inputLabel:'Ingresa tu nueva contraseña',
-          showCancelButton:true, confirmButtonText:'Actualizar'
+          background: '#252836',
+  color: '#f1f1f1',
+  iconColor: '#00ffcc',
+  confirmButtonColor: '#00c2a8',
+  confirmButtonText: 'Entendido',
+  customClass: {
+    popup: 'rounded-4 montserrat-font',
+    confirmButton: ' btn-success px-4 fw-bold'
+  },
+  showClass: { popup: 'animate__animated animate__fadeInDown' },
+  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
         }).then(r2=>{
           if(r2.isConfirmed && r2.value){
             user.updatePassword(r2.value)
@@ -163,9 +186,19 @@ document.addEventListener("DOMContentLoaded", () => {
             <li><b>Link Zoom:</b> ${nuevo.linkZoom || 'No asignado'}</li>
           </ul>
         `,
+        
         icon: 'success',
-        confirmButtonText: 'Entendido',
-        confirmButtonColor: '#3085d6'
+        background: '#252836',
+  color: '#f1f1f1',
+  iconColor: '#00ffcc',
+  confirmButtonColor: '#00c2a8',
+  confirmButtonText: 'Entendido',
+  customClass: {
+    popup: 'rounded-4 montserrat-font',
+    confirmButton: ' btn-success px-4 fw-bold'
+  },
+  showClass: { popup: 'animate__animated animate__fadeInDown' },
+  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
       });
 
       bootstrap.Modal.getInstance(document.getElementById("modalCrearCurso")).hide();
@@ -279,7 +312,21 @@ document.addEventListener("DOMContentLoaded", () => {
     if(arr.includes(cid)) return Swal.fire('Info','Ya está inscrito','info');
     arr.push(cid);
     await db.collection("usuarios").doc(uid).update({ cursosInscritos:arr });
-    Swal.fire('Asignado','Curso asignado al alumno','success');
+    Swal.fire({title: '¡Éxito!',
+  text: 'Curso Asignado satisfactoriamente',
+  icon: 'success',
+  background: '#252836',
+  color: '#f1f1f1',
+  iconColor: '#00ffcc',
+  confirmButtonColor: '#00c2a8',
+  confirmButtonText: 'Entendido',
+  customClass: {
+    popup: 'rounded-4 montserrat-font',
+    confirmButton: ' btn-success px-4 fw-bold'
+  },
+  showClass: { popup: 'animate__animated animate__fadeInDown' },
+  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+});
   });
 
   // Quitar curso
@@ -292,21 +339,26 @@ document.addEventListener("DOMContentLoaded", () => {
     if(!arr.includes(cid)) return Swal.fire('Info','El alumno no tiene ese curso','info');
     arr = arr.filter(x=> x!==cid);
     await db.collection("usuarios").doc(uid).update({ cursosInscritos:arr });
-    Swal.fire('Quitar','Curso removido del alumno','success');
+   Swal.fire({title: '¡Éxito!',
+  text: 'Curso removido satisfactoriamente',
+  icon: 'success',
+  background: '#252836',
+  color: '#f1f1f1',
+  iconColor: '#00ffcc',
+  confirmButtonColor: '#00c2a8',
+  confirmButtonText: 'Entendido',
+  customClass: {
+    popup: 'rounded-4 montserrat-font',
+    confirmButton: ' btn-success px-4 fw-bold'
+  },
+  showClass: { popup: 'animate__animated animate__fadeInDown' },
+  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+});
   });
 
   
 
 
-     // Modo claro/oscuro
-    document.getElementById('toggleModeBtn').onclick = () => {
-      document.body.classList.toggle('dark-mode');
-      document.body.classList.toggle('light-mode');
-      localStorage.setItem('admin-theme', document.body.classList.contains('dark-mode') ? 'dark' : 'light');
-      document.getElementById('toggleModeBtn').innerHTML = 
-        document.body.classList.contains('dark-mode')
-        ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-    };
     // Auto-aplicar preferencia
     window.addEventListener('DOMContentLoaded', () => {
       const pref = localStorage.getItem('admin-theme');
@@ -330,12 +382,7 @@ menuToggle.addEventListener('click', e => {
   document.body.classList.add('sidebar-open');
   e.stopPropagation();
 });
-// Cerrar con X
-sidebarCloseBtn.addEventListener('click', e => {
-  sidebar.classList.remove('open');
-  document.body.classList.remove('sidebar-open');
-  e.stopPropagation();
-});
+
 // Cerrar tocando fuera del sidebar
 document.addEventListener('click', function(e) {
   if (
@@ -377,6 +424,9 @@ document.getElementById("formRegistrarAlumno").addEventListener("submit", async 
 
   Swal.fire({
     title: 'Creando alumno...',
+    background: '#252836',
+    color: '#f1f1f1',
+    iconColor: '#00ffcc',
     didOpen: () => Swal.showLoading(),
     allowOutsideClick: false
   });
@@ -393,14 +443,21 @@ document.getElementById("formRegistrarAlumno").addEventListener("submit", async 
     if (!res.ok) throw new Error(data.error || "Error al crear alumno");
 
     Swal.fire({
-      icon: 'success',
-      title: '¡Éxito!',
-      text: 'Alumno registrado correctamente',
-      showClass: { popup: 'animate__animated animate__fadeInDown' },
-      hideClass: { popup: 'animate__animated animate__fadeOutUp' },
-      timer: 2500,
-      timerProgressBar: true
-    });
+  title: '¡Éxito!',
+  text: 'Alumno registrado correctamente',
+  icon: 'success',
+  background: '#252836',
+  color: '#f1f1f1',
+  iconColor: '#00ffcc',
+  confirmButtonColor: '#00c2a8',
+  confirmButtonText: 'Entendido',
+  customClass: {
+    popup: 'rounded-4 montserrat-font',
+    confirmButton: ' btn-success px-4 fw-bold'
+  },
+  showClass: { popup: 'animate__animated animate__fadeInDown' },
+  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+});
 
     bootstrap.Modal.getInstance(document.getElementById("modalRegistrarAlumno")).hide();
     document.getElementById("formRegistrarAlumno").reset();
@@ -416,4 +473,131 @@ document.getElementById("formRegistrarAlumno").addEventListener("submit", async 
     });
   }
 });
+
+
+
+
+
+/* DASHBOARD */
+
+const dashboardSection = document.getElementById('dashboard');
+
+async function cargarEstadisticas() {
+  try {
+    // Obtener total de cursos
+    const cursosSnap = await db.collection('cursos').get();
+    const totalCursos = cursosSnap.size;
+
+   // Obtener total de usuarios con rol "alumno"
+const usuariosSnap = await db.collection('usuarios').where("rol", "==", "alumno").get();
+const totalAlumnos = usuariosSnap.size;
+    // Total de docentes
+const docentesSnap = await db.collection('usuarios').where("rol", "==", "docente").get();
+const totalDocentes = docentesSnap.size;
+
+    // HTML para estadísticas
+    dashboardSection.innerHTML = `
+      <div class="dashboard-card">
+        <h2>${totalCursos}</h2>
+        <p>Cursos Activos</p>
+      </div>
+      <div class="dashboard-card">
+        <h2>${totalAlumnos}</h2>
+        <p>Alumnos Registrados</p>
+      </div>
+      <div class="dashboard-card">
+        <h2>${totalDocentes}</h2>
+        <p>Docentes</p>
+      </div>
+      <div class="dashboard-card" style="grid-column: span 3;">
+        <canvas id="graficoInscripciones" height="80"></canvas>
+      </div>
+    `;
+
+    // Simulación de datos semanales para el gráfico
+    const inscripcionesPorSemana = [4, 7, 10, 5, 12, 8]; // valores de ejemplo
+    const etiquetas = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+
+    new Chart(document.getElementById("graficoInscripciones"), {
+      type: 'line',
+      data: {
+        labels: etiquetas,
+        datasets: [{
+          label: "Inscripciones por día",
+          data: inscripcionesPorSemana,
+          borderWidth: 2,
+          borderColor: "#4CAF50",
+          backgroundColor: "#252836",
+          tension: 0.4,
+          fill: true,
+        }]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false }
+        },
+        scales: {
+          y: { beginAtZero: true }
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Error cargando estadísticas:", error);
+  }
+}
+
+// Ejecutamos la función
+cargarEstadisticas();
+
+
+async function cargarListaAlumnos() {
+  try {
+    const contenedor = document.getElementById('seccionAlumnos');
+    const snapshot = await db.collection('usuarios').where('rol', '==', 'alumno').get();
+
+    let html = `
+      <div class="text-center mb-4">
+        <h4 class="fw-bold"><i class="fas fa-users"></i> Alumnos Registrados</h4>
+      </div>
+      <div class="table-responsive">
+        <table class="table table-striped table-hover align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Nombre</th>
+              <th>Email</th>
+              <th>Fecha Registro</th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+
+    snapshot.forEach(doc => {
+      const alumno = doc.data();
+      const fecha = alumno.fechaRegistro?.toDate().toLocaleDateString("es-ES") || '—';
+      html += `
+        <tr>
+          <td>${alumno.nombre || 'Sin nombre'}</td>
+          <td>${alumno.email || '—'}</td>
+          <td>${fecha}</td>
+        </tr>
+      `;
+    });
+
+    html += `
+          </tbody>
+        </table>
+      </div>
+    `;
+
+    contenedor.innerHTML = html;
+
+  } catch (error) {
+    console.error("Error al cargar alumnos:", error);
+  }
+}
+
+cargarListaAlumnos();
+
 

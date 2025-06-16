@@ -109,9 +109,9 @@
 
 .hero-banner {
   position: relative;
-  height: 80vh;
+  height: 50vh;
   min-height: 400px;
-  background: url('../images/ChatGPT\ Image\ 9\ jun\ 2025\,\ 01_38_15\ p.m..png') center/cover no-repeat;
+  background: url('https://umanizales.edu.co/sites/default/files/2024-01/ing_industrial_entrada_amplia.png') center/cover no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;

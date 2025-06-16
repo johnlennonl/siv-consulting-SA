@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
   container.innerHTML = `
     <section class="py-5 text-white banner-servicios"
              data-aos="fade-down"
-             style="background: url('https://diavaz.com/wp-content/uploads/2019/10/banner_operacion_de_campos_diavaz.jpg') center/cover;">
+             style="background: url('https://www.intsurmex.com/images/002.png') no-repeat center center; background-size: cover;">
       <div class="overlay" style="background:rgba(0,0,0,0.5);padding:6rem 0;">
         <div class="container text-center">
           <h1 class="display-5 fw-bold" data-aos="fade-down" data-aos-delay="200">

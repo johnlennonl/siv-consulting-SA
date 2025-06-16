@@ -37,24 +37,30 @@ body {
 .admin-sidebar {
   width: 220px;
   min-width: 220px;
-  background: var(--sidebar-bg);
   color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
   padding-top: 32px;
   padding-bottom: 32px;
-  min-height: 100vh;
-  position: sticky;
+  height: 100vh;
+  overflow-y: auto;
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: 100;
+  z-index: 1000;
   transition: none;
 }
 .sidebar-logo img {
-  width: 80px;
+  width: 130px;
   margin-bottom: 38px;
+  cursor: pointer;
+  transition: filter 0.2s;
 }
+.sidebar-logo img:hover {
+  filter: brightness(0.8);
+}
+
 .nav-list {
   width: 100%;
   list-style: none;
@@ -97,24 +103,13 @@ body {
   justify-content: center;
   align-items: center;
   padding-bottom: 10px;
+  margin-bottom: 80px;
 }
-.sidebar-footer .icon-btn {
-  background: none;
-  border: none;
-  color: var(--accent);
-  font-size: 1.6em;
-  cursor: pointer;
-  border-radius: 50%;
-  padding: 10px;
-  transition: background 0.18s;
-}
-.sidebar-footer .icon-btn:active,
-.sidebar-footer .icon-btn:focus {
-  background: #222;
-}
-.sidebar-close-btn {
-  display: none;
-}
+
+
+
+
+
 
 /* --- HEADER MOBILE (oculto en escritorio) --- */
 .admin-mobile-header {
@@ -131,7 +126,12 @@ body {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    background: var(--sidebar-bg);
+    background-image: linear-gradient(
+    139deg,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(37, 28, 40, 1) 100%
+  );
     padding: 8px 18px;
     position: sticky;
     top: 0;
@@ -139,7 +139,7 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.10);
   }
   .logo-mobile {
-    height: 70px;
+    height: 80px;
   }
   .menu-hamburger {
     background: none;
@@ -155,6 +155,8 @@ body {
     left: -220px;
     top: 0;
     bottom: 0;
+    height: 100vh;
+    overflow: auto;
     width: 210px;
     height: 100vh;
     min-width: unset;
@@ -188,7 +190,7 @@ body {
     margin-top: 10px;
   }
   .sidebar-logo img {
-    width: 66px;
+    width: 86px;
     margin-bottom: 10px;
   }
   .nav-list {
@@ -280,27 +282,44 @@ body {
   gap: 24px;
 }
 .admin-card {
-  background: var(--card-bg);
   border-radius: 18px;
   box-shadow: var(--card-shadow);
   padding: 28px 20px 20px 20px;
   text-align: center;
   border: none;
+  cursor: pointer;
   transition: background 0.3s, color 0.3s, box-shadow 0.3s;
+  background-color: rgba(36, 40, 50, 1);
+  background-image: linear-gradient(
+    139deg,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(37, 28, 40, 1) 100%
+  );
+
 }
 .admin-card h5, .admin-card i {
-  color: var(--accent);
+  color: rgb(243, 242, 242);
+  font-family: 'Montserrat', sans-serif;
   font-size: 1.45em;
   margin-bottom: 10px;
 }
 .admin-card .btn {
   margin-top: 12px;
+  background-color: #aea4a4;
   font-weight: bold;
   font-size: 1.04em;
   border-radius: 7px;
+  color: rgb(6, 6, 6);
+  text-transform: uppercase;
+  font-family: 'Montserrat', sans-serif;
+  letter-spacing: 1px;
+  padding: 5px 12px;
+  border: none;
+  transition: background 0.3s, color 0.3s, box-shadow 0.3s;
   box-shadow: 0 2px 12px rgba(0,0,0,0.03);
-}
-
+}           
+ 
 
 /* ------ RESPONSIVE PANEL ------ */
 @media (max-width: 900px) {
@@ -312,6 +331,75 @@ body {
   .panel-grid { grid-template-columns: 1fr; gap: 10px; }
 }
 
+.adminText{
+  color: rgba(195, 194, 194, 0.441);
+  font-style: italic;
+  font-family: 'Montserrat', sans-serif;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  
+}
 
 
 
+.admin-main {
+  background-image: linear-gradient(to top, #c4c5c7 0%, #dcdddf 52%, #ebebeb 100%);
+}
+
+
+.admin-sidebar {
+  background-image: linear-gradient(
+    139deg,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(37, 28, 40, 1) 100%
+  );
+}
+
+
+
+
+/* Efecto hover en botones */
+.admin-card .btn:hover {
+  background-color: #c0b6b6;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+  color: black;
+}
+
+
+@media (max-width: 768px) {
+  .panel-grid {
+    grid-template-columns: repeat(auto-fit, minmax(90%, 1fr));
+    gap: 18px;
+  }
+
+  .admin-card {
+    padding: 20px 15px;
+  }
+}
+
+.montserrat-font {
+  font-family: 'Montserrat', sans-serif !important;
+}
+
+.admin-sidebar {
+  width: 220px;
+  min-width: 220px;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 32px;
+  padding-bottom: 32px;
+  height: 100vh;
+  overflow-y: auto;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  transition: none;
+}
+
+.admin-main {
+  margin-left: 220px; /* debe coincidir con el ancho del sidebar */
+}

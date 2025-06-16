@@ -10,23 +10,26 @@
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // Loader & reloj
-  window.addEventListener("load", ()=>{
+  // Loader y reloj
+  window.addEventListener("load", ()=> {
     const l = document.getElementById("loader-wrapper");
-    l.style.opacity = "1";
+    l.style.opacity="1";
     setTimeout(()=>{
-      l.style.transition = "opacity .5s";
-      l.style.opacity = "0";
-      setTimeout(()=> l.style.display="none",500);
+      l.style.transition="opacity .5s";
+      l.style.opacity="0";
+      setTimeout(()=>l.style.display="none",500);
     },500);
+    // Reloj
+    const fh = document.getElementById("fechaHora");
+    const tick = ()=>{
+      const d=new Date();
+      const opcionesFecha = { day: 'numeric', month: 'long', year: 'numeric' };
+const fechaFormateada = d.toLocaleDateString('es-ES', opcionesFecha).replace(" de ", " de ").replace(" de ", " del ");
+fh.textContent = fechaFormateada + " | " + d.toLocaleTimeString('es-ES');
+
+    };
+    tick(); setInterval(tick,1000);
   });
-  function actualizarFechaHora(){
-    const d = new Date();
-    document.getElementById("fechaHora").textContent =
-      d.toLocaleDateString("es-ES") + " " + d.toLocaleTimeString("es-ES",{second:"2-digit"});
-  }
-  setInterval(actualizarFechaHora, 1000);
-  actualizarFechaHora();
 
   // Auth y bienvenida
   firebase.auth().onAuthStateChanged(async user=>{
