@@ -10,11 +10,13 @@ body.light-mode {
   --main-bg: #fff;
   --main-text: #0c0c0c;
   --card-bg: #fff;
+  
 }
 body.dark-mode {
   --main-bg: #181818;
   --main-text: #fff;
   --card-bg: #232323;
+  --var-color: #f1f1f1;
 }
 body {
   background: var(--main-bg);
@@ -137,7 +139,7 @@ body {
     box-shadow: 0 2px 10px rgba(0,0,0,0.10);
   }
   .logo-mobile {
-    height: 34px;
+    height: 70px;
   }
   .menu-hamburger {
     background: none;

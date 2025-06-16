@@ -39,26 +39,19 @@
 // Función para cargar destinatarios (alumnos)
     async function loadDestinatarios() {
   const sel = document.getElementById('selectDestinatario');
+  if (!sel) return; // <- Esto evita el error si no existe
+
   sel.innerHTML = '<option value="" disabled selected>Selecciona alumno</option>';
-  const users = await db.collection('usuarios').where('rol','==','alumno').get();
+  const users = await db.collection('usuarios').where('rol', '==', 'alumno').get();
   users.forEach(doc => {
     const o = document.createElement('option');
-    o.value     = doc.id;
+    o.value = doc.id;
     o.textContent = doc.data().nombre;
     sel.appendChild(o);
   });
 }
-    // Auth & bienvenida
-    firebase.auth().onAuthStateChanged(async user => {
-      if(!user) return location.href="login.html";
-      const ud = await db.collection('usuarios').doc(user.uid).get();
-      if(!ud.exists || ud.data().rol !== 'admin') return location.href="login.html";
-      document.getElementById('bienvenida').textContent = `¡Bienvenido, ${ud.data().nombre||user.email}! 👋🏻`;
-      // después de validar, cargamos destinatarios
-      loadDestinatarios();
-    });
 
-
+  
   // Logout
   document.getElementById("logout").onclick = e=>{
     e.preventDefault();
@@ -97,39 +90,95 @@
       allCourses.push({ id: doc.id, titulo: doc.data().titulo });
     });
   });
+// Función global para recargar los cursos
+async function cargarCursos() {
+  allCourses = [];
+  const snapshot = await db.collection("cursos").get();
+  snapshot.forEach(doc => {
+    allCourses.push({ id: doc.id, titulo: doc.data().titulo });
+  });
+}
 
+document.addEventListener("DOMContentLoaded", () => {
+  const formCrearCurso = document.getElementById("formCrearCurso");
 
+  formCrearCurso.addEventListener("submit", async e => {
+    e.preventDefault();
 
-    // Crear curso
-    document.getElementById("formCrearCurso").addEventListener("submit", async e => {
-  e.preventDefault();
+    const titulo       = document.getElementById("tituloCurso").value.trim();
+    const descripcion  = document.getElementById("descripcionCurso").value.trim();
+    const docente      = document.getElementById("docenteCurso").value.trim();
+    const fotoDocenteInput = document.getElementById("fotoDocente");
+    const fotoDocente  = fotoDocenteInput?.value?.trim() || null;
 
-  // recogemos recursos dinámicos
-  const recursos = Array.from(document.querySelectorAll(".recurso-pair"))
-    .map(div => ({
-      nombre: div.querySelector(".rc-nombre").value,
-      url:    div.querySelector(".rc-url").value
-    }));
+    if (!titulo || !descripcion || !docente) {
+      return Swal.fire({
+        icon: 'warning',
+        title: 'Campos obligatorios',
+        text: 'Por favor completa al menos: título, descripción y docente.',
+        confirmButtonColor: '#d33'
+      });
+    }
 
-  const nuevo = {
-    titulo:       document.getElementById("tituloCurso").value,
-    descripcion:  document.getElementById("descripcionCurso").value,
-    fechaInicio:  document.getElementById("fechaInicio").value,
-    horaClase:    document.getElementById("horaClase").value,
-    diasClase:    Array.from(document.getElementById("diasClase").selectedOptions).map(o=>o.value),
-    docente:      document.getElementById("docenteCurso").value,
-    fotoDocente:  document.getElementById("fotoDocente").value,
-    linkZoom:     document.getElementById("linkZoomCurso").value,
-    notaFinal:    Number(document.getElementById("notaFinalCurso").value),
-    recursos,
-    videoTutorial:document.getElementById("videoTutorialCurso").value,
-    activo:       document.getElementById("activoCurso").checked
-  };
+    const recursos = Array.from(document.querySelectorAll(".recurso-pair"))
+      .map(div => ({
+        nombre: div.querySelector(".rc-nombre")?.value.trim() || '',
+        url: div.querySelector(".rc-url")?.value.trim() || ''
+      }))
+      .filter(r => r.nombre && r.url);
 
-  await db.collection("cursos").add(nuevo);
-  Swal.fire("¡Éxito!","Curso creado correctamente","success");
-  bootstrap.Modal.getInstance(document.getElementById("modalCrearCurso")).hide();
+    let videoURL = document.getElementById("videoTutorialCurso").value.trim();
+    if (videoURL.includes("youtube.com") || videoURL.includes("youtu.be")) {
+      const match = videoURL.match(/[?&]v=([^&#]+)/) || videoURL.match(/youtu\.be\/([^&#]+)/);
+      videoURL = match ? match[1] : videoURL;
+    }
+
+    const nuevo = {
+      titulo,
+      descripcion,
+      fechaInicio: document.getElementById("fechaInicio")?.value || null,
+      horaClase: document.getElementById("horaClase")?.value || null,
+      diasClase: Array.from(document.getElementById("diasClase")?.selectedOptions || []).map(o => o.value),
+      docente,
+      fotoDocente,
+      linkZoom: document.getElementById("linkZoomCurso")?.value || null,
+      notaFinal: Number(document.getElementById("notaFinalCurso")?.value) || null,
+      recursos,
+      videoTutorial: videoURL || null,
+      activo: document.getElementById("activoCurso").checked
+    };
+
+    try {
+      await db.collection("cursos").add(nuevo);
+      await cargarCursos(); // <--- ¡esto es lo importante!
+
+      await Swal.fire({
+        title: 'Curso creado exitosamente 🎉',
+        html: `
+          <p><strong>${nuevo.titulo}</strong> fue registrado correctamente.</p>
+          <ul style="text-align: left">
+            <li><b>Docente:</b> ${nuevo.docente}</li>
+            <li><b>Fecha Inicio:</b> ${nuevo.fechaInicio || 'No asignada'}</li>
+            <li><b>Días de clase:</b> ${nuevo.diasClase.join(", ") || 'No definidos'}</li>
+            <li><b>Link Zoom:</b> ${nuevo.linkZoom || 'No asignado'}</li>
+          </ul>
+        `,
+        icon: 'success',
+        confirmButtonText: 'Entendido',
+        confirmButtonColor: '#3085d6'
+      });
+
+      bootstrap.Modal.getInstance(document.getElementById("modalCrearCurso")).hide();
+      formCrearCurso.reset();
+
+    } catch (error) {
+      console.error(error);
+      Swal.fire('Error', error.message, 'error');
+    }
+  });
 });
+
+
 
     // Editar curso (enlace)
     const modalEd = document.getElementById("modalEditarCurso");
@@ -308,6 +357,7 @@ document.addEventListener('keydown', function(e) {
 
 
 
+// Registrar alumno (con SweetAlert mejorado)
 document.getElementById("formRegistrarAlumno").addEventListener("submit", async e => {
   e.preventDefault();
 
@@ -316,33 +366,54 @@ document.getElementById("formRegistrarAlumno").addEventListener("submit", async 
   const clave = document.getElementById("claveAlumno").value;
 
   if (!nombre || !email || !clave) {
-    return Swal.fire("Error", "Todos los campos son obligatorios", "error");
+    return Swal.fire({
+      icon: 'warning',
+      title: 'Campos incompletos',
+      text: 'Todos los campos son obligatorios.',
+      showClass: { popup: 'animate__animated animate__shakeX' },
+      hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+    });
   }
 
+  Swal.fire({
+    title: 'Creando alumno...',
+    didOpen: () => Swal.showLoading(),
+    allowOutsideClick: false
+  });
+
   try {
-    const res = await fetch("http://localhost:3000/crear-alumno", {
+    const res = await fetch("https://siv-backend.onrender.com/crear-alumno", {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ nombre, email, clave })
     });
 
     const data = await res.json();
 
-    if (data.success) {
-      Swal.fire("¡Éxito!", "Alumno registrado correctamente", "success");
-      bootstrap.Modal.getInstance(document.getElementById("modalRegistrarAlumno")).hide();
-      document.getElementById("formRegistrarAlumno").reset();
+    if (!res.ok) throw new Error(data.error || "Error al crear alumno");
 
-      // Recargar lista de alumnos, si tienes función
-      loadDestinatarios?.();
-    } else {
-      throw new Error(data.error || "Error desconocido");
-    }
+    Swal.fire({
+      icon: 'success',
+      title: '¡Éxito!',
+      text: 'Alumno registrado correctamente',
+      showClass: { popup: 'animate__animated animate__fadeInDown' },
+      hideClass: { popup: 'animate__animated animate__fadeOutUp' },
+      timer: 2500,
+      timerProgressBar: true
+    });
+
+    bootstrap.Modal.getInstance(document.getElementById("modalRegistrarAlumno")).hide();
+    document.getElementById("formRegistrarAlumno").reset();
 
   } catch (err) {
     console.error(err);
-    Swal.fire("Error", err.message, "error");
+    Swal.fire({
+      icon: 'error',
+      title: '¡Error inesperado!',
+      text: err.message,
+      showClass: { popup: 'animate__animated animate__shakeX' },
+      hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+    });
   }
 });
+

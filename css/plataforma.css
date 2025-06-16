@@ -122,3 +122,19 @@ canvas {
   max-width: 100%;
 }
 
+#fechaHora {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #d5af49;
+  margin: auto;
+ 
+}
+
+
+
+#bienvenida {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #d5af49;
+}
+
