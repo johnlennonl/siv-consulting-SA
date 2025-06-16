@@ -168,6 +168,8 @@ body {
     transition: left 0.27s cubic-bezier(.58,-0.18,.58,1.28);
     align-items: flex-start;
   }
+
+
   .admin-sidebar.open { left: 0; }
   .sidebar-close-btn {
     display: block;
@@ -301,7 +303,7 @@ body {
 .admin-card h5, .admin-card i {
   color: rgb(243, 242, 242);
   font-family: 'Montserrat', sans-serif;
-  font-size: 1.45em;
+  font-size: 1.09em;
   margin-bottom: 10px;
 }
 .admin-card .btn {
@@ -382,9 +384,17 @@ body {
   font-family: 'Montserrat', sans-serif !important;
 }
 
-.admin-sidebar {
+
+
+  .admin-sidebar {
   width: 220px;
   min-width: 220px;
+   background-image: linear-gradient(
+    139deg,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(37, 28, 40, 1) 100%
+  );
   color: #fff;
   display: flex;
   flex-direction: column;
@@ -400,6 +410,110 @@ body {
   transition: none;
 }
 
+
 .admin-main {
   margin-left: 220px; /* debe coincidir con el ancho del sidebar */
 }
+
+
+/* -------- SIDEBAR FIJO DESKTOP -------- */
+@media (min-width: 701px) {
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    min-width: 220px;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    background-image: linear-gradient(
+      139deg,
+      rgba(36, 40, 50, 1) 0%,
+      rgba(36, 40, 50, 1) 0%,
+      rgba(37, 28, 40, 1) 100%
+    );
+  }
+
+  .admin-main {
+    margin-left: 220px; /* Solo en desktop */
+  }
+}
+
+/* -------- SIDEBAR OCULTO POR DEFECTO EN MÓVIL -------- */
+@media (max-width: 700px) {
+  .admin-sidebar {
+    left: -220px;
+    margin-left: 0;
+    margin-right: 0;
+    position: fixed;
+  }
+
+  .admin-main {
+    margin-left: 0 !important;
+  }
+
+  .admin-sidebar.open {
+    left: 0; /* mostrar sidebar al hacer click en el menú hamburguesa */
+  }
+}
+
+
+/* -------- SIDEBAR FIJO DESKTOP -------- */
+@media (min-width: 701px) {
+  .admin-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 220px;
+    min-width: 220px;
+    height: 100vh;
+    overflow-y: auto;
+    z-index: 1000;
+    background-image: linear-gradient(
+      139deg,
+      rgba(36, 40, 50, 1) 0%,
+      rgba(36, 40, 50, 1) 0%,
+      rgba(37, 28, 40, 1) 100%
+    );
+  }
+
+  .admin-main {
+    margin-left: 220px; /* Solo en desktop */
+  }
+}
+
+/* -------- SIDEBAR OCULTO POR DEFECTO EN MÓVIL -------- */
+@media (max-width: 700px) {
+  .admin-sidebar {
+    position: fixed;
+    left: -220px;
+    top: 0;
+    bottom: 0;
+    height: 100vh;
+    overflow: auto;
+    width: 210px;
+    padding-top: 28px;
+    padding-bottom: 18px;
+    background-image: linear-gradient(
+      139deg,
+      rgba(36, 40, 50, 1) 0%,
+      rgba(36, 40, 50, 1) 0%,
+      rgba(37, 28, 40, 1) 100%
+    );
+    z-index: 1400;
+    box-shadow: 2px 0 16px rgba(0,0,0,0.13);
+    transition: left 0.27s cubic-bezier(.58,-0.18,.58,1.28);
+    align-items: flex-start;
+  }
+
+  .admin-sidebar.open {
+    left: 0; /* mostrar sidebar al hacer click en el menú hamburguesa */
+  }
+
+  .admin-main {
+    margin-left: 0 !important;
+  }
+}
+
+

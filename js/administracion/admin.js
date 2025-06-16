@@ -475,9 +475,6 @@ document.getElementById("formRegistrarAlumno").addEventListener("submit", async 
 });
 
 
-
-
-
 /* DASHBOARD */
 
 const dashboardSection = document.getElementById('dashboard');
@@ -491,6 +488,7 @@ async function cargarEstadisticas() {
    // Obtener total de usuarios con rol "alumno"
 const usuariosSnap = await db.collection('usuarios').where("rol", "==", "alumno").get();
 const totalAlumnos = usuariosSnap.size;
+    // Aquí simulamos docentes (puedes crear colección luego)
     // Total de docentes
 const docentesSnap = await db.collection('usuarios').where("rol", "==", "docente").get();
 const totalDocentes = docentesSnap.size;
@@ -498,20 +496,29 @@ const totalDocentes = docentesSnap.size;
     // HTML para estadísticas
     dashboardSection.innerHTML = `
       <div class="dashboard-card">
+      <div>
+      <img class="dashboard-icon" src="https://cdn-icons-png.freepik.com/256/12571/12571341.png?semt=ais_hybrid" alt="Dashboard Icon">
+       </div>
         <h2>${totalCursos}</h2>
         <p>Cursos Activos</p>
       </div>
-      <div class="dashboard-card">
+      <div class="dashboard-card ">
+      <div>
+      <img class="dashboard-icon" src="https://cdn-icons-png.flaticon.com/512/9972/9972270.png" alt="Dashboard Icon">
+       </div>
         <h2>${totalAlumnos}</h2>
         <p>Alumnos Registrados</p>
       </div>
       <div class="dashboard-card">
+      <div>
+      <img class="dashboard-icon" src="https://cdn-icons-png.freepik.com/256/3750/3750020.png?semt=ais_hybrid" alt="Dashboard Icon">
+       </div>
         <h2>${totalDocentes}</h2>
         <p>Docentes</p>
       </div>
-      <div class="dashboard-card" style="grid-column: span 3;">
-        <canvas id="graficoInscripciones" height="80"></canvas>
-      </div>
+      
+
+</div>
     `;
 
     // Simulación de datos semanales para el gráfico
@@ -548,56 +555,96 @@ const totalDocentes = docentesSnap.size;
   }
 }
 
-// Ejecutamos la función
+
 cargarEstadisticas();
 
 
-async function cargarListaAlumnos() {
-  try {
-    const contenedor = document.getElementById('seccionAlumnos');
-    const snapshot = await db.collection('usuarios').where('rol', '==', 'alumno').get();
+let listaAlumnos = []; // global
 
-    let html = `
-      <div class="text-center mb-4">
-        <h4 class="fw-bold"><i class="fas fa-users"></i> Alumnos Registrados</h4>
-      </div>
-      <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
-          <thead class="table-light">
-            <tr>
-              <th>Nombre</th>
-              <th>Email</th>
-              <th>Fecha Registro</th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
+// Renderiza solo una vez la estructura HTML de la sección
+function renderEstructuraAlumnos() {
+  const contenedor = document.getElementById('seccionAlumnos');
+  if (document.getElementById("tablaAlumnosBody")) return; // ya existe, no lo vuelvas a pintar
 
-    snapshot.forEach(doc => {
-      const alumno = doc.data();
-      const fecha = alumno.fechaRegistro?.toDate().toLocaleDateString("es-ES") || '—';
-      html += `
+  contenedor.innerHTML = `
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-light">
         <tr>
-          <td>${alumno.nombre || 'Sin nombre'}</td>
-          <td>${alumno.email || '—'}</td>
-          <td>${fecha}</td>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Fecha Registro</th>
+        </tr>
+      </thead>
+      <tbody id="tablaAlumnosBody"></tbody>
+    </table>
+  </div>
+`;
+
+  // Evento de búsqueda
+  document.getElementById("filtroAlumno").addEventListener("input", e => {
+    const q = e.target.value.toLowerCase();
+    const filtrados = listaAlumnos.filter(a =>
+      a.nombre.toLowerCase().includes(q) ||
+      a.email.toLowerCase().includes(q)
+    );
+    renderTablaAlumnos(filtrados);
+  });
+
+  // Botón refrescar
+  document.getElementById("btnRefrescarAlumnos").onclick = cargarListaAlumnos;
+}
+
+// Solo rellena la tabla
+function renderTablaAlumnos(lista) {
+  const tbody = document.getElementById("tablaAlumnosBody");
+  if (!tbody) return;
+
+  const y = window.scrollY; // ⏬ capturamos posición actual del scroll
+
+  tbody.innerHTML = "";
+
+  if (lista.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">No se encontraron alumnos.</td></tr>`;
+  } else {
+    lista.forEach(a => {
+      tbody.innerHTML += `
+        <tr>
+          <td>${a.nombre}</td>
+          <td>${a.email}</td>
+          <td>${a.fecha}</td>
         </tr>
       `;
     });
+  }
 
-    html += `
-          </tbody>
-        </table>
-      </div>
-    `;
+  // ⏫ restauramos scroll donde estaba
+  setTimeout(() => window.scrollTo({ top: y }), 0);
+}
 
-    contenedor.innerHTML = html;
+
+// Carga desde Firestore y actualiza tabla
+async function cargarListaAlumnos() {
+  try {
+    const snapshot = await db.collection('usuarios').where('rol', '==', 'alumno').get();
+    listaAlumnos = [];
+
+    snapshot.forEach(doc => {
+      const alumno = doc.data();
+      listaAlumnos.push({
+        nombre: alumno.nombre || "Sin nombre",
+        email: alumno.email || "—",
+        fecha: alumno.fechaRegistro?.toDate().toLocaleDateString("es-ES") || "—"
+      });
+    });
+
+    renderTablaAlumnos(listaAlumnos); // Actualiza solo la tabla
 
   } catch (error) {
     console.error("Error al cargar alumnos:", error);
   }
 }
 
+// EJECUCIÓN INICIAL
+renderEstructuraAlumnos();
 cargarListaAlumnos();
-
-
