@@ -303,31 +303,45 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Asignar curso
-  document.getElementById("formAsignarEst").addEventListener("submit", async e=>{
-    e.preventDefault();
-    const uid = document.getElementById("selectAlumnoAsig").value,
-          cid = document.getElementById("selectCursoAsig").value;
-    const uDoc = await db.collection("usuarios").doc(uid).get();
-    const arr = uDoc.data().cursosInscritos||[];
-    if(arr.includes(cid)) return Swal.fire('Info','Ya está inscrito','info');
-    arr.push(cid);
-    await db.collection("usuarios").doc(uid).update({ cursosInscritos:arr });
-    Swal.fire({title: '¡Éxito!',
-  text: 'Curso Asignado satisfactoriamente',
-  icon: 'success',
-  background: '#252836',
-  color: '#f1f1f1',
-  iconColor: '#00ffcc',
-  confirmButtonColor: '#00c2a8',
-  confirmButtonText: 'Entendido',
-  customClass: {
-    popup: 'rounded-4 montserrat-font',
-    confirmButton: ' btn-success px-4 fw-bold'
-  },
-  showClass: { popup: 'animate__animated animate__fadeInDown' },
-  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
-});
+  // Asignar curso
+document.getElementById("formAsignarEst").addEventListener("submit", async e=>{
+  e.preventDefault();
+  const uid = document.getElementById("selectAlumnoAsig").value,
+        cid = document.getElementById("selectCursoAsig").value;
+  const uDoc = await db.collection("usuarios").doc(uid).get();
+  const arr = uDoc.data().cursosInscritos||[];
+  if(arr.includes(cid)) return Swal.fire('Info','Ya está inscrito','info');
+  arr.push(cid);
+  await db.collection("usuarios").doc(uid).update({ cursosInscritos:arr });
+
+  // 🔔 Agregar notificación
+  const curso = allCourses.find(c => c.id === cid);
+  const nombreCurso = curso ? curso.titulo : "Curso desconocido";
+
+  await db.collection("usuarios").doc(uid).collection("notificaciones").add({
+    mensaje: `Te has inscrito en el curso: ${nombreCurso}`,
+    fecha: firebase.firestore.FieldValue.serverTimestamp(),
+    leido: false
   });
+
+  Swal.fire({
+    title: '¡Éxito!',
+    text: 'Curso Asignado satisfactoriamente',
+    icon: 'success',
+    background: '#252836',
+    color: '#f1f1f1',
+    iconColor: '#00ffcc',
+    confirmButtonColor: '#00c2a8',
+    confirmButtonText: 'Entendido',
+    customClass: {
+      popup: 'rounded-4 montserrat-font',
+      confirmButton: ' btn-success px-4 fw-bold'
+    },
+    showClass: { popup: 'animate__animated animate__fadeInDown' },
+    hideClass: { popup: 'animate__animated animate__fadeOutUp' }
+  });
+});
+
 
   // Quitar curso
   document.getElementById("formDesasignarEst").addEventListener("submit", async e=>{

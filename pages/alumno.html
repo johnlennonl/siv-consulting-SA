@@ -10,9 +10,8 @@
   <link rel="icon" href="../images/LOGO-SIN-FONDO-min.png" type="image/png"/>
   <link rel="stylesheet" href="../css/style.css">
   <link rel="stylesheet" href="../css/plataforma.css">
-  <style>
-    
-  </style>
+  <link rel="stylesheet" href="../css/Plataforma-alumno.css">
+  
 </head>
 <body>
   <!-- Loader -->
@@ -23,36 +22,115 @@
   <div class="bubble"></div>
 </div>
   </div>
-
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+<!-- Mobile Navbar -->
+  <!-- Mobile Navbar -->
+  <nav class="navbar navbar-dark navbar-custom mobile-navbar">
     <div class="container-fluid">
-      <a class="navbar-brand d-flex align-items-center gap-2" href="#">
-        <img src="../images/LOGO-SIN-FONDO-min.png" alt="Logo" height="40">
-        <span>Alumno SIV Consulting</span>
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarAlumno">
+      
+      <a class="navbar-brand " href="#">Portal Estudiante</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mobileMenu">
         <span class="navbar-toggler-icon"></span>
       </button>
-      <div class="collapse navbar-collapse" id="navbarAlumno">
+      <div class="collapse navbar-collapse" id="mobileMenu">
         <ul class="navbar-nav ms-auto">
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-book-reader"></i> Mis Cursos</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-tasks"></i> Tareas</a></li>
-          <li class="nav-item"><a class="nav-link" href="#"><i class="fas fa-clipboard-list"></i> Evaluaciones</a></li>
-          <li class="nav-item"><a class="nav-link" href="#" id="changePwdBtn"><i class="fas fa-key"></i> Cambiar contraseña</a></li>
-          <li class="nav-item"><a class="nav-link" href="#" id="logout"><i class="fas fa-sign-out-alt"></i> Salir</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Mis Cursos</a></li>
+          <li class="nav-item"><a class="nav-link" href="#">Perfil</a></li>
+          <li class="nav-item"><a class="nav-link changePwdBtn" href="#" ><i class="fas fa-key"></i> Cambiar contraseña</a></li>
+          <li class="nav-item logout"><a class="nav-link" href="#" ><i class="fas fa-sign-out-alt"></i> Salir</a></li>
         </ul>
       </div>
     </div>
   </nav>
 
-  <!-- Contenido -->
-  <div class="container mt-4 text-center">
-    <h1 id="bienvenida">¡Bienvenido!</h1>
-    <div id="fechaHora" class="text-muted small mb-4"></div>
+  <div class="container-fluid">
+    <div class="row">
+      <!-- Sidebar -->
+      <div class="col-md-3 col-lg-2 sidebar d-none d-md-block">
+       <div class="sidebar-logo">
+      <div class="d-flex justify-content-center ">
+        <img src="https://cdn-icons-png.flaticon.com/512/9972/9972270.png
+        " class="logotipoAlumno img-fluid" alt="Logo Estudiante" />
+      </div>
+      <h4 class="text-center mb-4 ">Portal Estudiante</h4>
+    </div>
+        <a href="#" class="active"><i class="fas fa-home"></i> Inicio</a>
+        <a href="#"><i class="fas fa-book-reader"></i> Mis Cursos</a>
+        <a href="#"><i class="fas fa-user"></i> Perfil</a>
+        <a href="#" class="changePwdBtn" ><i class="fas fa-key "></i> Cambiar contraseña</a>
+        <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+      </div>
 
-    <div id="cursos-container" class="row justify-content-center"></div>
+      <!-- Contenido principal -->
+      <div class="col-md-9 col-lg-10 p-4">
+        <div class="d-flex justify-content-between align-items-center mb-4   ">
+          <div>
+            <h2 id="bienvenida">¡Bienvenido, Alumno! 👋🏻</h2>
+            <p class="text-muted" id="fechaHora">Fecha y hora aquí</p>
+          </div>
+     <div class="position-relative d-inline-block">
+  <button class="btn btn-dark position-relative botonNotificacion " id="btnNotif">
+    <i class="fas fa-bell"></i>
+    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" id="notifCount" style="display: none;">0</span>
+  </button>
+
+  
+
+  <div id="notifList" class="notif-dropdown">
+    <div class="notif-scroll-container">
+      <p class="text-center text-muted m-0">Cargando notificaciones...</p>
+    </div>
   </div>
+</div>
+
+
+
+        </div>
+
+        <!-- Aquí irán los cards de resumen y cursos -->
+        <div id="cursos-container" class="row  "></div>
+      </div>
+    </div>
+  </div>
+
+
+<!-- Botón de contacto -->
+<button id="btnAbrirContacto" class="btn-soporte-fijo">
+  <i class="fas fa-headset"></i>
+</button>
+
+
+
+<!-- Modal de contacto -->
+<div class="modal fade" id="modalContacto" tabindex="-1">
+  <div class="modal-dialog">
+    <form class="modal-content" id="formContacto">
+      <div class="modal-header">
+        <h5 class="modal-title">¿Necesitas ayuda?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label for="nombreContacto" class="form-label">Nombre</label>
+          <input type="text" class="form-control" id="nombreContacto" name="name" required>
+        </div>
+        <div class="mb-3">
+          <label for="emailContacto" class="form-label">Correo</label>
+          <input type="email" class="form-control" id="emailContacto" name="email" required>
+        </div>
+        <div class="mb-3">
+          <label for="mensajeContacto" class="form-label">Mensaje</label>
+          <textarea class="form-control" id="mensajeContacto" name="message" rows="4" required></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Enviar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
 
   <!-- Scripts -->
    <script src="../js/loader.js" defer></script>
@@ -62,6 +140,12 @@
   <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="../js/administracion/alumno.js"> </script>
+  <script src="../js/soporte.js" defer></script>
+ <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+<script>
+  emailjs.init('lG1j1fSNUvKU4_Upr'); // este ID lo consigues en tu dashboard
+</script>
+
   
 </body>
 </html>

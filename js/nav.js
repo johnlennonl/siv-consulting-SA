@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
   <nav class="navbar navbar-expand-lg navbar-dark bg-black">
     <div class="container">
       <a class="navbar-brand" href="${base}index.html">
-        <img src="${base}images/LOGO-SIN-FONDO-min.png" alt="Logo" height="60">
+        <img src="${base}images/LOGO-SIN-FONDO-min.png" alt="Logo" height="80">
       </a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
         <span class="navbar-toggler-icon"></span>
