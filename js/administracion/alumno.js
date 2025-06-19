@@ -170,11 +170,11 @@ const renderCurso = async (idCurso) => {
     <p class="mt-3"><i class="fas fa-align-left me-2 text-secondary"></i><strong>Descripción:</strong> ${c.descripcion || "Sin descripción."}</p>
 
     <div class="d-flex align-items-center gap-3 my-3">
-      <img src="../images/${c.fotoDocente}" class="rounded-circle border border-2 shadow" style="width:60px;height:60px;object-fit:cover">
+      <img src="../images/${c.fotoDocente}" class="rounded-circle border border-2 shadow" style="width:80px;height:80px;object-fit:cover">
       <span class="fw-bold"><i class="fas fa-chalkboard-teacher me-2"></i>${c.docente}</span>
     </div>
 
-    <a href="${c.linkZoom}" target="_blank" class="btn btn-outline-warning fw-bold mb-2">
+    <a href="${c.linkZoom}" target="_blank" class="btn btn-outline-warning fw-bold mb-2 btnVerClase  ">
       <i class="fas fa-video me-2"></i>Entrar a clase en vivo
     </a>
 
