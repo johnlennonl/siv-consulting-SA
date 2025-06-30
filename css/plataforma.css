@@ -280,19 +280,3 @@ canvas {
 }
 
 
-#seccionAlumnos .table-responsive {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border-radius: 10px;
-}
-
-#seccionAlumnos table {
-  min-width: 600px;
-}
-
-.filtro-alumno {
-  min-width: 250px;
-  border-radius: 12px;
-}
-
-

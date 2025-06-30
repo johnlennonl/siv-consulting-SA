@@ -74,14 +74,17 @@ function loginUser(email, password) {
       firebase.firestore().collection("usuarios").doc(uid).get()
         .then((doc) => {
           const rol = doc.data()?.rol || "";
-          if (rol === "admin") {
-            window.location.href = "admin.html";
-          } else if (rol === "alumno") {
-            window.location.href = "alumno.html";
-          } else {
-            Swal.fire("Error", "Rol no autorizado.", "error");
-            firebase.auth().signOut();
-          }
+         if (rol === "admin") {
+  window.location.href = "admin.html";
+} else if (rol === "alumno") {
+  window.location.href = "alumno.html";
+} else if (rol === "docente") {
+  window.location.href = "docente.html";
+} else {
+  Swal.fire("Error", "Rol no autorizado.", "error");
+  firebase.auth().signOut();
+}
+
         });
     })
     .catch((error) => {

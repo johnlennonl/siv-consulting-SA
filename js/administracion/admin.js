@@ -61,51 +61,6 @@ fh.textContent = fechaFormateada + " | " + d.toLocaleTimeString('es-ES');
     firebase.auth().signOut().then(()=>location.href="login.html");
   };
 
-  // Cambiar contraseña
-  document.getElementById("changePwdBtn").addEventListener("click", ()=>{
-    Swal.fire({
-      title:'Confirma tu contraseña actual',
-      input:'password', inputLabel:'Por seguridad ingresa tu contraseña actual',
-      background: '#252836',
-  color: '#f1f1f1',
-  iconColor: '#00ffcc',
-  confirmButtonColor: '#00c2a8',
-  confirmButtonText: 'Entendido',
-  customClass: {
-    popup: 'rounded-4 montserrat-font',
-    confirmButton: ' btn-success px-4 fw-bold'
-  },
-  showClass: { popup: 'animate__animated animate__fadeInDown' },
-  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
-    }).then(r=>{
-      if(!r.isConfirmed || !r.value) return;
-      const user=firebase.auth().currentUser,
-            cred=firebase.auth.EmailAuthProvider.credential(user.email,r.value);
-      user.reauthenticateWithCredential(cred)
-        .then(()=> Swal.fire({
-          title:'Nueva contraseña',
-          input:'password', inputLabel:'Ingresa tu nueva contraseña',
-          background: '#252836',
-  color: '#f1f1f1',
-  iconColor: '#00ffcc',
-  confirmButtonColor: '#00c2a8',
-  confirmButtonText: 'Entendido',
-  customClass: {
-    popup: 'rounded-4 montserrat-font',
-    confirmButton: ' btn-success px-4 fw-bold'
-  },
-  showClass: { popup: 'animate__animated animate__fadeInDown' },
-  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
-        }).then(r2=>{
-          if(r2.isConfirmed && r2.value){
-            user.updatePassword(r2.value)
-              .then(()=>Swal.fire('¡Éxito!','Contraseña cambiada.','success'))
-              .catch(e=>Swal.fire('Error',e.message,'error'));
-          }
-        }))
-        .catch(()=>Swal.fire('Error','Contraseña incorrecta','error'));
-    });
-  });
 
     let allCourses = [];
   db.collection("cursos").get().then(snap=>{
@@ -113,6 +68,8 @@ fh.textContent = fechaFormateada + " | " + d.toLocaleTimeString('es-ES');
       allCourses.push({ id: doc.id, titulo: doc.data().titulo });
     });
   });
+
+
 // Función global para recargar los cursos
 async function cargarCursos() {
   allCourses = [];
@@ -122,93 +79,10 @@ async function cargarCursos() {
   });
 }
 
+
 document.addEventListener("DOMContentLoaded", () => {
-  const formCrearCurso = document.getElementById("formCrearCurso");
-
-  formCrearCurso.addEventListener("submit", async e => {
-    e.preventDefault();
-
-    const titulo       = document.getElementById("tituloCurso").value.trim();
-    const descripcion  = document.getElementById("descripcionCurso").value.trim();
-    const docente      = document.getElementById("docenteCurso").value.trim();
-    const fotoDocenteInput = document.getElementById("fotoDocente");
-    const fotoDocente  = fotoDocenteInput?.value?.trim() || null;
-
-    if (!titulo || !descripcion || !docente) {
-      return Swal.fire({
-        icon: 'warning',
-        title: 'Campos obligatorios',
-        text: 'Por favor completa al menos: título, descripción y docente.',
-        confirmButtonColor: '#d33'
-      });
-    }
-
-    const recursos = Array.from(document.querySelectorAll(".recurso-pair"))
-      .map(div => ({
-        nombre: div.querySelector(".rc-nombre")?.value.trim() || '',
-        url: div.querySelector(".rc-url")?.value.trim() || ''
-      }))
-      .filter(r => r.nombre && r.url);
-
-    let videoURL = document.getElementById("videoTutorialCurso").value.trim();
-    if (videoURL.includes("youtube.com") || videoURL.includes("youtu.be")) {
-      const match = videoURL.match(/[?&]v=([^&#]+)/) || videoURL.match(/youtu\.be\/([^&#]+)/);
-      videoURL = match ? match[1] : videoURL;
-    }
-
-    const nuevo = {
-      titulo,
-      descripcion,
-      fechaInicio: document.getElementById("fechaInicio")?.value || null,
-      horaClase: document.getElementById("horaClase")?.value || null,
-      diasClase: Array.from(document.getElementById("diasClase")?.selectedOptions || []).map(o => o.value),
-      docente,
-      fotoDocente,
-      linkZoom: document.getElementById("linkZoomCurso")?.value || null,
-      notaFinal: Number(document.getElementById("notaFinalCurso")?.value) || null,
-      recursos,
-      videoTutorial: videoURL || null,
-      activo: document.getElementById("activoCurso").checked
-    };
-
-    try {
-      await db.collection("cursos").add(nuevo);
-      await cargarCursos(); // <--- ¡esto es lo importante!
-
-      await Swal.fire({
-        title: 'Curso creado exitosamente 🎉',
-        html: `
-          <p><strong>${nuevo.titulo}</strong> fue registrado correctamente.</p>
-          <ul style="text-align: left">
-            <li><b>Docente:</b> ${nuevo.docente}</li>
-            <li><b>Fecha Inicio:</b> ${nuevo.fechaInicio || 'No asignada'}</li>
-            <li><b>Días de clase:</b> ${nuevo.diasClase.join(", ") || 'No definidos'}</li>
-            <li><b>Link Zoom:</b> ${nuevo.linkZoom || 'No asignado'}</li>
-          </ul>
-        `,
-        
-        icon: 'success',
-        background: '#252836',
-  color: '#f1f1f1',
-  iconColor: '#00ffcc',
-  confirmButtonColor: '#00c2a8',
-  confirmButtonText: 'Entendido',
-  customClass: {
-    popup: 'rounded-4 montserrat-font',
-    confirmButton: ' btn-success px-4 fw-bold'
-  },
-  showClass: { popup: 'animate__animated animate__fadeInDown' },
-  hideClass: { popup: 'animate__animated animate__fadeOutUp' }
-      });
-
-      bootstrap.Modal.getInstance(document.getElementById("modalCrearCurso")).hide();
-      formCrearCurso.reset();
-
-    } catch (error) {
-      console.error(error);
-      Swal.fire('Error', error.message, 'error');
-    }
-  });
+  const db = firebase.firestore(); // o tu initFirebase() personalizado
+  initCrearCurso(db);
 });
 
 
@@ -489,88 +363,6 @@ document.getElementById("formRegistrarAlumno").addEventListener("submit", async 
 });
 
 
-/* DASHBOARD */
-
-const dashboardSection = document.getElementById('dashboard');
-
-async function cargarEstadisticas() {
-  try {
-    // Obtener total de cursos
-    const cursosSnap = await db.collection('cursos').get();
-    const totalCursos = cursosSnap.size;
-
-   // Obtener total de usuarios con rol "alumno"
-const usuariosSnap = await db.collection('usuarios').where("rol", "==", "alumno").get();
-const totalAlumnos = usuariosSnap.size;
-    // Aquí simulamos docentes (puedes crear colección luego)
-    // Total de docentes
-const docentesSnap = await db.collection('usuarios').where("rol", "==", "docente").get();
-const totalDocentes = docentesSnap.size;
-
-    // HTML para estadísticas
-    dashboardSection.innerHTML = `
-      <div class="dashboard-card">
-      <div>
-      <img class="dashboard-icon" src="https://cdn-icons-png.freepik.com/256/12571/12571341.png?semt=ais_hybrid" alt="Dashboard Icon">
-       </div>
-        <h2>${totalCursos}</h2>
-        <p>Cursos Activos</p>
-      </div>
-      <div class="dashboard-card ">
-      <div>
-      <img class="dashboard-icon" src="https://cdn-icons-png.flaticon.com/512/9972/9972270.png" alt="Dashboard Icon">
-       </div>
-        <h2>${totalAlumnos}</h2>
-        <p>Alumnos Registrados</p>
-      </div>
-      <div class="dashboard-card">
-      <div>
-      <img class="dashboard-icon" src="https://cdn-icons-png.freepik.com/256/3750/3750020.png?semt=ais_hybrid" alt="Dashboard Icon">
-       </div>
-        <h2>${totalDocentes}</h2>
-        <p>Docentes</p>
-      </div>
-      
-
-</div>
-    `;
-
-    // Simulación de datos semanales para el gráfico
-    const inscripcionesPorSemana = [4, 7, 10, 5, 12, 8]; // valores de ejemplo
-    const etiquetas = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
-
-    new Chart(document.getElementById("graficoInscripciones"), {
-      type: 'line',
-      data: {
-        labels: etiquetas,
-        datasets: [{
-          label: "Inscripciones por día",
-          data: inscripcionesPorSemana,
-          borderWidth: 2,
-          borderColor: "#4CAF50",
-          backgroundColor: "#252836",
-          tension: 0.4,
-          fill: true,
-        }]
-      },
-      options: {
-        responsive: true,
-        plugins: {
-          legend: { display: false }
-        },
-        scales: {
-          y: { beginAtZero: true }
-        }
-      }
-    });
-
-  } catch (error) {
-    console.error("Error cargando estadísticas:", error);
-  }
-}
-
-
-cargarEstadisticas();
 
 
 let listaAlumnos = []; // global

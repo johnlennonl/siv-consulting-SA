@@ -13,14 +13,13 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
 
 
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/style.css">;
   <link rel="stylesheet" href="../css/plataforma.css">
   <link rel="stylesheet" href="../css/admin-panel.css">
 </head>
 <body class="light-mode">
 <!-- Loader -->
 <div id="loader-wrapper">
-  
 <div class="loader2">
   <div class="bubble"></div>
   <div class="bubble"></div>
@@ -35,6 +34,7 @@
       <i class="fas fa-bars"></i>
     </button>
   </header>
+  
 
   <!-- SIDEBAR -->
   <aside class="admin-sidebar" id="sidebar">
@@ -44,6 +44,7 @@
         <img src="../images/LOGO-SIN-FONDO-min.png" class="logo img-fluid" alt="Logo SIV" />
       </div>
     </div>
+
     <ul class="nav-list">
       <li><a href="#"><i class="fas fa-home"></i> <span>Dashboard</span></a></li>
       <li><a href="#"><i class="fas fa-book-reader"></i> <span>Gestión de Cursos</span></a></li>
@@ -56,6 +57,7 @@
         </h5>
     </div>
   </aside>
+      
 
   <!-- MAIN -->
   <main class="admin-main ">
@@ -74,14 +76,22 @@
     <i class="fas fa-chart-line me-2 text-primary "></i>
     Estadísticas
   </h4>
-  <section id="dashboard" class="dashboard-container container-fluid px-3 mb-5 "></section>
+  <section id="dashboard" class="dashboard-container container-fluid px-3 mb-5 ">
+  </section>
+
+  <div class="container-fluid">
+    <div id="graficoInscripciones">
+
+    </div>
+    
+  </div>
 </div>
      
 
       
-      <div class="row gx-5 gy-4 ">
+      <div class="row gx-5 gy-4 mx-auto  ">
         <!-- GESTIÓN DE CURSOS -->
-        <div class="col-lg-12  ">
+        <div class="col-lg-12   ">
         <div class="text-center">
             <h4 class="mb-4 mt-4  fw-bold text-center text-md-start  " style="font-family: Montserrat, sans-serif;"><i class="fas fa-book-open me-2 text-warning"></i> Gestión de Cursos</h4>
         </div>
@@ -128,6 +138,37 @@
                 <button class="btn btn-warning w-100" data-bs-toggle="modal" data-bs-target="#modalGestionInscripciones">Gestionar</button>
               </div>
             </div>
+
+            <!-- Card para asignar docentes -->
+                <div class="card admin-card shadow-sm">
+                  <div class="card-body text-center">
+                    <div class="d-flex justify-content-center mb-2">
+                 <img src="https://cdn-icons-png.flaticon.com/512/2986/2986262.png" alt="Inscripciones" class="img-fluid" style="width: 100px;">
+                    </div>
+                    <h5 class="card-title">Asignar Docentes</h5>
+                    <button class="btn btn-info w-100" data-bs-toggle="modal" data-bs-target="#modalAsignarDocente">
+                      Gestionar
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Card Registrar Docente -->
+                  <div class="card admin-card shadow-sm">
+                    <div class="card-body text-center">
+                      <div class="d-flex justify-content-center mb-2">
+                        <img src="https://cdn-icons-png.flaticon.com/512/3750/3750020.png"
+                             class="img-fluid" style="width: 100px;" alt="Icono Docente">
+                      </div>
+                      <h5>Registrar Docente Nuevo</h5>
+                      <button class="btn btn-primary w-100"
+                              data-bs-toggle="modal" data-bs-target="#modalRegistrarDocente">
+                        Registrar
+                                        </button>
+                    </div>
+                </div>
+
+
+                
             <!-- Card Registrar Alumno -->
               <div class="card admin-card shadow-sm">
                 <div class="card-body text-center">
@@ -157,101 +198,153 @@
 
 <!-- Tabla dinámica (solo esta parte cambia con JS) -->
 <div id="seccionAlumnos" class="mt-5"></div>
+
+<div id="seccionDocentes" class="mt-5">
+  <h4 class="fw-bold mb-4"><i class="fas fa-chalkboard-teacher me-2 text-info"></i> Docentes Registrados</h4>
+  <div class="table-responsive">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Fecha Registro</th>
+        </tr>
+      </thead>
+      <tbody id="tablaDocentesBody"></tbody>
+    </table>
+  </div>
+</div>
+
+
+
+<div id="seccionDocentesCursos" class="mt-4">
+  <h3 class="mb-4">📚 Cursos Asignados a Docentes</h3>
+  <div class="table-responsive ">
+    <table class="table table-striped table-hover align-middle">
+      <thead class="table-light ">
+        <tr>
+          <th>#</th>
+          <th>Curso</th>
+          <th>Docente</th>
+          <th>Nº Alumnos</th>
+        </tr>
+      </thead>
+      <tbody id="tablaDocentesCursos"></tbody>
+    </table>
+  </div>
+</div>
+
+
           </div>
         </div>
       </div>
     </main>
   </div>
-
-
-  <!-- Modal Crear Curso -->
-  <div class="modal fade" id="modalCrearCurso" tabindex="-1">
-    <div class="modal-dialog">
-      <form id="formCrearCurso" class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Crear Nuevo Curso</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+<!-- Modal Crear Curso -->
+<div class="modal fade" id="modalCrearCurso" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="formCrearCurso" class="modal-content">
+      <div class="modal-header modalEstilos">
+        <h5 class="modal-title">Crear Nuevo Curso</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <!-- Nombre del curso -->
+        <div class="mb-3">
+          <label for="tituloCurso" class="form-label">Nombre del Curso</label>
+          <input id="tituloCurso" type="text" class="form-control" required>
         </div>
-        <div class="modal-body">
-          <!-- Dentro de #modalCrearCurso .modal-body -->
-           <div class="mb-3">
-  <label for="tituloCurso" class="form-label">Nombre del Curso</label>
-  <input id="tituloCurso" type="text" class="form-control" required>
-</div>
-<div class="mb-3">
-  <label for="descripcionCurso" class="form-label">Descripción</label>
-  <textarea id="descripcionCurso" class="form-control" rows="3" required></textarea>
-</div>
-<div class="mb-3">
-  <label for="docenteCurso" class="form-label">Docente</label>
-  <input id="docenteCurso" type="text" class="form-control" required>
-</div>
-<div class="mb-3">
-  <label for="fotoDocente" class="form-label">Foto del Docente (archivo)</label>
-  <input id="fotoDocente" type="text" class="form-control" placeholder="https://... (opcional)">
-</div>
 
-<div class="mb-3">
-  <label for="linkZoomCurso" class="form-label">Link Zoom</label>
-  <input id="linkZoomCurso" type="url" class="form-control">
-</div>
-<div class="mb-3">  
-  <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
-  <input id="fechaInicio" type="date" class="form-control" required>
-</div>
-<div class="mb-3">
-  <label for="horaClase" class="form-label">Hora de Clases </label><label class="form-label" for="horaClases"></label>
-  <input id="horaClase" type="time" class="form-control" required>
-</div>
-<div class="mb-3">
-  <label for="diasClase" class="form-label">Dias de Clases</label>
-  <select id="diasClase" class="form-select" required>
-    <option value="lunes">Lunes</option>
-    <option value="martes">Martes</option>
-    <option value="miercoles">Mi&eacute;rcoles</option>
-    <option value="jueves">Jueves</option>
-    <option value="viernes">Viernes</option>
-  </select>
-</div>
-<div class="mb-3">
-  <label for="notaFinalCurso" class="form-label">Nota Final</label>
-  <input id="notaFinalCurso" type="number" class="form-control" value="0">
-</div>
-<div class="mb-3">
-  <label class="form-label">Recursos (nombre + url)</label>
-  <div id="recursosContainer"></div>
-  <button id="addRecursoBtn" class="btn btn-sm btn-outline-secondary">+ Añadir Recurso</button>
-</div>
-<div class="mb-3">
-  <label for="videoTutorialCurso" class="form-label">Video Tutorial (YouTube ID)</label>
-  <input id="videoTutorialCurso" type="text" class="form-control" placeholder="3AbNBaljboM?...">
-</div>
-<div class="form-check mb-3">
-  <input id="activoCurso" class="form-check-input" type="checkbox" checked>
-  <label class="form-check-label" for="activoCurso">Activo</label>
-</div>
+        <!-- Descripción -->
+        <div class="mb-3">
+          <label for="descripcionCurso" class="form-label">Descripción</label>
+          <textarea id="descripcionCurso" class="form-control" rows="3" required></textarea>
+        </div>
 
+        <!-- Docente (opcional) -->
+        <div class="mb-3">
+          <label for="docenteCurso" class="form-label">Docente (opcional)</label>
+          <select id="docenteCurso" class="form-select">
+            <option value="" disabled selected>Asignar Luego</option>
+          </select>
         </div>
-        <div class="modal-footer">
-          <button class="btn btn-success">Crear</button>
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+
+        <!-- Foto del docente (opcional) -->
+        <div class="mb-3">
+          <label for="fotoDocente" class="form-label">Foto del Docente (opcional)</label>
+          <input id="fotoDocente" type="text" class="form-control" placeholder="URL de la foto (opcional)">
         </div>
-      </form>
-    </div>
+
+        <!-- Link de Zoom -->
+        <div class="mb-3">
+          <label for="linkZoomCurso" class="form-label">Link Zoom</label>
+          <input id="linkZoomCurso" type="url" class="form-control">
+        </div>
+
+        <!-- Fecha de inicio -->
+        <div class="mb-3">
+          <label for="fechaInicio" class="form-label">Fecha de Inicio</label>
+          <input id="fechaInicio" type="date" class="form-control" required>
+        </div>
+
+        <!-- Hora de clases -->
+        <div class="mb-3">
+          <label for="horaClase" class="form-label">Hora de Clases</label>
+          <input id="horaClase" type="time" class="form-control" required>
+        </div>
+
+        <!-- Días de clases -->
+        <div class="mb-3">
+          <label for="diasClase" class="form-label">Días de Clases</label>
+          <select id="diasClase" class="form-select" required>
+            <option value="lunes">Lunes</option>
+            <option value="martes">Martes</option>
+            <option value="miercoles">Miércoles</option>
+            <option value="jueves">Jueves</option>
+            <option value="viernes">Viernes</option>
+          </select>
+        </div>
+
+        <!-- Recursos (Link OneDrive) -->
+        <div class="mb-3">
+          <label for="linkRecursosCurso" class="form-label">Recursos (Link OneDrive)</label>
+          <input id="linkRecursosCurso" type="url" class="form-control" placeholder="Enlace a los recursos" required>
+        </div>
+
+        <!-- Video tutorial -->
+        <div class="mb-3">
+          <label for="videoTutorialCurso" class="form-label">Video Tutorial (enlace YouTube)</label>
+          <input id="videoTutorialCurso" type="text" class="form-control" placeholder="ID de YouTube o enlace completo">
+        </div>
+
+        <!-- Activo -->
+        <div class="form-check mb-3">
+          <input id="activoCurso" class="form-check-input" type="checkbox" checked>
+          <label class="form-check-label" for="activoCurso">Activo</label>
+        </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="submit" class="btn btn-success">Crear Curso</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </form>
   </div>
+</div>
+
 
   <!-- Modal Editar Curso -->
   <div class="modal fade" id="modalEditarCurso" tabindex="-1">
     <div class="modal-dialog">
-      <form id="formEditarCurso" class="modal-content">
-        <div class="modal-header">
+      <form id="formEditarCurso" class="modal-content  ">
+        <div class="modal-header modalEstilos">
           <h5 class="modal-title">Editar Link de Zoom</h5>
           <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
         </div>
         <div class="modal-body">
           <div class="mb-3">
             <label for="cursoSelectEditar" class="form-label">Curso</label>
-            <select id="cursoSelectEditar" class="form-select" required></select>
+            <select id="cursoSelectEditar" class="form-select rounded-3 shadow-sm" required></select>
           </div>
           <div class="mb-3">
             <label for="linkZoomEditar" class="form-label">Link Zoom</label>
@@ -259,7 +352,7 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button class="btn btn-info">Actualizar</button>
+          <button class="btn btn-success">Actualizar</button>
           <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
         </div>
       </form>
@@ -269,64 +362,74 @@
   
 
   <!-- Modal Gestionar Inscripciones -->
-  <div class="modal fade" id="modalGestionInscripciones" tabindex="-1">
-    <div class="modal-dialog">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title">Asignar / Quitar Cursos</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-        <div class="modal-body">
-          <ul class="nav nav-tabs" id="tabIns" role="tablist">
-            <li class="nav-item" role="presentation">
-              <button class="nav-link active" id="tabAsignar" data-bs-toggle="tab" data-bs-target="#paneAsignar">Asignar</button>
-            </li>
-            <li class="nav-item" role="presentation">
-              <button class="nav-link" id="tabDesasignar" data-bs-toggle="tab" data-bs-target="#paneDesasignar">Quitar</button>
-            </li>
-          </ul>
-          <div class="tab-content mt-3">
-            <!-- Asignar -->
-            <div class="tab-pane fade show active" id="paneAsignar">
-              <form id="formAsignarEst">
-                <div class="mb-3">
-                  <label for="selectAlumnoAsig" class="form-label">Alumno</label>
-                  <select id="selectAlumnoAsig" class="form-select" required></select>
-                </div>
-                <div class="mb-3">
-                  <label for="selectCursoAsig" class="form-label">Curso</label>
-                  <select id="selectCursoAsig" class="form-select" required></select>
-                </div>
-                <button class="btn btn-warning w-100">Asignar Curso</button>
-              </form>
-            </div>
-            <!-- Desasignar -->
-            <div class="tab-pane fade" id="paneDesasignar">
-              <form id="formDesasignarEst">
-                <div class="mb-3">
-                  <label for="selectAlumnoDes" class="form-label">Alumno</label>
-                  <select id="selectAlumnoDes" class="form-select" required></select>
-                </div>
-                <div class="mb-3">
-                  <label for="selectCursoDes" class="form-label">Curso</label>
-                  <select id="selectCursoDes" class="form-select" required></select>
-                </div>
-                <button class="btn btn-danger w-100">Quitar Curso</button>
-              </form>
-            </div>
+<div class="modal fade" id="modalGestionInscripciones" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow">
+      <div class="modal-header  text-white modalEstilos" >
+        <h5 class="modal-titl  text-center fw-bold"><i class="fas fa-tasks me-2"></i>Gestionar Inscripciones</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body p-4">
+        <ul class="nav nav-pills nav-fill mb-3" id="tabIns" role="tablist">
+          <li class="nav-item">
+            <button class="nav-link asignarColor " id="tabAsignar" data-bs-toggle="tab" data-bs-target="#paneAsignar">
+              <i class="fas fa-plus-circle me-2 "></i>Asignar Curso
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link quitarColor " id="tabDesignar" data-bs-toggle="tab" data-bs-target="#paneDesasignar">
+              <i class="fas fa-minus-circle me-2"></i>Quitar Curso
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content">
+          <!-- Asignar -->
+          <div class="tab-pane fade show active" id="paneAsignar">
+            <form id="formAsignarEst">
+              <div class="mb-3">
+                <label for="selectAlumnoAsig" class="form-label">Alumno</label>
+                <select id="selectAlumnoAsig" class="form-select rounded-3 shadow-sm" required></select>
+              </div>
+              <div class="mb-3">
+                <label for="selectCursoAsig" class="form-label">Curso</label>
+                <select id="selectCursoAsig" class="form-select rounded-3 shadow-sm" required></select>
+              </div>
+              <button class="btn btn-success w-100 rounded-3 shadow-sm">
+                <i class="fas fa-check-circle me-2"></i>Asignar Curso
+              </button>
+            </form>
+          </div>
+
+          <!-- Desasignar -->
+          <div class="tab-pane fade" id="paneDesasignar">
+            <form id="formDesasignarEst">
+              <div class="mb-3">
+                <label for="selectAlumnoDes" class="form-label">Alumno</label>
+                <select id="selectAlumnoDes" class="form-select rounded-3 shadow-sm" required></select>
+              </div>
+              <div class="mb-3">
+                <label for="selectCursoDes" class="form-label">Curso</label>
+                <select id="selectCursoDes" class="form-select rounded-3 shadow-sm" required></select>
+              </div>
+              <button class="btn btn-danger w-100 rounded-3 shadow-sm">
+                <i class="fas fa-trash-alt me-2"></i>Quitar Curso
+              </button>
+            </form>
           </div>
         </div>
       </div>
     </div>
-  </main>
+  </div>
 </div>
+
 <!-- Modal Registrar Alumno -->
 <div class="modal fade" id="modalRegistrarAlumno" tabindex="-1">
   <div class="modal-dialog">
     <form id="formRegistrarAlumno" class="modal-content">
-      <div class="modal-header">
+      <div class="modal-header modalEstilos ">
         <h5 class="modal-title">Registrar Nuevo Alumno</h5>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
       </div>
       <div class="modal-body">
         <div class="mb-3">
@@ -351,22 +454,91 @@
 
 </div>
 
+<!-- Modal Registrar Docente -->
+<div class="modal fade" id="modalRegistrarDocente" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="formRegistrarDocente" class="modal-content">
+      <div class="modal-header modalEstilos">
+        <h5 class="modal-title">Registrar Nuevo Docente</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="mb-3">
+          <label class="form-label">Nombre completo</label>
+          <input id="nombreDocente" type="text" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input id="emailDocente" type="email" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Contraseña temporal</label>
+          <input id="claveDocente" type="password" class="form-control" required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary">Registrar</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
 
 
 
 
-  
+<!-- Modal Asignar Docente -->
+<div class="modal fade" id="modalAsignarDocente" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content rounded-4 shadow-lg">
+      <div class="modal-header bg-dark text-white rounded-top-4">
+        <h5 class="modal-title">Asignar Docente al Curso</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <form id="formAsignarDocente">
+          <div class="mb-3">
+            <label for="selectCursoAsignarDocente" class="form-label">Curso (sin docente)</label>
+            <select id="selectCursoAsignarDocente" class="form-select" required></select>
+          </div>
+          <div class="mb-3">
+            <label for="selectDocenteAsignar" class="form-label">Docente</label>
+            <select id="selectDocenteAsignar" class="form-select" required></select>
+          </div>
+          <button type="submit" class="btn btn-success w-100 fw-bold">Asignar Docente</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
 
   <!-- Scripts Firebase, Bootstrap, SweetAlert2 -->
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-  <script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="../js/administracion/admin.js"> </script>
+
+<!-- Firebase y librerías -->
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
+
+<!-- Librerías externas -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="https://cdn.jsdelivr.net/npm/aos@2.3.4/dist/aos.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- Tu código -->
+<script src="../js/administracion/authBienvenida.js"></script>
+<script src="../js/administracion/crearCurso.js"></script>
+<script src="../js/administracion/registrarDocente.js"></script>
+<script src="../js/administracion/asignarDocente.js"></script>
+<script src="../js/administracion/docenteCurso.js"></script>
+<script src="../js/administracion/tablaDocentes.js"></script>
+<script src="../js/administracion/stats.js"></script>
+<script src="../js/administracion/admin.js"></script>
+
+<!-- El finalizador que llama a todo -->
+<script src="../js/administracion/init.js"></script>
+
 
 </body>
 </html>

@@ -37,13 +37,51 @@ app.post('/crear-alumno', async (req, res) => {
     });
 
     // Guardar en Firestore
-   await db.collection('usuarios').doc(userRecord.uid).set({
-  nombre,
-  email,
-  rol: 'alumno',
-  cursosInscritos: [],
-  fechaRegistro: admin.firestore.FieldValue.serverTimestamp() // ⏱️ este campo es la clave
+    await db
+      .collection('usuarios')
+      .doc(userRecord.uid)
+      .set({
+        nombre,
+        email,
+        rol: 'alumno',
+        cursosInscritos: [],
+        fechaRegistro: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+    res.json({ success: true, uid: userRecord.uid });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
 });
+
+// 📩 Endpoint para crear docente
+app.post('/crear-docente', async (req, res) => {
+  const { nombre, email, clave } = req.body;
+
+  if (!nombre || !email || !clave) {
+    return res.status(400).json({ error: 'Faltan datos' });
+  }
+
+  try {
+    // Crear usuario en Firebase Auth
+    const userRecord = await admin.auth().createUser({
+      email,
+      password: clave,
+      displayName: nombre,
+    });
+
+    // Guardar en Firestore
+    await db
+      .collection('usuarios')
+      .doc(userRecord.uid)
+      .set({
+        nombre,
+        email,
+        rol: 'docente',
+        cursosInscritos: [],
+        fechaRegistro: admin.firestore.FieldValue.serverTimestamp()
+      });
 
     res.json({ success: true, uid: userRecord.uid });
   } catch (err) {
@@ -53,6 +91,8 @@ app.post('/crear-alumno', async (req, res) => {
 });
 
 // 🚀 Iniciar servidor
-app.listen(3000, () => {
-  console.log('Servidor corriendo en http://localhost:3000');
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+
