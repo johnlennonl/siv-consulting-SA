@@ -431,6 +431,7 @@ function renderEstructuraAlumnos() {
           <th>Nombre</th>
           <th>Email</th>
           <th>Fecha Registro</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody id="tablaAlumnosBody"></tbody>
@@ -464,17 +465,22 @@ function renderTablaAlumnos(lista) {
   if (lista.length === 0) {
     tbody.innerHTML = `<tr><td colspan="3" class="text-center text-muted">No se encontraron alumnos.</td></tr>`;
   } else {
-    lista.forEach(a => {
-      tbody.innerHTML += `
-        <tr>
-          <td>${a.nombre}</td>
-          <td>${a.email}</td>
-          <td>${a.fecha}</td>
-        </tr>
-      `;
-    });
-  }
+   lista.forEach(a => {
+    tbody.innerHTML += `
+      <tr data-uid="${a.uid}">
+        <td>${a.nombre}</td>
+        <td>${a.email}</td>
+        <td>${a.fecha}</td>
+        <td class="text-center">
+          <button class="btn btn-sm btnEditar btn-edit">✏️</button>
+          <button class="btn btn-sm btn-outline-danger  btnEliminar btn-delete">🗑️</button>
+        </td>
+      </tr>
+    `;
+  });
+}
 
+        
   // ⏫ restauramos scroll donde estaba
   setTimeout(() => window.scrollTo({ top: y }), 0);
 }
@@ -489,6 +495,7 @@ async function cargarListaAlumnos() {
     snapshot.forEach(doc => {
       const alumno = doc.data();
       listaAlumnos.push({
+        uid: doc.id,
         nombre: alumno.nombre || "Sin nombre",
         email: alumno.email || "—",
         fecha: alumno.fechaRegistro?.toDate().toLocaleDateString("es-ES") || "—"

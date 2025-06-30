@@ -536,6 +536,38 @@
   </div>
 </div>
 
+<!-- Modal Editar Usuario -->
+<div class="modal fade" id="modalEditarUsuario" tabindex="-1">
+  <div class="modal-dialog">
+    <form id="formEditarUsuario" class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Editar Usuario</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <input type="hidden" id="editUid">
+        <div class="mb-3">
+          <label class="form-label">Nombre</label>
+          <input id="editNombre" type="text" class="form-control" required>
+        </div>
+        <div class="mb-3">
+          <label class="form-label">Rol</label>
+          <select id="editRol" class="form-select">
+            <option value="alumno">Alumno</option>
+            <option value="docente">Docente</option>
+            <option value="admin">Admin</option>
+          </select>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-success">Guardar Cambios</button>
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
 
   <!-- Scripts Firebase, Bootstrap, SweetAlert2 -->
 
@@ -563,6 +595,7 @@
 <script src="../js/administracion/cambioContrasena.js"></script>
 <script src="../js/administracion/stats.js"></script>
 <script src="../js/scroll.js"></script>
+<script src="../js/administracion/gestionUsuarios.js"></script>
 <script src="../js/administracion/admin.js"></script>
 
 <!-- El finalizador que llama a todo -->

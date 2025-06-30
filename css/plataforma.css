@@ -172,12 +172,14 @@ canvas {
   width: 100%;
   border-collapse: collapse;
   margin-top: 10px;
+  cursor: pointer;
 }
 
 .tabla-alumnos th, .tabla-alumnos td {
   padding: 10px;
   border-bottom: 1px solid #ccc;
   text-align: left;
+  cursor: pointer;
 }
 
 .tabla-alumnos th {
@@ -190,6 +192,7 @@ canvas {
   width: 100%;
   border-radius: 10px;
   overflow: hidden;
+  cursor: pointer;
 }
 
 #seccionAlumnos th, #seccionAlumnos td {
@@ -357,3 +360,21 @@ canvas {
   
 }
 
+
+
+.btnEditar{
+  background-color: #009f8b;
+}
+
+.btnEditar:hover{
+  background-color: #00c2a8;
+}
+
+.btnEliminar{
+  background-color: #504280;
+  border: none;
+  color: #fff;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
+  
+}
