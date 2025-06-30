@@ -108,16 +108,67 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Eliminar curso
-    document.getElementById("btnEliminarCurso").addEventListener("click", async ()=>{
-      const { value:id } = await Swal.fire({
-        title:'ID del curso a eliminar',
-        input:'text', inputLabel:'Introduce el ID',
-        showCancelButton:true
-      });
-      if(!id) return;
-      await db.collection("cursos").doc(id).delete();
-      Swal.fire('Eliminado','Curso borrado','success');
+  
+document.getElementById("btnEliminarCurso").addEventListener("click", async () => {
+  try {
+    // 1) Traemos todos los cursos
+    const snapshot = await db.collection("cursos").get();
+    if (snapshot.empty) {
+      return Swal.fire("Info", "No hay cursos para eliminar.", "info");
+    }
+
+    // 2) Montamos las opciones para SweetAlert
+    const inputOptions = {};
+    snapshot.forEach(doc => {
+      inputOptions[doc.id] = doc.data().titulo;  // key = id, value = título
     });
+
+    // 3) Abrimos el SweetAlert
+    const { value: cursoId } = await Swal.fire({
+      title: "¿Qué curso quieres eliminar?",
+      input: "select",
+      inputOptions,
+      inputPlaceholder: "Selecciona un curso",
+      showCancelButton: true,
+      confirmButtonText: "Eliminar",
+      cancelButtonText: "Cancelar",
+      background: "linear-gradient(139deg, rgba(36,40,50,1) 0%, rgba(37,28,40,1) 100%)",
+      color: "#fff",
+      iconColor: "#ff5c5c",
+      
+       // — ESTO es lo importante —
+     // aquí se aplican las clases de Bootstrap al <select>
+    customClass: {
+      input: " bg-white text-dark border-0 rounded-start shadow-sm  ",
+    },
+    });
+
+    if (!cursoId) return;  // el usuario canceló
+
+    // 4) Confirmación final
+    const { isConfirmed } = await Swal.fire({
+      title: "¿Seguro?",
+      text: `Vas a borrar: "${inputOptions[cursoId]}"`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Sí, bórralo",
+      cancelButtonText: "No",
+      background: "linear-gradient(139deg, rgba(36,40,50,1) 0%, rgba(37,28,40,1) 100%)",
+      color: "#fff",
+      iconColor: "#ff5c5c"
+    });
+    if (!isConfirmed) return;
+
+    // 5) Borramos en Firestore
+    await db.collection("cursos").doc(cursoId).delete();
+
+    Swal.fire("¡Eliminado!", "El curso ha sido borrado.", "success");
+  } catch (err) {
+    console.error(err);
+    Swal.fire("Error", err.message, "error");
+  }
+});
+
 
      // Gestión de inscripciones
   const modalIns = document.getElementById("modalGestionInscripciones");

@@ -250,11 +250,15 @@ canvas {
 }
 
 
+
+
+
 .filtro-alumno {
-  min-width: 250px;
+  min-width: 350px;
+  height: 40px;
   border: 2px solid #ccc;
   border-radius: 12px;
-  padding: 8px 16px;
+  padding: 8px 10px;
   font-size: 15px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   transition: all 0.2s ease-in-out;
@@ -266,17 +270,40 @@ canvas {
   box-shadow: 0 0 0 3px rgba(0, 194, 168, 0.25);
 }
 
+@media screen and (max-width: 768px) {
+  .filtro-alumno {
+    width: 100%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .filtro-alumno {
+    width: 100%;
+  }
+}
+
+
+
 .btn-refrescar {
+  cursor: pointer;
   background-color: #00c2a8;
   border: none;
   color: #fff;
   padding: 8px 20px;
   border-radius: 10px;
   transition: background-color 0.3s ease;
+  height: 40px;
 }
 
 .btn-refrescar:hover {
   background-color: #009f8b;
+}
+
+@media screen and (max-width: 768px) {
+   .btn-refrescar {
+      width: 100%;
+   }
+  
 }
 
 
@@ -310,3 +337,23 @@ canvas {
   color: #d5af49;
   text-decoration: none;
 }
+
+
+/*Buascador */
+
+.contenedorBuscarAlumno{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+@media screen and (max-width: 768px) {
+  .contenedorBuscarAlumno{
+    display: flex;
+    flex-direction: center;
+    justify-content: center;
+    align-items: center;
+  }
+  
+}
+
