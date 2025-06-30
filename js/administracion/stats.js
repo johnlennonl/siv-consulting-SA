@@ -55,20 +55,43 @@ const totalDocentes = docentesSnap.size;
         datasets: [{
           label: "Inscripciones por día",
           data: inscripcionesPorSemana,
+          borderColor: '#00c2a8',
+          backgroundColor: 'rgba(0,194,168,0.2)',
+          pointBackgroundColor: '#00ffcc',
+          pointBorderColor: '#1f242f',
           borderWidth: 2,
-          borderColor: "#4CAF50",
-          backgroundColor: "#252836",
           tension: 0.4,
-          fill: true,
+          fill: true
         }]
       },
-      options: {
+     options: {
         responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: 16 },
         plugins: {
-          legend: { display: false }
+          title: {
+            display: true,
+            color: '#f1f1f1',
+            font: { size: 16, family: 'Montserrat' }
+          },
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: '#1f242f',
+            titleColor: '#00ffcc',
+            bodyColor: '#f1f1f1',
+            cornerRadius: 4
+          }
         },
         scales: {
-          y: { beginAtZero: true }
+          x: {
+            ticks: { color: '#f1f1f1' },
+            grid:  { color: 'rgba(255,255,255,0.1)' }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#f1f1f1' },
+            grid:  { color: 'rgba(255,255,255,0.1)' }
+          }
         }
       }
     });

@@ -280,3 +280,33 @@ canvas {
 }
 
 
+
+
+/*Chart */
+
+.chart-card {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+}
+.chart-card h5 {
+  font-family: Montserrat, sans-serif;
+  color: #f1f1f1;
+}
+
+
+.footer1 {
+   background-image: linear-gradient(
+    139deg,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(37, 28, 40, 1) 100%
+  );
+  color: #eee7e7;
+  text-align: center;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.footer1 a {
+  color: #d5af49;
+  text-decoration: none;
+}
