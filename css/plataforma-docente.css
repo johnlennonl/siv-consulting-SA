@@ -1,0 +1,1038 @@
+/* =========================
+   PANEL DOCENTE SIV CONSULTING
+   CSS MODULARIZADO Y COMENTADO
+   ========================= */
+
+/* Reset básico */
+body, html {
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', 'Montserrat', Arial, sans-serif;
+  background: #e6e7e9;
+  color: #181c32;
+  height: 100%;
+  min-height: 100vh;
+}
+
+.admin-wrapper {
+  display: flex;
+  min-height: 100vh;
+  background: linear-gradient(150deg,#ececec 0%,#e7e8ea 100%);
+}
+
+/* =============== SIDEBAR =============== */
+.admin-sidebar {
+  width: 270px;
+  min-width: 270px;
+  background: linear-gradient(139deg, #242832 0%, #251C28 100%);
+  color: #fff;
+  min-height: 100vh;
+  transition: all .3s;
+  z-index: 1001;
+  box-shadow: 2px 0 20px #181c3220;
+  position: relative;
+  padding-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-logo {
+  padding: 1.5rem 0 .5rem 0;
+  margin-bottom: .7rem;
+}
+.sidebar-img {
+  width: 200px;
+  max-width: 250px;
+}
+.sidebar-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  margin-top: .5rem;
+  color: #fff;
+  font-style: oblique;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1 1 auto;
+}
+.nav-list li {
+  margin-bottom: .3rem;
+}
+.nav-list li:last-child {
+  margin-bottom: 0;
+}
+.nav-list li a {
+  color: #f1f1f1;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 1.07rem;
+  padding: 0.85em 2em 0.85em 1.5em;
+  border-radius: 12px 25px 25px 12px;
+  
+  position: relative;
+  gap: .85em;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.nav-list li a i {
+  width: 1.6em;
+  text-align: center;
+  font-size: 1.15em;
+  margin-right: .2em;
+  flex-shrink: 0;
+}
+.nav-list li a.active, .nav-list li a:hover, .nav-list li a:focus {
+  background: #e8bb3f;
+  color: #222;
+  font-weight: 700;
+  box-shadow: 0 1px 8px #23253a25;
+}
+
+/* Badge Notificaciones */
+#notifCountSidebar {
+  margin-left: .3em;
+  font-size: .93em;
+  padding: .25em .65em;
+  background: #e83e3e;
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 2px 8px #0002;
+}
+
+/* Ajuste para que el badge no desborde en mobile */
+#linkNotificaciones {
+  min-width: 0;
+  justify-content: space-between;
+  gap: .7em;
+}
+
+/* ================= HEADER MOBILE =============== */
+.admin-mobile-header {
+  background: linear-gradient(139deg, #242832 0%, #251C28 100%);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: .6rem 1.2rem .6rem 1.4rem;
+  height: 56px;
+  box-shadow: 0 2px 16px #0002;
+  position: sticky;
+  top: 0;
+  z-index: 1201;
+  width: 100vw;
+}
+.logo-mobile {
+  height: 2.5rem !important;
+  width: 2.5rem !important;
+  margin-right: .9rem;
+}
+.menu-hamburger {
+  background: none;
+  border: none;
+  outline: none;
+  padding: 0;
+  margin: 0;
+}
+.menu-hamburger i {
+  font-size: 2.1rem;
+  color: #fff;
+}
+
+/* ================= MAIN CONTENT =============== */
+
+/* Encabezado Bienvenida */
+.admin-header {
+  margin-bottom: 1.6rem;
+}
+#bienvenida {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: .6rem;
+  color: #181c32;
+}
+#fechaHora {
+  font-size: 1.03rem;
+  color: #555b6d;
+}
+/* Loader Styles */
+#loader-wrapper {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100vh;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.loader2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.bubble {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-image: linear-gradient(to right, #d5af49, #ff9a44);
+  margin: 0 5px;
+  animation: bubbleAnimation 1.5s ease-in-out infinite;
+}
+
+@keyframes bubbleAnimation {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(2);
+    opacity: 0.5;
+  }
+}
+
+
+/* Oculta contenido hasta cargar */
+.hidden {
+  display: none;
+
+}
+
+
+/* ================= RESPONSIVE ===================== */
+
+/* ---- Sidebar Responsive ---- */
+@media (max-width: 991.5px) {
+  .admin-sidebar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 100vh;
+    min-height: 100vh;
+    z-index: 1300;
+    transform: translateX(-100%);
+    transition: transform .33s cubic-bezier(.54,.05,.37,1.06);
+    box-shadow: 2px 0 24px #00000014;
+  }
+  .admin-sidebar.open {
+    transform: translateX(0);
+  }
+  .admin-main {
+    padding: 1.5rem .5rem 1.7rem .5rem;
+  }
+  body.sidebar-open {
+    overflow: hidden;
+  }
+  body.sidebar-open .admin-sidebar {
+    transform: translateX(0);
+  }
+  /* Cubre fondo oscuro al abrir menú */
+  body.sidebar-open::before {
+    content:'';
+    position:fixed;z-index:1299;inset:0;backdrop-filter:blur(1.3px);
+    background:rgba(20,20,30,.27);
+    animation:fadein .2s;
+  }
+  @keyframes fadein {from{opacity:0}to{opacity:1}}
+}
+
+/* Mobile: centrar logo y título uno debajo del otro */
+@media (max-width: 575px) {
+  .sidebar-logo {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    gap: .3rem;
+    
+  }
+  .sidebar-img {
+    margin-bottom: 0.2rem !important;
+    margin-right: 0 !important;
+    height: 7.5rem !important;
+    width: 7.5rem !important;
+  }
+  .sidebar-title {
+    margin-top: 1rem !important;
+    font-size: 1.03rem;
+  }
+  .nav-list li a {
+    font-size: 1rem;
+    padding: 0.82em 1.2em 0.82em 1.2em;
+  }
+  #notifCountSidebar {
+    padding: .17em .45em;
+    font-size: .87em;
+  }
+  #bienvenida {
+    font-size: 0.87rem;
+        text-align: center;
+
+  }
+  #fechaHora {
+    font-size: .87rem;
+        text-align: center;
+
+  }
+}
+
+/* Extra: Scrollbar bonito sidebar (opcional) */
+.admin-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: #e8bb3f #241C28;
+}
+.admin-sidebar::-webkit-scrollbar {
+  width: 8px;
+  background: #241C28;
+}
+.admin-sidebar::-webkit-scrollbar-thumb {
+  background: #e8bb3f;
+  border-radius: 8px;
+}
+
+/* ============ FIN PANEL DOCENTE ============ */
+
+/** main **/
+.admin-main {
+  background-image: linear-gradient(to top, #c4c5c7 0%, #dcdddf 52%, #ebebeb 100%);
+}
+
+/* admin-panel.css o tu CSS global */
+/* ==== Centrado y estilos main ==== */
+.admin-main {
+  min-height: 100vh;
+  padding: 2.5rem 2rem;
+  background-image: linear-gradient(to top, #c4c5c7 0%, #dcdddf 52%, #ebebeb 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* CENTRA horizontalmente */
+  width: 100%;
+}
+
+/* Contenedor con máximo ancho y centrado */
+.container-main-content {
+  width: 100%;
+  max-width: 1050px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centra los hijos internos */
+}
+
+/* Encabezado de bienvenida centrado y separado */
+.admin-header {
+  width: 100%;
+  margin-bottom: 2.2rem;
+}
+#bienvenida {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: #181c32;
+  margin-bottom: .3rem;
+}
+#fechaHora {
+  font-size: 1.08rem;
+  color: #555b6d;
+}
+
+/* ================== CARDS DE CURSOS =================== */
+.seccion-mis-cursos {
+  width: 100%;
+}
+
+.seccion-mis-cursos .row {
+  justify-content: center; /* Centra las cards */
+  gap: 0.7rem 0;
+}
+
+.seccion-mis-cursos .card {
+  border-radius: 18px;  
+  border: none;
+  cursor: pointer !important;
+  background: #23232b;
+  color: #fff;
+  min-height: 320px;
+  margin-bottom: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.seccion-mis-cursos .card:hover {
+  border: 1.5px solid #fee084;
+}
+.seccion-mis-cursos .card-title {
+  font-size: 1.17rem;
+  font-weight: 700;
+}
+.seccion-mis-cursos .card-text {
+  font-size: 1.04rem;
+  color: #e5e5e5;
+}
+.seccion-mis-cursos .btn {
+  border-radius: 1.5em;
+  border: 1px solid #d1ae46;
+  background: transparent;
+  color: #f0efed;
+  font-weight: 600;
+  margin-top: 1.2rem;
+  
+}
+.seccion-mis-cursos .btn:hover {
+  background: #e7c150;
+  color: #23232b;
+  border: 1.5px solid #c9a845;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 1200px) {
+  .container-main-content {
+    max-width: 98vw;
+  }
+}
+@media (max-width: 767px) {
+  .container-main-content {
+    padding: 0 .4rem;
+    max-width: 100vw;
+  }
+  .seccion-mis-cursos .card {
+    min-height: unset;
+    margin-bottom: 1.1rem;
+  }
+}
+
+
+
+
+/***** CARD CURSOS DOCENTE ******/
+
+.cardCursosDocente{
+  background: linear-gradient(139deg, #242832 0%, #251C28 100%);
+  border-radius: 18px;
+ cursor: pointer ! important;
+  border: none;
+  color:white;
+
+}
+.cardCursosDocente:hover{
+  box-shadow: 0 6px 28px 0 rgba(80,80,110,0.08);
+  border: 1.5px solid #fee084;
+}
+
+.btnVerDetalles{
+  background: linear-gradient(139deg, #242832 0%, #251C28 100%);
+  border-radius: 18px;
+  border: 1px solid white;
+  color:white;
+}
+
+.btnVerDetalles:hover{
+  box-shadow: 0 6px 28px 0 rgba(80,80,110,0.08);
+  border: 1.5px solid #fee084;
+}
+
+
+
+.swal2-popup.curso-modal-pro {
+  font-family: 'Montserrat', 'Segoe UI', Arial, sans-serif;
+  background: linear-gradient(139deg, #242832 0%, #2d2134 100%);
+  color: #f1f1f1;
+  border-radius: 24px;
+  padding: 2.2rem 1.5rem 1.5rem 1.5rem;
+  max-width: 720px;
+}
+.swal2-title {
+  font-size: 2rem !important;
+  color: #f1c232;
+}
+.swal2-close {
+  color: #fff !important;
+}
+.list-group-item.bg-transparent {
+  background: transparent !important;
+}
+
+
+.detalle-curso-content {
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1.5rem;
+  background: rgba(255,255,255,0.01);
+  padding: 0.35rem 0;
+  border-radius: 8px;
+  font-size: 1.08em;
+}
+.info-row .info-value {
+  font-weight: bold;
+  color: #ffe599;
+  font-size: 1.05em;
+}
+.info-row i {
+  font-size: 1.1em;
+}
+
+ul.list-group.mt-2 {
+  margin-top: .5rem !important;
+}
+.list-group-item.bg-transparent {
+  background: transparent !important;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #fff;
+  font-size: 1.05em;
+  border-bottom: 1px solid #fff2;
+}
+.list-group-item.bg-transparent .badge {
+  font-size: .95em;
+  background: #30392f;
+  color: #d4ffd7;
+  font-weight: 500;
+  border-radius: 7px;
+  margin-left: .75rem;
+}
+/* ----- MODAL RESPONSIVE ----- */
+@media (max-width: 600px) {
+  .swal2-popup {
+    width: 98vw !important;       /* Ocupa casi todo el ancho */
+    max-width: 98vw !important;
+    min-width: unset !important;
+    padding: 1.2rem 0.5rem 1rem 0.5rem !important;
+  }
+  .detalle-curso-content {
+    max-width: 98vw !important;
+    padding: 0 !important;
+    font-size: 1.01em;
+  }
+  .info-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.3rem;
+    font-size: 1em;
+    width: 100%;
+  }
+  .info-row .info-value {
+    color: #ffe599;
+    font-size: 1.03em;
+    padding-left: 0;
+  }
+  .list-group-item.bg-transparent {
+    flex-direction: column;
+    align-items: flex-start;
+    font-size: 1em;
+    padding-left: 0;
+  }
+  .list-group-item .badge {
+    margin-left: 0.1rem !important;
+    margin-top: 0.3rem;
+    display: block;
+  }
+}
+
+/* Opcional: mejora la presentación en tablets */
+@media (max-width: 900px) {
+  .swal2-popup {
+    width: 95vw !important;
+    max-width: 95vw !important;
+  }
+  .detalle-curso-content {
+    max-width: 95vw !important;
+  }
+}
+
+
+
+/**** dasboard  curso **********/
+
+/* ======== DASHBOARD DEL CURSO ======== */
+
+
+.curso-dashboard-container {
+  max-width: 100%;
+  margin: 0 auto;
+  background: linear-gradient(139deg, #242832 0%, #251C28 100%);
+  color: #fff;
+  border-radius: 18px;
+  padding: 2rem 1.5rem 1.5rem 1.5rem;
+  box-shadow: 0 8px 38px #181c3222;
+  margin-bottom: 3rem;
+}
+.curso-dashboard-container .curso-titulo {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  color: #fee084;
+}
+.curso-dashboard-container .curso-descripcion {
+  margin-bottom: 1.5rem;
+  font-size: 1.15rem;
+  color: #f7f7f7;
+}
+.curso-dashboard-container .info-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  margin-bottom: 1.8rem;
+}
+.curso-dashboard-container .info-item {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  background: #232029;
+  border-radius: 10px;
+  padding: .55em 1em;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #f7f7f7;
+  border: 1px solid #33313b;
+}
+.curso-dashboard-container .info-icon {
+  color: #fee084;
+  font-size: 1.1rem;
+}
+.curso-dashboard-container .curso-zoom-link {
+  color: #fee084;
+  font-weight: bold;
+  text-decoration: underline;
+}
+.curso-dashboard-container .estudiantes-section h4 {
+  font-size: 1.17rem;
+  color: #fee084;
+  margin-bottom: .7em;
+}
+.lista-estudiantes {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.lista-estudiantes li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #292632;
+  border-radius: 9px;
+  margin-bottom: 8px;
+  padding: 0.6em 1em 0.6em .8em;
+  font-size: 1.08rem;
+}
+.lista-estudiantes .nombre-estudiante {
+  font-weight: 500;
+  color: #fee084;
+}
+.lista-estudiantes .correo-estudiante {
+  background: #1fa37a;
+  color: #fff;
+  border-radius: 6px;
+  padding: 0.2em 0.7em;
+  font-size: .98em;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+@media (max-width: 600px) {
+  .curso-dashboard-container {
+    padding: 1.2rem 0.5rem 1.2rem 0.5rem;
+    max-width: 98vw;
+  }
+  .curso-dashboard-container .info-list {
+    flex-direction: column;
+    gap: .7rem;
+  }
+  .lista-estudiantes li {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: .3em;
+    font-size: .98rem;
+    padding: .8em .7em;
+  }
+}
+
+
+
+/* TABS personalizadas dentro del dashboard */
+.curso-dashboard-container .nav-tabs {
+  border-bottom: 2px solid #232029;
+  margin-bottom: 1.5rem;
+  gap: 1rem;
+}
+.curso-dashboard-container .nav-tabs .nav-link {
+  background: none;
+  border: none;
+  color: #d5af49;
+  font-weight: 500;
+  border-radius: 12px 12px 0 0;
+  padding: 0.7em 1.3em;
+  transition: background 0.25s, color 0.25s;
+  margin-right: 3px;
+}
+.curso-dashboard-container .nav-tabs .nav-link.active,
+.curso-dashboard-container .nav-tabs .nav-link:hover {
+  background: #2c2837;
+  color: #1fa37a;
+  box-shadow: 0 -2px 18px #1fa37a33;
+  border: none;
+}
+
+.curso-dashboard-container .nav-tabs .nav-link:focus {
+  outline: 2px solid #fee08455;
+}
+
+
+.curso-dashboard-container .d-flex h2 {
+  font-size: 1.5rem;
+  font-weight: 400;
+  color: #d5af49;
+  margin: 0;
+}
+.curso-dashboard-container .btn-warning.btn-sm {
+  background: linear-gradient(91deg, #1fa37a 0%, #fee084 100%);
+  color: #2d2d2d;
+  border: none;
+  font-weight: bold;
+  border-radius: 9px;
+  padding: 0.45em 1.2em;
+  box-shadow: 0 2px 14px #1fa37a22;
+  transition: background 0.23s;
+}
+.curso-dashboard-container .btn-warning.btn-sm:hover {
+  background: linear-gradient(91deg, #d5af49 0%, #1fa37a 100%);
+  color: #171717;
+}
+
+#tabContenido {
+  background: #22202a;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px #181c3220;
+  padding: 2rem 1.3rem 1.4rem 1.3rem;
+  min-height: 210px;
+  animation: tabfadein .5s;
+}
+@keyframes tabfadein {
+  from { opacity: 0; transform: translateY(15px);}
+  to { opacity: 1; transform: translateY(0);}
+}
+
+@media (max-width: 600px) {
+  .curso-dashboard-container {
+    padding: 1.1rem 0.2rem 1.1rem 0.2rem;
+    max-width: 99vw;
+    border-radius: 12px;
+  }
+  .curso-dashboard-container .d-flex h2 {
+    font-size: 1.27rem;
+  }
+  .curso-dashboard-container .nav-tabs {
+    gap: 0.2rem;
+    font-size: 0.98rem;
+  }
+  #tabContenido {
+    padding: 1rem 0.5rem 1rem 0.5rem;
+  }
+}
+
+.curso-dashboard-container .alert-info, 
+.curso-dashboard-container .alert-warning {
+  border-radius: 8px;
+  border: none;
+  background: linear-gradient(90deg, #252839 80%, #1fa37a44 100%);
+  color: #fee084;
+  box-shadow: 0 2px 7px #23202924;
+  font-weight: 500;
+}
+
+.lista-estudiantes li {
+  transition: background 0.17s, box-shadow 0.17s;
+}
+.lista-estudiantes li:hover {
+  background: #32304a;
+  box-shadow: 0 2px 10px #1fa37a23;
+}
+
+
+
+
+.card-curso-pro {
+  background-color: #1fa37a;
+  border-radius: 20px;
+  border: none;
+  color: #fff;
+  box-shadow: 0 8px 36px #23202920;
+  transition: box-shadow 0.25s;
+   /* color: #00ffcc; */
+}
+
+
+.card-curso-pro .btn-outline-warning {
+  border-width: 2px;
+  color: #c4c5c7;
+  border-color: #d5af49;
+  background: none;
+  border-radius: 10px;
+  letter-spacing: 1px;
+}
+
+
+.modal-content{
+  background-image: linear-gradient(
+    139deg,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(37, 28, 40, 1) 100%
+  );
+  border-radius: 20px;
+  border: none;
+  color: #fff;
+  box-shadow: 0 8px 36px #23202920;
+  transition: box-shadow 0.25s;
+   /* color: #00ffcc; */
+}
+
+.estilosH5MisCursos{
+  color: #d5af49;
+  font-weight: 700;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+
+.cardCursoContenido{
+  background-image: linear-gradient(
+    139deg,
+    rgba(36, 40, 50, 1) 0%,
+    rgba(36, 40, 50, 1) 0%,
+    rgb(46, 33, 50) 100%
+  );
+  border-radius: 20px;
+  border: none;
+  color: #fff;
+  box-shadow: 0 8px 36px #23202920;
+  transition: box-shadow 0.25s;
+  
+
+ 
+}
+
+
+
+.notif-scroll-container {
+  max-height: 260px;
+  overflow-y: auto;
+  padding-left: 0;
+  list-style: none;
+  margin-bottom: 0;
+  
+}
+.notificacion-item {
+  padding: 0.7em 0.5em 0.5em 0.7em;
+  border-bottom: 1px solid #f5f5f5;
+  font-size: 1.05em;
+}
+
+
+/* Recursos - Estilo formulario y lista */
+#formAgregarRecurso {
+  background: #1f1f2e;
+  border-radius: 13px;
+  padding: 1.2rem 1.5rem .5rem 1.5rem;
+  box-shadow: 0 4px 24px #20213215;
+  margin-bottom: 2rem;
+}
+#formAgregarRecurso .form-label {
+  color: #fee084;
+  font-weight: 500;
+}
+#formAgregarRecurso input.form-control {
+  
+  border: 1px solid #36385b;
+  color: #fff;
+  border-radius: 9px;
+}
+#formAgregarRecurso input.form-control:focus {
+  border-color: #fee084;
+  
+  color: #fff;
+}
+#formAgregarRecurso button.btn-success {
+  color: #222;
+  border: none;
+  border-radius: 9px;
+  font-weight: 600;
+}
+#formAgregarRecurso button.btn-success:hover {
+  color: #181818;
+}
+
+/* Lista de recursos */
+#listaRecursos ul.list-group {
+  background: transparent;
+  border-radius: 10px;
+  padding: 0;
+}
+#listaRecursos .list-group-item {
+  background: #24273b !important;
+  color: #fff;
+  border: 1px solid #393c57;
+  border-radius: 8px !important;
+  margin-bottom: 8px;
+  font-size: 1.09rem;
+  transition: transform 0.08s;
+}
+#listaRecursos .list-group-item:hover {
+  background: #242832 !important;
+  transform: scale(1.015);
+  box-shadow: 0 0 0 2px #fee08440;
+}
+#listaRecursos a {
+  text-decoration: none;
+  font-weight: 600;
+  color: #00c2a8;
+}
+#listaRecursos .btnEliminarRecurso {
+  background: #d73636;
+  color: #fff;
+  border-radius: 7px;
+  border: none;
+  padding: 3px 10px;
+  font-size: .97rem;
+  transition: background 0.12s;
+}
+#listaRecursos .btnEliminarRecurso:hover {
+  background: #b82e2e;
+}
+
+/** calificaciones ***/ 
+
+/* ---- Modal de calificaciones ---- */
+.swal-titulo-actividad {
+  color: #fee084;
+  font-size: 2.2rem;
+  font-weight: 800;
+  line-height: 1.1;
+  text-align: center;
+  margin-bottom: 1.3rem;
+  letter-spacing: -0.5px;
+  text-shadow: 0 2px 18px #0002;
+}
+.swal-popup-notas {
+  border-radius: 18px !important;
+  box-shadow: 0 10px 40px #161a2c33 !important;
+  padding: 0 !important;
+}
+.swal-tabla-calif table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 0.5em;
+}
+.swal-tabla-calif th {
+  color: #fee084;
+  font-size: 1.17rem;
+  padding-bottom: 4px;
+}
+.swal-tabla-calif td {
+  color: #fff;
+  font-size: 1.13rem;
+  vertical-align: middle;
+  padding: 4px 0;
+}
+.nota-alumno-input {
+  width: 70px;
+  font-size: 1.15rem;
+  text-align: center;
+  border-radius: 6px;
+  border: 2px solid #fee084;
+  outline: none;
+  padding: 0.16em 0.3em;
+  transition: border 0.2s;
+}
+.nota-alumno-input:focus {
+  border-color: #1fa37a;
+  background: #232029;
+  color: #fee084;
+}
+.btnGuardarNota {
+  background: #e8bb3f;
+  color: #232029;
+  font-size: 1.23em;
+  padding: 2px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.18s;
+  margin-left: 4px;
+}
+.btnGuardarNota:hover {
+  background: #1fa37a;
+  color: #fff;
+}
+@media (max-width: 600px) {
+  .swal-titulo-actividad { font-size: 1.4rem; }
+  .swal-tabla-calif th, .swal-tabla-calif td { font-size: 1em; }
+  .swal-tabla-calif table { font-size: 0.98em; }
+}
+
+/* TALBA ALUMNOS CALIFICACIONES *****/ 
+
+.resumen-notas-table {
+  background: #1b1a23;
+  color: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 26px 0 #00000018;
+  margin-top: 8px;
+  font-size: 1.04rem;
+}
+.resumen-notas-table thead th {
+  background: #232029;
+  color: #e8bb3f !important;
+  font-weight: bold;
+  border-bottom: 2.5px solid #e8bb3f;
+  border-top: none !important;
+  letter-spacing: .02em;
+  text-align: center;
+}
+.resumen-notas-table tbody tr {
+  transition: background 0.17s;
+  cursor: pointer;
+}
+.resumen-notas-table tbody tr:hover {
+  background: #26283a;
+}
+.resumen-notas-table td, .resumen-notas-table th {
+  border: none;
+  padding: 0.52em 0.7em;
+  vertical-align: middle;
+  text-align: center;
+}
+.resumen-notas-table td:first-child, .resumen-notas-table th:first-child {
+  text-align: left;
+  font-weight: 500;
+  color: #e8bb3f;
+}
+.resumen-notas-table td:last-child, .resumen-notas-table th:last-child {
+  font-weight: bold;
+  color: #e8bb3f;
+  letter-spacing: .04em;
+}
+.resumen-notas-table tr td {
+  border-bottom: 1.2px solid #22232e;
+}
+.resumen-notas-table tr:last-child td {
+  border-bottom: none;
+}
+@media (max-width: 650px) {
+  .resumen-notas-table {
+    font-size: 0.93rem;
+  }
+  .resumen-notas-table th,
+  .resumen-notas-table td {
+    padding: 0.4em 0.3em;
+  }
+}

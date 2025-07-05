@@ -122,21 +122,11 @@ canvas {
   max-width: 100%;
 }
 
-#fechaHora {
-  font-size: 1rem;
-  font-weight: bold;
-  color: #d5af49;
-  margin: auto;
- 
-}
 
 
 
-#bienvenida {
-  font-size: 1.5rem;
-  font-weight: bold;
-  
-}
+
+
 
 /* From Uiverse.io by LeonKohli */ 
 .loader2 {
@@ -330,6 +320,7 @@ canvas {
     rgba(36, 40, 50, 1) 0%,
     rgba(37, 28, 40, 1) 100%
   );
+  
   color: #eee7e7;
   text-align: center;
   font-size: 14px;
@@ -378,3 +369,4 @@ canvas {
   transition: background-color 0.3s ease;
   
 }
+

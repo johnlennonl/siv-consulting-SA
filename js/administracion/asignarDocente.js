@@ -59,8 +59,6 @@ modalAsig.addEventListener("show.bs.modal", () => {
   cargarCursosSinDocente(window.db);
   cargarDocentes(window.db);
 });
-
-// 4️⃣ Al enviar el formulario, asigna y refresca la tabla de docentes–cursos
 const formAsig = document.getElementById("formAsignarDocente");
 formAsig.addEventListener("submit", async e => {
   e.preventDefault();
@@ -69,7 +67,27 @@ formAsig.addEventListener("submit", async e => {
   if (!cursoId || !docenteId) return;
 
   try {
+    // Asigna el docente al curso
     await window.db.collection("cursos").doc(cursoId).update({ docenteId });
+
+    // 🔔 Crea la notificación para el docente asignado
+    const cursoDoc = await window.db.collection('cursos').doc(cursoId).get();
+    const cursoTitulo = cursoDoc.data().titulo || 'un curso nuevo';
+    const noti = {
+      mensaje: `¡Tienes un nuevo curso asignado: <b>${cursoTitulo}</b>!`,
+      fecha: firebase.firestore.Timestamp.now(),
+      leida: false
+    };
+    console.log("Voy a notificar al docente", docenteId, "por curso", cursoId, noti);
+
+    await window.db.collection('usuarios')
+      .doc(docenteId)
+      .collection('notificaciones')
+      .add(noti)
+      .then(() => console.log("Notificación creada!"))
+      .catch(err => console.error("Error guardando notificación:", err));
+
+    // SweetAlert de éxito
     Swal.fire({
       title: "¡Docente asignado! 🎉",
       icon: "success",
@@ -77,9 +95,12 @@ formAsig.addEventListener("submit", async e => {
       color: "#fff",
       confirmButtonColor: "#00c2a8"
     });
+
+    // Cierra el modal y resetea el form
     bootstrap.Modal.getInstance(modalAsig).hide();
     formAsig.reset();
-    // refresca la tabla de cursos-docentes
+
+    // Refresca la tabla de cursos-docentes si existe
     if (typeof cargarCursosDocentes === "function") {
       cargarCursosDocentes(window.db);
     }

@@ -32,20 +32,21 @@ fh.textContent = fechaFormateada + " | " + d.toLocaleTimeString('es-ES');
   });
 
   
-  // Auth y bienvenida
-  firebase.auth().onAuthStateChanged(async user=>{
-    if(!user) return location.href="login.html";
-    const ud = await db.collection("usuarios").doc(user.uid).get();
-    if(!ud.exists || ud.data().rol!=="docente") return location.href="login.html";
-    document.getElementById("bienvenida").textContent =
-      `¡Bienvenido, ${ud.data().nombre||user.email}! 👋🏻`;
+  // Al iniciar el panel, tras auth:
+firebase.auth().onAuthStateChanged(async user => {
+  if(!user) return location.href="login.html";
+  const ud = await db.collection("usuarios").doc(user.uid).get();
+  if(!ud.exists || ud.data().rol!=="docente") return location.href="login.html";
 
-     
-      //Docente Nombre 
-     document.querySelectorAll(".docenteNombre").forEach(el => {
-       el.textContent = ud.data().nombre || user.email;
-     }) 
+  document.getElementById("bienvenida").textContent =
+    `¡Bienvenido, ${ud.data().nombre||user.email}! 👋🏻`;
+
+  // Mostramos cursos al entrar
+  await cargarMisCursos(user.uid);
+
+  // El resto de tu código (bienvenida, nombre, etc)
 });
+
 
 //logout 
 document.getElementsByClassName("logout")[0].addEventListener("click", e => {
@@ -97,3 +98,83 @@ document.getElementsByClassName("logout")[0].addEventListener("click", e => {
         .catch(()=>Swal.fire('Error','Contraseña incorrecta','error'));
     });
   });
+
+
+document.getElementById("linkNotificaciones").addEventListener("click", async e => {
+  e.preventDefault();
+  const user = firebase.auth().currentUser;
+  if (!user) return;
+
+  // Traer las notificaciones, mostrando las no leídas primero
+  const snap = await db
+    .collection('usuarios')
+    .doc(user.uid)
+    .collection('notificaciones')
+    .orderBy('fecha', 'desc')
+    .limit(20)
+    .get();
+
+  let html = '';
+  let idsNoLeidas = [];
+  if (snap.empty) {
+    html = `<li class="text-center text-muted py-2">No tienes notificaciones.</li>`;
+  } else {
+    html = Array.from(snap.docs).map(doc => {
+      const d = doc.data();
+      const leida = d.leida ? 'opacity:0.5;' : '';
+      if (!d.leida) idsNoLeidas.push(doc.id);
+      const fecha = d.fecha?.toDate().toLocaleString('es-ES') || '';
+      return `
+        <li class="notificacion-item" style="${leida}">
+          <span style="font-weight:500">${d.mensaje}</span>
+          <br>
+          <small style="color:#ffc107">${fecha}</small>
+          ${!d.leida ? '<span style="color:#1fa37a;font-size:0.93em;font-weight:500">● Nuevo</span>' : ''}
+        </li>
+      `;
+    }).join('');
+  }
+
+  Swal.fire({
+    title: '📬 Notificaciones',
+    html: `<ul class="notif-scroll-container" style="max-height:260px;overflow:auto;">${html}</ul>`,
+    width: 400,
+    background: '#fff',
+    color: '#181818',
+    showCloseButton: true,
+    showConfirmButton: false,
+    customClass: {
+      popup: 'rounded-4 shadow-lg'
+    }
+  });
+
+  // Marcar como leídas las que estaban no leídas
+  if (idsNoLeidas.length) {
+    const batch = db.batch();
+    idsNoLeidas.forEach(id => {
+      const ref = db
+        .collection('usuarios')
+        .doc(user.uid)
+        .collection('notificaciones')
+        .doc(id);
+      batch.update(ref, { leida: true });
+    });
+    await batch.commit();
+  }
+
+  // Actualiza el badge
+  setTimeout(() => actualizarBadgeNotificaciones(user.uid), 300);
+});
+
+
+async function actualizarBadgeNotificaciones(uid) {
+  const snap = await db
+    .collection('usuarios').doc(uid)
+    .collection('notificaciones')
+    .where('leida', '==', false)
+    .get();
+  document.getElementById('notifCountSidebar').textContent = snap.size || 0;
+}
+firebase.auth().onAuthStateChanged(user => {
+  if (user) actualizarBadgeNotificaciones(user.uid);
+});
