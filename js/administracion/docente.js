@@ -139,8 +139,8 @@ document.getElementById("linkNotificaciones").addEventListener("click", async e 
     title: '📬 Notificaciones',
     html: `<ul class="notif-scroll-container" style="max-height:260px;overflow:auto;">${html}</ul>`,
     width: 400,
-    background: '#fff',
-    color: '#181818',
+    background: '#25242f',
+    color: '#fff',
     showCloseButton: true,
     showConfirmButton: false,
     customClass: {

@@ -331,11 +331,17 @@ async function cargarTabCalificaciones(cursoId) {
             <b style="font-size:1.16rem; color:#fee084;">${act.titulo}</b>
             <p class="mb-1" style="color:#e1e1e1">${act.descripcion || ''}</p>
           </div>
-          <button class="btn btn-sm btnCalificarActividad" 
-                  style="background:#1fa37a;color:#fff;font-weight:600;box-shadow:0 1px 8px #2222"
-                  data-id="${act.id}" data-titulo="${act.titulo}">
-            <i class="fas fa-pen"></i> Calificar
-          </button>
+          <div>
+            <button class="btn btn-sm btnCalificarActividad" 
+                    style="background:#1fa37a;color:#fff;font-weight:600;box-shadow:0 1px 8px #2222"
+                    data-id="${act.id}" data-titulo="${act.titulo}">
+              <i class="fas fa-pen"></i> Calificar
+            </button>
+            <button class="btn btn-sm btn-danger btnEliminarActividad" 
+                    style="margin-left:6px;" data-id="${act.id}" data-titulo="${act.titulo}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
         </div>
       </div>
     `).join('');
@@ -377,6 +383,47 @@ async function cargarTabCalificaciones(cursoId) {
       cargarTabCalificaciones(cursoId);
     }
   };
+
+  // Eliminar actividad (¡Elimina actividad y TODAS sus notas!)
+  document.querySelectorAll('.btnEliminarActividad').forEach(btn => {
+    btn.onclick = async function () {
+      const actId = btn.getAttribute('data-id');
+      const titulo = btn.getAttribute('data-titulo');
+      const confirm = await Swal.fire({
+        title: '¿Eliminar actividad?',
+        html: `<b>${titulo}</b><br><small>Se eliminarán también todas las notas asociadas.</small>`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar',
+        background: "#191927",
+        color: "#fee084"
+      });
+      if (confirm.isConfirmed) {
+        // Borra las notas de la actividad
+        const notasSnap = await db.collection('cursos').doc(cursoId)
+          .collection('actividades').doc(actId)
+          .collection('notas').get();
+        const batch = db.batch();
+        notasSnap.forEach(doc => batch.delete(doc.ref));
+        await batch.commit();
+        // Borra la actividad
+        await db.collection('cursos').doc(cursoId)
+          .collection('actividades').doc(actId).delete();
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Actividad eliminada',
+          showConfirmButton: false,
+          timer: 1000,
+          background: "#fee084",
+          color: "#191927"
+        });
+        cargarTabCalificaciones(cursoId);
+      }
+    };
+  });
 
   // Calificar actividad (por alumno)
   document.querySelectorAll('.btnCalificarActividad').forEach(btn => {
@@ -428,6 +475,9 @@ async function cargarTabCalificaciones(cursoId) {
               <button class="btnGuardarNota" style="background:#1fa37a;color:#fff;border:none;padding:3px 9px;border-radius:7px" data-alum="${alumno.id}" title="Guardar nota">
                 <i class="fas fa-save"></i>
               </button>
+              <button class="btnEliminarNota" style="background:#e94343;color:#fff;border:none;padding:3px 9px;border-radius:7px;margin-left:4px" data-alum="${alumno.id}" title="Eliminar nota">
+                <i class="fas fa-trash"></i>
+              </button>
             </td>
           </tr>
         `;
@@ -447,8 +497,9 @@ async function cargarTabCalificaciones(cursoId) {
         }
       });
 
-      // Evento guardar nota (EDITABLE)
+      // Evento guardar/eliminar nota
       setTimeout(() => {
+        // GUARDAR NOTA
         document.querySelectorAll('.btnGuardarNota').forEach(btnNota => {
           btnNota.onclick = async function () {
             const alumId = btnNota.getAttribute('data-alum');
@@ -483,11 +534,46 @@ async function cargarTabCalificaciones(cursoId) {
                 btnNota.style.color = "#fff";
                 btnNota.disabled = false;
               }, 1000);
-              // Actualiza el resumen
-              cargarResumenNotas(cursoId);
+              if (typeof cargarResumenNotas === 'function') cargarResumenNotas(cursoId);
             } catch (err) {
               Swal.fire("Error", err.message, "error");
               console.error('Error guardando nota:', err);
+            }
+          }
+        });
+
+        // ELIMINAR NOTA
+        document.querySelectorAll('.btnEliminarNota').forEach(btnDel => {
+          btnDel.onclick = async function () {
+            const alumId = btnDel.getAttribute('data-alum');
+            const confirm = await Swal.fire({
+              title: '¿Eliminar nota?',
+              text: 'Esta acción no se puede deshacer.',
+              icon: 'warning',
+              showCancelButton: true,
+              confirmButtonText: 'Sí, eliminar',
+              cancelButtonText: 'Cancelar',
+              background: "#191927",
+              color: "#fee084"
+            });
+            if (confirm.isConfirmed) {
+              await db
+                .collection('cursos').doc(cursoId)
+                .collection('actividades').doc(actId)
+                .collection('notas').doc(alumId)
+                .delete();
+              document.querySelector(`.nota-alumno-input[data-alum="${alumId}"]`).value = '';
+              Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: 'Nota eliminada',
+                showConfirmButton: false,
+                timer: 900,
+                background: "#fee084",
+                color: "#191927"
+              });
+              if (typeof cargarResumenNotas === 'function') cargarResumenNotas(cursoId);
             }
           }
         });
@@ -572,10 +658,246 @@ async function cargarResumenNotas(cursoId) {
   document.getElementById('resumenNotas').innerHTML = resumenHTML;
 }
 
+// Tab 4: Estadísticas (Asistencias)
+async function cargarTabEstadisticas(cursoId) {
+  const db = window.db || firebase.firestore();
 
-// Tab 5: Estadísticas
-function cargarTabEstadisticas(cursoId) {
-  document.getElementById('tabContenido').innerHTML = `
-    <div class="alert alert-info">Aquí se mostrarán estadísticas rápidas del curso.</div>
+  // Traer alumnos inscritos
+  const alumnosSnap = await db
+    .collection('usuarios')
+    .where('rol', '==', 'alumno')
+    .where('cursosInscritos', 'array-contains', cursoId)
+    .get();
+  const alumnos = alumnosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // Traer asistencias del curso
+  const asistSnap = await db
+    .collection('cursos').doc(cursoId)
+    .collection('asistencias')
+    .orderBy('fecha', 'desc')
+    .get();
+  const asistencias = asistSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // 1. Bloque de registrar asistencia
+  let formHTML = `
+    <div class="mb-3">
+      <h4><i class="fas fa-calendar-check me-2 text-warning"></i>Registrar Asistencia</h4>
+      <div class="row g-2 align-items-end">
+        <div class="col-auto">
+          <label>Fecha</label>
+          <input type="date" class="form-control" id="asistFecha" value="${(new Date()).toISOString().split('T')[0]}">
+        </div>
+        <div class="col-auto">
+          <button class="btn btn-success" id="btnMarcarAsistencia"><i class="fas fa-check"></i> Registrar</button>
+        </div>
+      </div>
+      <div id="asistAlumnosLista" class="mt-3"></div>
+    </div>
   `;
+
+  // 2. Resumen de asistencias
+  let resumenHTML = `
+    <div class="mt-4">
+      <h5 style="color:#fee084"><i class="fas fa-user-check me-2"></i>Resumen de Asistencias</h5>
+      <div class="table-responsive" style="background:#1f1f2e; border-radius:15px;">
+  <table class="table table-bordered table-hover table-sm resumen-notas-table mb-0" style="color:#fff;min-width:500px;">
+          <thead>
+            <tr>
+              <th>Estudiante</th>
+              <th>Asistencias</th>
+              <th>Ausencias</th>
+              <th>% Asistencia</th>
+              <th>Última asistencia</th>
+            </tr>
+          </thead>
+          <tbody>
+  `;
+  // Preprocesar asistencias por alumno
+  const totalClases = asistencias.length;
+  for (const alumno of alumnos) {
+    let asis = 0, aus = 0, ultima = '-';
+    for (const registro of asistencias) {
+      if (registro.asistencias && registro.asistencias[alumno.id]) {
+        asis++;
+        ultima = registro.fecha;
+      } else if (registro.asistencias && registro.asistencias[alumno.id] === false) {
+        aus++;
+      }
+    }
+    const percent = totalClases ? ((asis / totalClases) * 100).toFixed(1) + '%' : '-';
+    resumenHTML += `
+      <tr>
+        <td>${alumno.nombre || alumno.email}</td>
+        <td style="text-align:center">${asis}</td>
+        <td style="text-align:center">${aus}</td>
+        <td style="color:#fee084;font-weight:600;text-align:center">${percent}</td>
+        <td style="text-align:center">${ultima !== '-' ? new Date(ultima).toLocaleDateString() : '-'}</td>
+      </tr>
+    `;
+  }
+  resumenHTML += `
+          </tbody>
+        </table>
+      </div>
+    </div>
+  `;
+
+  // Renderiza todo el tab
+  document.getElementById('tabContenido').innerHTML = `
+    <div class="mb-4">${formHTML}</div>
+    <div id="asistResumen">${resumenHTML}</div>
+  `;
+
+  // --- Lista de asistencias para eliminar ---
+  if (asistencias.length) {
+    let listaHTML = `
+      <div class="mt-4">
+        <h6 style="color:#fee084"><i class="fas fa-trash-alt me-2"></i>Eliminar registro de asistencia</h6>
+        <div class="row g-2">`;
+    for (const registro of asistencias) {
+      listaHTML += `
+        <div class="col-12 col-sm-4 mb-2">
+          <div class="d-flex align-items-center" style="background:#25242f;border-radius:8px;padding:8px 12px;">
+            <span style="flex:1">${new Date(registro.fecha).toLocaleDateString()}</span>
+            <button class="btn btn-danger btn-sm btnEliminarAsistencia" data-fecha="${registro.fecha}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>`;
+    }
+    listaHTML += `</div></div>`;
+    document.getElementById('asistResumen').insertAdjacentHTML('beforeend', listaHTML);
+
+    // Evento eliminar asistencia
+    document.querySelectorAll('.btnEliminarAsistencia').forEach(btn => {
+      btn.onclick = async function () {
+        const fecha = btn.getAttribute('data-fecha');
+        const confirm = await Swal.fire({
+          title: '¿Eliminar asistencia?',
+          text: `Esta acción eliminará el registro de asistencia del ${new Date(fecha).toLocaleDateString()}.`,
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonText: 'Sí, eliminar',
+          cancelButtonText: 'Cancelar',
+          background: "#25242f",
+          color: "#fff",
+        });
+        if (confirm.isConfirmed) {
+          await db.collection('cursos').doc(cursoId)
+            .collection('asistencias').doc(fecha).delete();
+          Swal.fire({
+            toast: true,
+            position: "top-end",
+            icon: "success",
+            title: "Asistencia eliminada",
+            showConfirmButton: false,
+            timer: 1200,
+            background: "#25242f",
+            color: "#191927"
+          });
+          // Recarga el tab para actualizar la vista
+          cargarTabEstadisticas(cursoId);
+        }
+      }
+    });
+  }
+
+  // --- Botón para marcar asistencia con SweetAlert ---
+ // --- Botón para marcar asistencia con SweetAlert, buscador y checkboxes modernos ---
+document.getElementById('btnMarcarAsistencia').onclick = async function (e) {
+  e.preventDefault();
+  const fecha = document.getElementById('asistFecha').value;
+  if (!fecha) return Swal.fire("Selecciona una fecha válida");
+
+  // Traer asistencia existente para esa fecha (si existe)
+  const asistDoc = asistencias.find(a => a.fecha === fecha);
+  let asistMap = asistDoc?.asistencias || {};
+
+  // HTML: Buscador + checkboxes custom
+  let html = `
+    <style>
+      .checklist-alumno {display:flex;align-items:center;margin-bottom:9px;}
+      .checklist-alumno input[type="checkbox"] {display:none;}
+      .checklist-alumno label {
+        background:#232029;color:#fee084; 
+        border-radius: 7px; padding:7px 18px; 
+        cursor:pointer; margin-left:7px; font-weight:500; font-size:1.1rem; 
+        border:2px solid #fee084; transition:.12s;
+        min-width:165px;
+        user-select: none;
+      }
+      .checklist-alumno input[type="checkbox"]:checked + label {
+        background:#1fa37a;color:#fff;border:2px solid #1fa37a;
+        box-shadow:0 2px 14px #2223;
+        font-weight:600;
+        letter-spacing: 0.2px;
+      }
+      .swal2-input { margin-bottom:16px !important; }
+    </style>
+    <input type="text" id="swal-buscar-alumno" class="swal2-input" placeholder="Buscar estudiante...">
+    <div id="swal-lista-alumnos" style="max-height:330px;overflow-y:auto;text-align:left">
+      ${alumnos.map(alumno => {
+        const checked = asistMap[alumno.id] ? 'checked' : '';
+        return `
+          <div class="checklist-alumno">
+            <input type="checkbox" id="swal_asist_${alumno.id}" value="${alumno.id}" ${checked}>
+            <label for="swal_asist_${alumno.id}">${alumno.nombre || alumno.email}</label>
+          </div>
+        `;
+      }).join('')}
+    </div>
+  `;
+
+  // SweetAlert para marcar presentes
+  const { isConfirmed } = await Swal.fire({
+    title: '<span style="color:#fee084;font-size:2rem;font-weight:800">Marcar Asistencia</span>',
+    html: html,
+    confirmButtonText: 'Guardar asistencia',
+    showCancelButton: true,
+    background: "#191927",
+    color: "#fee084",
+    width: 550,
+    customClass: { popup: 'swal-popup-notas' },
+    didOpen: () => {
+      // Buscador en tiempo real
+      const input = document.getElementById('swal-buscar-alumno');
+      input.addEventListener('input', function() {
+        const q = input.value.trim().toLowerCase();
+        document.querySelectorAll('#swal-lista-alumnos .checklist-alumno').forEach(div => {
+          const label = div.querySelector('label').innerText.toLowerCase();
+          div.style.display = label.includes(q) ? '' : 'none';
+        });
+      });
+    }
+  });
+
+  if (isConfirmed) {
+    // Saca los IDs seleccionados
+    let asistencia = {};
+    alumnos.forEach(al => {
+      asistencia[al.id] = document.getElementById(`swal_asist_${al.id}`).checked;
+    });
+
+    // Guarda en Firestore
+    await db.collection('cursos').doc(cursoId)
+      .collection('asistencias').doc(fecha)
+      .set({ fecha, asistencias: asistencia });
+
+    Swal.fire({
+      icon: "success",
+      title: "¡Asistencia guardada!",
+      toast: true,
+      position: "top-end",
+      showConfirmButton: false,
+      timer: 1200,
+      background: "#fee084",
+      color: "#191927"
+    });
+
+    cargarTabEstadisticas(cursoId); // Recarga asistencias y resumen
+  }
+};
+
+
 }
+

@@ -60,7 +60,7 @@
       </div>
 
       <!-- Contenido principal -->
-      <div class="col-md-9 col-lg-10 p-4">
+      <div class="col-md-8 col-lg-10 p-4">
         <div class="d-flex justify-content-between align-items-center mb-4   ">
           <div>
             <h2 id="bienvenida">¡Bienvenido, Alumno! 👋🏻</h2>
@@ -83,7 +83,34 @@
 </div>
 
         <!-- Aquí irán los cards de resumen y cursos -->
-        <div id="cursos-container" class="row  "></div>
+        <div id="cursos-container" class="row">
+  <!-- Aquí seguirá tu select de curso si tienes varios -->
+  <div id="panelAlumnoTabs" class="panel-alumno mt-3">
+    <ul class="nav nav-tabs tabs-custom mb-4" id="tabsAlumno">
+  <li class="nav-item">
+    <a class="nav-link active" data-tab="resumen" href="#"><i class="fas fa-book-open me-1"></i>Resumen</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-tab="temario" href="#"><i class="fas fa-list me-1"></i>Temario</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-tab="recursos" href="#"><i class="fas fa-folder-open me-1"></i>Recursos</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-tab="actividades" href="#"><i class="fas fa-tasks me-1"></i>Actividades y Notas</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-tab="asistencias" href="#"><i class="fas fa-calendar-check me-1"></i>Asistencias</a>
+  </li>
+  <li class="nav-item">
+    <a class="nav-link" data-tab="certificados" href="#"><i class="fas fa-certificate me-1"></i>Certificados</a>
+  </li>
+</ul>
+
+    <div id="contenidoTabAlumno"></div>
+  </div>
+</div>
+
       </div>
     </div>
   </div>
@@ -141,6 +168,8 @@
 <script>
   emailjs.init('lG1j1fSNUvKU4_Upr'); // este ID lo consigues en tu dashboard
 </script>
+<script src="../js/administracion/notificaciones.js"></script>
+<script src="../js/administracion/panelAlumno.js"></script>
 
   
 </body>

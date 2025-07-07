@@ -37,7 +37,7 @@ function renderMisCursos(cursos) {
   } else {
     cursos.forEach(curso => {
       html += `
-        <div class="col-md-12 col-lg-6">
+        <div class="col-md-12 col-lg-8">
           <div class="card card-curso-pro shadow h-100">
             <div class="card-body cardCursoContenido d-flex flex-column align-items-start">
               <h5 class="card-title estilosH5MisCursos mb-3" ">

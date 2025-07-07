@@ -79,8 +79,9 @@
 }           
 
 .inputElegirCurso:focus {
-  border-color: #f5c518; /* color dorado como en tus botones */
+  border-color: #d5af49; /* color dorado como en tus botones */
   box-shadow: 0 0 0 0.15rem rgba(245, 197, 24, 0.25);
+  
   
 }
 
@@ -257,4 +258,46 @@
   font-size: 16px;
   font-weight: bold;
   transition: all 0.3s ease;
+}
+
+
+/* Tabs Custom Style */
+.tabs-custom .nav-link {
+  color: #d5af49;
+  background: #23232e;
+  border: none;
+  margin-right: 6px;
+  border-radius: 18px 18px 0 0;
+  padding: 10px 20px;
+  font-weight: 600;
+  font-size: 1.05rem;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 4px 0 rgba(34,34,64,0.08);
+}
+
+.tabs-custom .nav-link.active, .tabs-custom .nav-link:focus {
+  background: #d5af49;
+  color: #191927;
+  font-weight: 700;
+  box-shadow: 0 4px 18px 0 rgba(254,224,132,0.10);
+  border-bottom: 3px solid #d5af49;
+}
+
+.tabs-custom .nav-link:hover {
+  color: #191927;
+  background: #d5af49;
+}
+
+/* Para móviles: los tabs scrollean si no caben */
+@media (max-width: 700px) {
+  .tabs-custom {
+    overflow-x: auto;
+    white-space: nowrap;
+    flex-wrap: nowrap;
+    scrollbar-width: thin;
+  }
+  .tabs-custom .nav-item {
+    display: inline-block;
+    min-width: 130px;
+  }
 }

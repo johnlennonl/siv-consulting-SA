@@ -1036,3 +1036,59 @@ ul.list-group.mt-2 {
     padding: 0.4em 0.3em;
   }
 }
+
+
+/* Estilo para los checkboxes dentro del SweetAlert */
+.swal-asist-checkbox input[type="checkbox"] {
+  display: none;
+}
+.swal-asist-checkbox label {
+  display: inline-block;
+  background: #25242f;
+  color: #fff;
+  border-radius: 8px;
+  padding: 7px 15px;
+  margin: 4px 10px 4px 0;
+  cursor: pointer;
+  border: 2px solid #1fa37a;
+  font-weight: 500;
+  min-width: 125px;
+  text-align: center;
+  transition: .13s;
+}
+.swal-asist-checkbox input[type="checkbox"]:checked + label {
+  background: #1fa37a;
+  color: #fff;
+  border: 2px solid #fee084;
+  box-shadow: 0 2px 9px #18192788;
+}
+
+.swal-asist-checkbox-list {
+  max-height: 350px;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 600px) {
+  .resumen-notas-table {
+    font-size: 0.98rem;
+    min-width: 520px !important;    /* Mantiene tamaño legible */
+  }
+  .resumen-notas-table th, .resumen-notas-table td {
+    padding: 0.44em 0.7em !important;
+    white-space: nowrap;
+    border-radius: 0 !important;
+  }
+  /* Opcional: Oculta columna de % asistencia y ausencias en móvil para más espacio */
+  .resumen-notas-table th:nth-child(3),
+  .resumen-notas-table td:nth-child(3),
+  .resumen-notas-table th:nth-child(4),
+  .resumen-notas-table td:nth-child(4) {
+    display: none;
+  }
+  .table-responsive {
+    border-radius: 12px !important;
+    box-shadow: 0 2px 22px #1113;
+  }
+}
