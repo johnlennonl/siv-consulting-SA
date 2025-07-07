@@ -307,6 +307,7 @@ async function cargarTabTemario(cursoId) {
     }
   });
 }
+
 // Tab 4: Calificaciones y Resumen
 async function cargarTabCalificaciones(cursoId) {
   const db = window.db || firebase.firestore();
@@ -426,160 +427,208 @@ async function cargarTabCalificaciones(cursoId) {
   });
 
   // Calificar actividad (por alumno)
-  document.querySelectorAll('.btnCalificarActividad').forEach(btn => {
-    btn.onclick = async function () {
-      const actId = this.getAttribute('data-id');
-      const tituloAct = this.getAttribute('data-titulo');
+  // Calificar actividad (por alumno, versión mejorada con respuestas)
+document.querySelectorAll('.btnCalificarActividad').forEach(btn => {
+  btn.onclick = async function () {
+    const actId = this.getAttribute('data-id');
+    const tituloAct = this.getAttribute('data-titulo');
 
-      // Traer alumnos
-      const alumnosSnap = await db
-        .collection('usuarios')
-        .where('rol', '==', 'alumno')
-        .where('cursosInscritos', 'array-contains', cursoId)
-        .get();
-      const alumnos = alumnosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    // Traer alumnos
+    const alumnosSnap = await db
+      .collection('usuarios')
+      .where('rol', '==', 'alumno')
+      .where('cursosInscritos', 'array-contains', cursoId)
+      .get();
+    const alumnos = alumnosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
-      // Traer notas existentes
-      const notasSnap = await db
-        .collection('cursos').doc(cursoId)
-        .collection('actividades').doc(actId)
-        .collection('notas').get();
-      const notas = {};
-      notasSnap.forEach(n => notas[n.id] = n.data().nota);
+    // Traer notas y respuestas
+    const notasSnap = await db
+      .collection('cursos').doc(cursoId)
+      .collection('actividades').doc(actId)
+      .collection('notas').get();
+    const notas = {};
+    const respuestas = {};
+    notasSnap.forEach(n => {
+      notas[n.id] = n.data().nota;
+      respuestas[n.id] = n.data().respuesta || '';
+    });
 
-      // HTML para calificar
-      let html = `
-        <div class="swal-tabla-calif">
-          <table style="width:100%;">
-            <thead>
-              <tr style="border-bottom:1px solid #333">
-                <th style="color:#fee084;text-align:left;">Alumno</th>
-                <th style="color:#fee084;">Nota</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-      `;
-      for (const alumno of alumnos) {
-        html += `
-          <tr>
-            <td style="color:#fff;font-weight:500">${alumno.nombre || alumno.email}</td>
-            <td>
-              <input type="number" min="0" max="20" step="0.1"
-                class="nota-alumno-input"
-                style="width:70px;background:#181927;color:#fee084;border:1px solid #444;border-radius:7px;text-align:center"
-                value="${notas[alumno.id] !== undefined ? notas[alumno.id] : ''}"
-                data-alum="${alumno.id}">
-            </td>
-            <td>
-              <button class="btnGuardarNota" style="background:#1fa37a;color:#fff;border:none;padding:3px 9px;border-radius:7px" data-alum="${alumno.id}" title="Guardar nota">
-                <i class="fas fa-save"></i>
-              </button>
-              <button class="btnEliminarNota" style="background:#e94343;color:#fff;border:none;padding:3px 9px;border-radius:7px;margin-left:4px" data-alum="${alumno.id}" title="Eliminar nota">
-                <i class="fas fa-trash"></i>
-              </button>
-            </td>
-          </tr>
-        `;
-      }
-      html += `</tbody></table></div>`;
+    // HTML para calificar mostrando respuesta
+    let html = `
+      <div class="swal-tabla-calif" style="max-height:400px;overflow-y:auto">
+        <table style="width:100%;">
+          <thead>
+            <tr style="border-bottom:1px solid #333">
+              <th style="color:#fee084;text-align:left;">Alumno</th>
+              <th style="color:#fee084;">Respuesta</th>
+              <th style="color:#fee084;">Nota</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+    `;
+   for (const alumno of alumnos) {
+  let tieneRespuesta = !!respuestas[alumno.id];
 
+  html += `
+    <tr>
+      <td style="color:#fff;font-weight:500;min-width:120px">${alumno.nombre || alumno.email}</td>
+      <td style="font-size:0.97rem;max-width:220px;word-break:break-word;color:#fee084;">
+        <div style="background:#191927;border-radius:7px;padding:5px 8px;text-align:center;">
+          ${
+            tieneRespuesta
+              ? `<button class="btn btn-link btn-sm verRespuestaBtn" data-respuesta="${encodeURIComponent(respuestas[alumno.id])}" style="color:#fee084;padding:0 6px;font-weight:bold; text-decoration:underline">VER RESPUESTA </button>`
+              : '<span style="color:#888">No enviado</span>'
+          }
+        </div>
+      </td>
+      <td>
+        <input type="number" min="0" max="20" step="0.1"
+          class="nota-alumno-input"
+          style="width:70px;background:#181927;color:#fee084;border:1px solid #444;border-radius:7px;text-align:center"
+          value="${notas[alumno.id] !== undefined ? notas[alumno.id] : ''}"
+          data-alum="${alumno.id}">
+      </td>
+      <td>
+        <button class="btnGuardarNota" style="background:#1fa37a;color:#fff;border:none;padding:3px 9px;border-radius:7px" data-alum="${alumno.id}" title="Guardar nota">
+          <i class="fas fa-save"></i>
+        </button>
+        <button class="btnEliminarNota" style="background:#e94343;color:#fff;border:none;padding:3px 9px;border-radius:7px;margin-left:4px" data-alum="${alumno.id}" title="Eliminar nota">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  `;
+}
+
+html += `</tbody></table></div>`;
+
+Swal.fire({
+  title: `<div class="swal-titulo-actividad" style="color:#fee084;font-weight:900;font-size:2rem;">${tituloAct.toUpperCase()}</div>`,
+  html: html,
+  width: 700,
+  background: "#191927",
+  color: "#fee084",
+  showCloseButton: true,
+  showConfirmButton: false,
+  customClass: {
+    popup: 'swal-popup-notas'
+  }
+});
+
+// --- Botón "Ver" para respuestas largas ---
+setTimeout(() => {
+  document.querySelectorAll('.verRespuestaBtn').forEach(btn => {
+    btn.onclick = function() {
+      const texto = decodeURIComponent(this.dataset.respuesta);
       Swal.fire({
-        title: `<div class="swal-titulo-actividad" style="color:#fee084;font-weight:900;font-size:2rem;">${tituloAct.toUpperCase()}</div>`,
-        html: html,
-        width: 540,
+        title: "Respuesta del Alumno",
+        html: `<div style="text-align:left;max-height:350px;overflow:auto;padding:8px 2px;"><pre style="white-space:pre-wrap;font-size:1rem;">${texto}</pre></div>`,
         background: "#191927",
         color: "#fee084",
-        showCloseButton: true,
-        showConfirmButton: false,
-        customClass: {
-          popup: 'swal-popup-notas'
+        confirmButtonText: "Cerrar",
+        width: 600,
+      });
+    }
+  });
+}, 300);
+
+
+    // Evento guardar/eliminar nota
+    setTimeout(() => {
+      // GUARDAR NOTA
+      document.querySelectorAll('.btnGuardarNota').forEach(btnNota => {
+        btnNota.onclick = async function () {
+          const alumId = btnNota.getAttribute('data-alum');
+          const notaVal = document.querySelector(`.nota-alumno-input[data-alum="${alumId}"]`).value;
+          let nota = notaVal ? parseFloat(notaVal) : null;
+          if (nota < 0) nota = 0;
+          if (nota > 20) nota = 20;
+          try {
+            await db
+              .collection('cursos').doc(cursoId)
+              .collection('actividades').doc(actId)
+              .collection('notas').doc(alumId)
+              .set({ nota, respuesta: respuestas[alumId] }, { merge: true });
+
+            // Opcional: Notifica al alumno que ya fue calificado
+            await db.collection('usuarios').doc(alumId)
+              .collection('notificaciones').add({
+                mensaje: `Se ha calificado tu actividad <b>${tituloAct}</b> con <b>${nota}</b>.`,
+                fecha: firebase.firestore.Timestamp.now(),
+                leido: false,
+                cursoId,
+                actividadId: actId
+              });
+
+            btnNota.innerHTML = '<i class="fas fa-check"></i>';
+            btnNota.style.background = "#fee084";
+            btnNota.style.color = "#191927";
+            btnNota.disabled = true;
+            // Toast
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: 'Nota actualizada',
+              showConfirmButton: false,
+              timer: 900,
+              background: "#fee084",
+              color: "#191927"
+            });
+            setTimeout(() => {
+              btnNota.innerHTML = '<i class="fas fa-save"></i>';
+              btnNota.style.background = "#1fa37a";
+              btnNota.style.color = "#fff";
+              btnNota.disabled = false;
+            }, 1000);
+            if (typeof cargarResumenNotas === 'function') cargarResumenNotas(cursoId);
+          } catch (err) {
+            Swal.fire("Error", err.message, "error");
+            console.error('Error guardando nota:', err);
+          }
         }
       });
 
-      // Evento guardar/eliminar nota
-      setTimeout(() => {
-        // GUARDAR NOTA
-        document.querySelectorAll('.btnGuardarNota').forEach(btnNota => {
-          btnNota.onclick = async function () {
-            const alumId = btnNota.getAttribute('data-alum');
-            const notaVal = document.querySelector(`.nota-alumno-input[data-alum="${alumId}"]`).value;
-            let nota = notaVal ? parseFloat(notaVal) : null;
-            if (nota < 0) nota = 0;
-            if (nota > 20) nota = 20;
-            try {
-              await db
-                .collection('cursos').doc(cursoId)
-                .collection('actividades').doc(actId)
-                .collection('notas').doc(alumId)
-                .set({ nota });
-              btnNota.innerHTML = '<i class="fas fa-check"></i>';
-              btnNota.style.background = "#fee084";
-              btnNota.style.color = "#191927";
-              btnNota.disabled = true;
-              // Toast
-              Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Nota actualizada',
-                showConfirmButton: false,
-                timer: 900,
-                background: "#fee084",
-                color: "#191927"
-              });
-              setTimeout(() => {
-                btnNota.innerHTML = '<i class="fas fa-save"></i>';
-                btnNota.style.background = "#1fa37a";
-                btnNota.style.color = "#fff";
-                btnNota.disabled = false;
-              }, 1000);
-              if (typeof cargarResumenNotas === 'function') cargarResumenNotas(cursoId);
-            } catch (err) {
-              Swal.fire("Error", err.message, "error");
-              console.error('Error guardando nota:', err);
-            }
-          }
-        });
-
-        // ELIMINAR NOTA
-        document.querySelectorAll('.btnEliminarNota').forEach(btnDel => {
-          btnDel.onclick = async function () {
-            const alumId = btnDel.getAttribute('data-alum');
-            const confirm = await Swal.fire({
-              title: '¿Eliminar nota?',
-              text: 'Esta acción no se puede deshacer.',
-              icon: 'warning',
-              showCancelButton: true,
-              confirmButtonText: 'Sí, eliminar',
-              cancelButtonText: 'Cancelar',
-              background: "#191927",
-              color: "#fee084"
+      // ELIMINAR NOTA
+      document.querySelectorAll('.btnEliminarNota').forEach(btnDel => {
+        btnDel.onclick = async function () {
+          const alumId = btnDel.getAttribute('data-alum');
+          const confirm = await Swal.fire({
+            title: '¿Eliminar nota?',
+            text: 'Esta acción no se puede deshacer.',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Sí, eliminar',
+            cancelButtonText: 'Cancelar',
+            background: "#191927",
+            color: "#fee084"
+          });
+          if (confirm.isConfirmed) {
+            await db
+              .collection('cursos').doc(cursoId)
+              .collection('actividades').doc(actId)
+              .collection('notas').doc(alumId)
+              .update({ nota: firebase.firestore.FieldValue.delete() });
+            document.querySelector(`.nota-alumno-input[data-alum="${alumId}"]`).value = '';
+            Swal.fire({
+              toast: true,
+              position: 'top-end',
+              icon: 'success',
+              title: 'Nota eliminada',
+              showConfirmButton: false,
+              timer: 900,
+              background: "#fee084",
+              color: "#191927"
             });
-            if (confirm.isConfirmed) {
-              await db
-                .collection('cursos').doc(cursoId)
-                .collection('actividades').doc(actId)
-                .collection('notas').doc(alumId)
-                .delete();
-              document.querySelector(`.nota-alumno-input[data-alum="${alumId}"]`).value = '';
-              Swal.fire({
-                toast: true,
-                position: 'top-end',
-                icon: 'success',
-                title: 'Nota eliminada',
-                showConfirmButton: false,
-                timer: 900,
-                background: "#fee084",
-                color: "#191927"
-              });
-              if (typeof cargarResumenNotas === 'function') cargarResumenNotas(cursoId);
-            }
+            if (typeof cargarResumenNotas === 'function') cargarResumenNotas(cursoId);
           }
-        });
-      }, 400);
-    };
-  });
+        }
+      });
+    }, 400);
+  }
+});
+
 
   // 6. Cargar resumen de notas (al final)
   cargarResumenNotas(cursoId);

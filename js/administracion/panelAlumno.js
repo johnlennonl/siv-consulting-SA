@@ -110,9 +110,104 @@ temarioSnap.forEach((doc) => {
 
 
     // 3. Actividades y notas
-    async function renderActividadesNotas(idCurso, alumnoId) {
-      tabContenido.innerHTML = `<div class="alert alert-info">Actividades y notas en construcción.</div>`;
+  // 3. Actividades y notas
+async function renderActividadesNotas(idCurso, alumnoId) {
+  const db = firebase.firestore();
+  const tabContenido = document.getElementById("contenidoTabAlumno");
+  tabContenido.innerHTML = `<div class="text-center text-muted">Cargando actividades...</div>`;
+
+  // Traer actividades
+  const actsSnap = await db.collection("cursos").doc(idCurso).collection("actividades").get();
+
+  if (actsSnap.empty) {
+    tabContenido.innerHTML = `<div class="alert alert-warning">No hay actividades asignadas aún.</div>`;
+    return;
+  }
+
+  let html = '<div class="list-group">';
+  // Usamos Promise.all para traer respuestas por cada actividad (en paralelo)
+  const acts = await Promise.all(actsSnap.docs.map(async doc => {
+    const act = doc.data();
+    const actId = doc.id;
+
+    // Formatear fecha de entrega
+    let fechaEntrega = "No definida";
+    if (act.fecha) {
+      if (typeof act.fecha === "object" && act.fecha.seconds) {
+        const date = new Date(act.fecha.seconds * 1000);
+        fechaEntrega = date.toLocaleDateString("es-VE", { year: "numeric", month: "long", day: "numeric" });
+      } else if (typeof act.fecha === "string") {
+        fechaEntrega = new Date(act.fecha).toLocaleDateString("es-VE", { year: "numeric", month: "long", day: "numeric" });
+      }
     }
+
+    // Buscar si ya tiene respuesta
+    const respSnap = await db.collection("cursos").doc(idCurso)
+      .collection("actividades").doc(actId)
+      .collection("notas").doc(alumnoId).get();  // <-- Cambiado aquí!
+    const respuesta = respSnap.exists ? respSnap.data() : null;
+
+    // Estado de la respuesta (si ya envió, textarea disabled)
+    const yaRespondio = !!respuesta?.respuesta;
+    const nota = respuesta?.nota ?? null;
+    const retro = respuesta?.retroalimentacion ?? null;
+
+    return `
+      <div class="list-group-item bg-dark text-white mb-4 border rounded-3 shadow-sm">
+        <h5 class="fw-bold mb-2"><i class="fas fa-file-alt me-2"></i>${(act.titulo || "Sin título").toUpperCase()}</h5>
+        <p class="mb-2">${act.descripcion || "Sin descripción"}</p>
+        <small class="text-info">Fecha de entrega: ${fechaEntrega}</small>
+        <div class="mt-3">
+          <label for="respuesta_${actId}" class="form-label fw-bold">Tu respuesta:</label>
+          <textarea id="respuesta_${actId}" rows="4" class="form-control bg-light" placeholder="Escribe tu respuesta aquí..." ${yaRespondio ? "disabled" : ""}>${respuesta?.respuesta || ""}</textarea>
+          <button class="btn btn-warning mt-2 fw-bold enviar-respuesta-btn" style="float:right" data-actid="${actId}" ${yaRespondio ? "disabled" : ""}>${yaRespondio ? "Respuesta enviada" : "Enviar respuesta"}</button>
+        </div>
+        ${nota !== null ? `<div class="mt-3 alert alert-success mb-0">Nota: <b>${nota}</b> ${retro ? `<br><span class="text-muted">Observación: ${retro}</span>` : ""}</div>` : ""}
+      </div>
+    `;
+  }));
+
+  html += acts.join("") + "</div>";
+  tabContenido.innerHTML = html;
+
+  // Listener a los botones de enviar respuesta
+  tabContenido.querySelectorAll(".enviar-respuesta-btn").forEach(btn => {
+    btn.onclick = async function () {
+      const actId = this.dataset.actid;
+      const textarea = document.getElementById(`respuesta_${actId}`);
+      const value = textarea.value.trim();
+      if (!value) {
+        Swal.fire("Responde la actividad antes de enviar");
+        return;
+      }
+      this.disabled = true;
+      textarea.disabled = true;
+      await db.collection("cursos").doc(idCurso)
+        .collection("actividades").doc(actId)
+        .collection("notas").doc(alumnoId)   // <-- Cambiado aquí también!
+        .set({
+          respuesta: value,
+          fechaEnvio: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+      Swal.fire({
+        icon: "success",
+        title: "¡Respuesta enviada!",
+        text: "Tu respuesta fue enviada correctamente.",
+        timer: 1600,
+        showConfirmButton: false,
+        toast: true,
+        position: "top-end",
+        background: "#25242f",
+        color: "#fee084"
+      });
+      this.textContent = "Respuesta enviada";
+    };
+  });
+}
+
+
+
+
 
     // 4. Recursos
     // --- Tab Recursos (Diseño: Título + Botón al lado) ---

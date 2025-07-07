@@ -301,3 +301,26 @@
     min-width: 130px;
   }
 }
+
+
+
+/*** Actividades ****/
+
+.form-control {
+  background: #191927;
+  color: #0a0a0a;
+  border: 1.5px solid #fee084;
+  border-radius: 14px;
+  font-size: 1.06rem;
+  box-shadow: none;
+  transition: border 0.2s;
+}
+.form-control:focus {
+  border-color: #f7b928;
+  outline: none;
+  background: #23232e;
+  color: #0c0c0c;
+}
+
+
+
