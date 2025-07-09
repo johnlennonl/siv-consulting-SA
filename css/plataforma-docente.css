@@ -93,22 +93,22 @@ body, html {
 }
 
 /* Badge Notificaciones */
-#notifCountSidebar {
-  margin-left: .3em;
+/* #notifCountSidebar { */
+  /* margin-left: .3em;
   font-size: .93em;
   padding: .25em .65em;
-  background: #e83e3e;
+  background: #111111;
   color: #fff;
   font-weight: 700;
   box-shadow: 0 2px 8px #0002;
 }
 
 /* Ajuste para que el badge no desborde en mobile */
-#linkNotificaciones {
+/* #linkNotificaciones {
   min-width: 0;
   justify-content: space-between;
   gap: .7em;
-}
+} */ 
 
 /* ================= HEADER MOBILE =============== */
 .admin-mobile-header {
@@ -852,13 +852,13 @@ ul.list-group.mt-2 {
 #formAgregarRecurso input.form-control {
   
   border: 1px solid #36385b;
-  color: #fff;
+  color: #0a0a0a;
   border-radius: 9px;
 }
 #formAgregarRecurso input.form-control:focus {
   border-color: #fee084;
-  
-  color: #fff;
+  color: #1a1919;
+  font-weight: 500;
 }
 #formAgregarRecurso button.btn-success {
   color: #222;
@@ -1059,7 +1059,7 @@ ul.list-group.mt-2 {
 .swal-asist-checkbox input[type="checkbox"]:checked + label {
   background: #1fa37a;
   color: #fff;
-  border: 2px solid #fee084;
+  border: 2px solid #e8bb3f;
   box-shadow: 0 2px 9px #18192788;
 }
 
@@ -1092,3 +1092,36 @@ ul.list-group.mt-2 {
     box-shadow: 0 2px 22px #1113;
   }
 }
+
+
+
+
+#notifCountSidebar {
+  background: #d4382f;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 1.14em;
+  min-width: 26px;
+  min-height: 24px;
+  display: inline-block;
+  text-align: center;
+  line-height: 23px;
+  font-weight: bold;
+  position: relative;
+  top: 2px;
+  box-shadow: 0 1px 5px #19192770;
+  transition: 0.15s;
+}
+
+.btnEliminarNotif{
+  width: 30px;
+  border-radius: 55%;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-left: 10px;
+  color: #da1818;
+  font-size: 1.2rem;
+  
+}
+

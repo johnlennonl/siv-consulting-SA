@@ -153,56 +153,124 @@ async function renderActividadesNotas(idCurso, alumnoId) {
     const retro = respuesta?.retroalimentacion ?? null;
 
     return `
-      <div class="list-group-item bg-dark text-white mb-4 border rounded-3 shadow-sm">
-        <h5 class="fw-bold mb-2"><i class="fas fa-file-alt me-2"></i>${(act.titulo || "Sin título").toUpperCase()}</h5>
-        <p class="mb-2">${act.descripcion || "Sin descripción"}</p>
-        <small class="text-info">Fecha de entrega: ${fechaEntrega}</small>
-        <div class="mt-3">
-          <label for="respuesta_${actId}" class="form-label fw-bold">Tu respuesta:</label>
-          <textarea id="respuesta_${actId}" rows="4" class="form-control bg-light" placeholder="Escribe tu respuesta aquí..." ${yaRespondio ? "disabled" : ""}>${respuesta?.respuesta || ""}</textarea>
-          <button class="btn btn-warning mt-2 fw-bold enviar-respuesta-btn" style="float:right" data-actid="${actId}" ${yaRespondio ? "disabled" : ""}>${yaRespondio ? "Respuesta enviada" : "Enviar respuesta"}</button>
-        </div>
-        ${nota !== null ? `<div class="mt-3 alert alert-success mb-0">Nota: <b>${nota}</b> ${retro ? `<br><span class="text-muted">Observación: ${retro}</span>` : ""}</div>` : ""}
-      </div>
-    `;
+  <div class="list-group-item bg-dark text-white mb-4 border rounded-3 shadow-sm" style="position:relative;padding:1.5em">
+    <h5 class="fw-bold mb-2"><i class="fas fa-file-alt me-2"></i>${(act.titulo || "Sin título").toUpperCase()}</h5>
+    <p class="mb-2">${act.descripcion || "Sin descripción"}</p>
+    <div class="d-flex flex-wrap align-items-center mb-1" style="gap:1.2em;">
+      <small class="text-info" style="font-size:1.07em">Fecha de entrega: ${fechaEntrega}</small>
+      ${
+        nota !== null 
+        ? `<span class="badge border-0" style="
+              background:#d7fbe9;
+              color:#169151;
+              padding:8px 20px;
+              font-size:1.15em;
+              font-weight:600;
+              border-radius:10px;
+              box-shadow:0 1px 9px #1fa37a22;
+              margin-left:7px;
+              letter-spacing:0.2px;
+              vertical-align:middle;
+          ">
+            <i class="fas fa-medal me-1 text-warning"></i> Nota: <span style="font-size:1.19em">${nota}</span>
+          </span>`
+        : ''
+      }
+    </div>
+    ${
+      retro 
+        ? `<div style="background:#2d2d39;padding:10px 15px;border-radius:9px;margin-bottom:6px;margin-top:3px;color:#ffc107;font-size:1.06em;display:flex;align-items:center;gap:6px;">
+              <i class="fas fa-comment-dots"></i>
+              <span><b>Observación:</b> ${retro}</span>
+          </div>`
+        : ''
+    }
+    <div class="mt-3">
+      <label for="respuesta_${actId}" class="form-label fw-bold">Tu respuesta:</label>
+      <textarea id="respuesta_${actId}" rows="4" class="form-control bg-light" placeholder="Escribe tu respuesta aquí..." ${yaRespondio ? "disabled" : ""}>${respuesta?.respuesta || ""}</textarea>
+      <button class="btn btn-warning mt-2 fw-bold enviar-respuesta-btn" style="float:right" data-actid="${actId}" ${yaRespondio ? "disabled" : ""}>${yaRespondio ? "Respuesta enviada" : "Enviar respuesta"}</button>
+    </div>
+  </div>
+`;
+
   }));
 
   html += acts.join("") + "</div>";
   tabContenido.innerHTML = html;
 
   // Listener a los botones de enviar respuesta
-  tabContenido.querySelectorAll(".enviar-respuesta-btn").forEach(btn => {
-    btn.onclick = async function () {
-      const actId = this.dataset.actid;
-      const textarea = document.getElementById(`respuesta_${actId}`);
-      const value = textarea.value.trim();
-      if (!value) {
-        Swal.fire("Responde la actividad antes de enviar");
-        return;
+// Listener a los botones de enviar respuesta
+tabContenido.querySelectorAll(".enviar-respuesta-btn").forEach(btn => {
+  btn.onclick = async function () {
+    const actId = this.dataset.actid;
+    const textarea = document.getElementById(`respuesta_${actId}`);
+    const value = textarea.value.trim();
+    if (!value) {
+      Swal.fire("Responde la actividad antes de enviar");
+      return;
+    }
+    this.disabled = true;
+    textarea.disabled = true;
+
+    // GUARDAR la respuesta del alumno
+    await db.collection("cursos").doc(idCurso)
+      .collection("actividades").doc(actId)
+      .collection("notas").doc(alumnoId)
+      .set({
+        respuesta: value,
+        fechaEnvio: firebase.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+    // --- NOTIFICAR AL DOCENTE ---
+    try {
+      // 1. Trae info del curso y docente
+      const cursoDoc = await db.collection("cursos").doc(idCurso).get();
+      const docenteId = cursoDoc.data().docenteId; // Debe existir este campo
+
+      if (docenteId) {
+        // 2. Info del alumno y actividad
+        const alumnoDoc = await db.collection("usuarios").doc(alumnoId).get();
+        const alumnoNombre = alumnoDoc.data().nombre || alumnoDoc.data().email;
+
+        const actDoc = await db.collection("cursos").doc(idCurso)
+            .collection("actividades").doc(actId).get();
+        const actTitulo = actDoc.data().titulo || "Actividad";
+
+        // 3. Agrega la notificación SOLO AQUÍ
+        await db.collection("usuarios").doc(docenteId)
+          .collection("notificaciones").add({
+            tipo: "respuesta_actividad",
+            mensaje: `El alumno <b>${alumnoNombre}</b> respondió la actividad <b>${actTitulo}</b>.`,
+            alumnoId,
+            alumnoNombre,
+            cursoId: idCurso,
+            actividadId: actId,
+            actividadTitulo: actTitulo,
+            fecha: firebase.firestore.Timestamp.now(),
+            leida: false   // OJO: "leida" para que cuente el badge
+          });
       }
-      this.disabled = true;
-      textarea.disabled = true;
-      await db.collection("cursos").doc(idCurso)
-        .collection("actividades").doc(actId)
-        .collection("notas").doc(alumnoId)   // <-- Cambiado aquí también!
-        .set({
-          respuesta: value,
-          fechaEnvio: firebase.firestore.FieldValue.serverTimestamp()
-        }, { merge: true });
-      Swal.fire({
-        icon: "success",
-        title: "¡Respuesta enviada!",
-        text: "Tu respuesta fue enviada correctamente.",
-        timer: 1600,
-        showConfirmButton: false,
-        toast: true,
-        position: "top-end",
-        background: "#25242f",
-        color: "#fee084"
-      });
-      this.textContent = "Respuesta enviada";
-    };
-  });
+    } catch (err) {
+      console.error("Error enviando notificación a docente:", err);
+    }
+    // --------------------------
+
+    Swal.fire({
+      icon: "success",
+      title: "¡Respuesta enviada!",
+      text: "Tu respuesta fue enviada correctamente.",
+      timer: 1600,
+      showConfirmButton: false,
+      toast: true,
+      position: "top-end",
+      background: "#25242f",
+      color: "#fee084"
+    });
+    this.textContent = "Respuesta enviada";
+  };
+});
+
+
 }
 
 

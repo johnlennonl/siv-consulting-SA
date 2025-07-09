@@ -316,7 +316,7 @@
   transition: border 0.2s;
 }
 .form-control:focus {
-  border-color: #f7b928;
+  border-color: #d6bb62;
   outline: none;
   background: #23232e;
   color: #0c0c0c;
