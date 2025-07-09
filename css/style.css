@@ -634,10 +634,11 @@ header {
   overflow: hidden;
   white-space: nowrap;
   width: 100%;
-  animation: marquee 15s linear infinite;
+  animation: marquee 25s linear infinite;
   font-weight: 500;
   font-size: 1.06rem;
   color: #fff;
+  letter-spacing: 0.2px;
 }
 .tendencias-marquee span {
   display: inline-block;
@@ -658,8 +659,8 @@ header {
 @media (max-width: 576px) {
   .siv-header { height: 58vh; min-height: 230px;}
   .siv-header .carousel-item img { height: 50vh; }
-  .siv-header-overlay { padding-top: 2rem; }
-  .siv-header-overlay h1 { font-size: 1.6rem; }
+  .siv-header-overlay { padding-top: 1.4rem; }
+  .siv-header-overlay h1 { font-size: 2rem; }
   .siv-header-overlay p { font-size: .80rem;}
   .tendencias-container { font-size: 0.82rem;}
   .tendencias-marquee span {display: none;}
