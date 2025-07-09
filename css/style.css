@@ -651,17 +651,19 @@ header {
 /* RESPONSIVE */
 @media (max-width: 992px) {
   .siv-header { height: 50vh; }
-  .siv-header .carousel-item img { height: 50vh; }
-  .siv-header-overlay h1 { font-size: 2rem; }
+  .siv-header .carousel-item img { height: 55vh; }
+  .siv-header-overlay h1 { font-size: 3rem; }
   .siv-header-overlay p { font-size: 1.08rem; }
 }
 @media (max-width: 576px) {
-  .siv-header { height: 37vh; min-height: 230px;}
-  .siv-header .carousel-item img { height: 37vh; }
+  .siv-header { height: 58vh; min-height: 230px;}
+  .siv-header .carousel-item img { height: 50vh; }
   .siv-header-overlay { padding-top: 2rem; }
-  .siv-header-overlay h1 { font-size: 1.3rem; }
-  .siv-header-overlay p { font-size: .95rem;}
+  .siv-header-overlay h1 { font-size: 1.6rem; }
+  .siv-header-overlay p { font-size: .80rem;}
   .tendencias-container { font-size: 0.82rem;}
+  .tendencias-marquee span {display: none;}
+  .btnIrCursos { font-size: 0.8rem !important; }
 }
 
 
@@ -687,16 +689,6 @@ header {
   }
   .tendencia-img {
     max-height: 180px !important;
-  }
-}
-@media (max-width: 576px) {
-  .tendencias-container {
-    /* Puedes ajustar entre 16px y 32px según lo que quieras bajar */
-    margin-top: 28px !important;
-    /* Si usas absolute, mejor cambia a static en mobile */
-    position: static !important;
-    /* Opcional: agrega border-radius si lo quieres redondeado */
-    border-radius: 0 0 14px 14px;
   }
 }
 

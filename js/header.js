@@ -31,28 +31,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
       <!-- OVERLAY/HERO -->
       <div class="siv-header-overlay text-center text-white d-flex flex-column justify-content-center align-items-center">
-        <h1 class="fw-bold mb-3" data-aos="fade-down" data-aos-delay="100">
+        <h1 class="fw-bold mb-3 tituloHeader" data-aos="fade-down" data-aos-delay="100">
           Impulsando el Talento.<br>Transformando la Industria.
         </h1>
         <p class="lead mb-4" data-aos="fade-up" data-aos-delay="300">
           Asesoría Técnica y Formación de Profesionales para un futuro más sólido.
         </p>
-        <a href="pages/cursos-tecnicos.html" class="btn btn-lg btn-custom shadow-lg px-5" data-aos="zoom-in" data-aos-delay="500">
+        <a href="pages/cursos-tecnicos.html" class="btn btn-lg btn-custom btnIrCursos shadow-lg px-5 " data-aos="zoom-in" data-aos-delay="500">
           Ver Cursos
           <i class="bi bi-arrow-right ms-2"></i>
         </a>
       </div>
 
       <!-- TENDENCIAS -->
-      <div class="tendencias-container d-flex justify-content-center align-items-center text-white px-3">
-      
-        <div class="tendencias-marquee flex-grow-1">
-          <span>
-           📣📰 SIV Consulting y el Instituto Politécnico Santiago Mariño impulsan el debate sobre Fracturamiento Hidráulico en la Industria Petrolera.
-          </span> 
-        </div>
-        
-      </div>
+<div class="tendencias-container d-flex align-items-center text-white px-3">
+  <div class="tendencias-marquee flex-grow-1">
+    <span>
+      📣📰 SIV Consulting y el Instituto Politécnico Santiago Mariño impulsan el debate sobre Fracturamiento Hidráulico en la Industria Petrolera.       
+    </span>
+    
+  </div>
+</div>
+
+
     </header>
   `;
 });
