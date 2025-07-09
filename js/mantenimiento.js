@@ -1,4 +1,3 @@
-// js/mantenimiento.js
 document.addEventListener("DOMContentLoaded", () => {
   const container = document.getElementById("servicios-container");
 
@@ -37,48 +36,39 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   ];
 
-  // Inyecta el banner y sección principal con animaciones AOS
   container.innerHTML = `
-    <section class="py-5 text-white banner-servicios"
-             data-aos="fade-down"
-             style="background: url('https://www.intsurmex.com/images/002.png') no-repeat center center; background-size: cover;">
-      <div class="overlay" style="background:rgba(0,0,0,0.5);padding:6rem 0;">
+    <!-- Banner -->
+    <section class="py-5 text-white banner-servicios-pro position-relative" data-aos="fade-down">
+      <div class="overlay-servicios-pro d-flex flex-column justify-content-center align-items-center" style="padding:5.5rem 0;">
         <div class="container text-center">
-          <h1 class="display-5 fw-bold" data-aos="fade-down" data-aos-delay="200">
+          <h1 class="display-5 fw-bold mb-3" data-aos="fade-down" data-aos-delay="200">
             SERVICIOS DE MANTENIMIENTO INDUSTRIAL
           </h1>
           <p class="lead" data-aos="fade-up" data-aos-delay="400">
             Comprometidos en ofrecer excelencia y tecnología de vanguardia para nuestros clientes.
           </p>
-          <a href="../pages/contacto.html"
-             class="btn btn-custom btn-lg mt-3"
-             data-aos="zoom-in"
-             data-aos-delay="600">
+          <a href="../pages/contacto.html" class="btn btn-custom btn-lg mt-3" data-aos="zoom-in" data-aos-delay="600">
             Solicitar Cotización
           </a>
         </div>
       </div>
     </section>
 
-    <section id="cotizacion"
-             class="py-5 bg-light"
-             data-aos="fade-up"
-             data-aos-delay="200">
+    <!-- Cards de Servicios -->
+    <section id="cotizacion" class="py-5 bg-light" data-aos="fade-up" data-aos-delay="200">
       <div class="container">
-        <h2 class="text-center fw-bold mb-5"
-            data-aos="fade-up"
-            data-aos-delay="300">
+        <h2 class="text-center fw-bold mb-5 text-warning" data-aos="fade-up" data-aos-delay="300">
           Nuestros Servicios para el Mantenimiento Industrial
         </h2>
-        <div class="row g-4">
+        <div class="row g-4 justify-content-center">
           ${servicios.map((s, i) => `
-            <div class="col-md-6"
-                 data-aos="zoom-in"
-                 data-aos-delay="${400 + i * 100}">
-              <div class="card h-100 shadow-sm">
-                <img src="${s.img}" class="card-img-top" alt="${s.title}">
-                <div class="card-body">
-                  <h5 class="card-title">${s.title}</h5>
+            <div class="col-md-6 col-lg-4" data-aos="zoom-in" data-aos-delay="${400 + i * 100}">
+              <div class="card servicio-card-pro border-0 h-100 shadow-sm">
+                <div class="servicio-img-wrapper-pro">
+                  <img src="${s.img}" class="img-fluid rounded-4" alt="${s.title}">
+                </div>
+                <div class="card-body pt-3">
+                  <h5 class="card-title fw-bold mb-2">${s.title}</h5>
                   <p class="card-text">${s.text}</p>
                 </div>
               </div>

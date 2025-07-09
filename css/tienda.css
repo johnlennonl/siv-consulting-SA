@@ -192,3 +192,162 @@
   background-color: #b6b3a9;
   color: black;
 }
+
+
+/********************************MEJORADO ************************************/
+
+.tienda-curso-card {
+  background: #fff;
+  border-radius: 2.2rem;
+  box-shadow: 0 3px 22px #b5b5b513;
+  margin-bottom: 2.5rem;
+  overflow: hidden;
+  transition: box-shadow 0.28s, transform 0.19s;
+  display: flex;
+  flex-direction: column;
+  min-width: 270px;
+  max-width: 355px;
+  margin-right: 2rem;
+  margin-left: 0;
+  position: relative;
+  border: none;
+}
+.tienda-curso-card:hover {
+  box-shadow: 0 8px 40px #d5af4977;
+  transform: translateY(-7px) scale(1.025);
+}
+
+.card-img-top-wrap {
+  position: relative;
+  background: linear-gradient(120deg, #d5af4920 60%, #fff 100%);
+  padding: 1.15rem 0 0.5rem 0;
+  text-align: center;
+}
+.tienda-img-curso {
+  max-width: 86%;
+  max-height: 160px;
+  border-radius: 1.2rem;
+  object-fit: cover;
+  box-shadow: 0 2px 12px #0002;
+  transition: transform 0.21s;
+}
+.tienda-curso-card:hover .tienda-img-curso {
+  transform: scale(1.04) rotate(-1.7deg);
+}
+
+.tienda-badge {
+  position: absolute;
+  left: 1.2rem;
+  top: 1.2rem;
+  font-size: .92rem;
+  font-weight: 700;
+  border-radius: 8px;
+  padding: 0.4em 0.88em;
+  box-shadow: 0 2px 7px #d5af4921;
+  z-index: 2;
+}
+.tienda-badge.bg-primary {
+  left: auto;
+  right: 1.2rem;
+  background: #2d9edb !important;
+}
+
+.contenido-curso h4 {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: .4rem;
+}
+.contenido-curso .precio-curso {
+  color: #d5af49;
+  font-weight: 800;
+  font-size: 1.19rem;
+  letter-spacing: 0.5px;
+}
+
+.tienda-curso-card .btn-custom {
+  background: #d5af49;
+  color: #000;
+  border-radius: 10px;
+  font-weight: 700;
+  border: none;
+  box-shadow: 0 2px 12px #d5af492a;
+  transition: background 0.15s, color 0.15s, transform 0.14s;
+}
+.tienda-curso-card .btn-custom:hover {
+  background: #b99030;
+  color: #fff;
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* Responsive tienda cards */
+@media (max-width: 991px) {
+  .tienda-curso-card {
+    border-radius: 1.1rem;
+    margin-bottom: 1.6rem;
+    max-width: 99%;
+    min-width: unset;
+    margin-right: 0;
+  }
+  .tienda-img-curso {
+    max-height: 92px;
+  }
+}
+
+.tienda-filtros {
+  min-width: 220px;
+  max-width: 260px;
+  background: #fffbe7;
+  border-radius: 1.4rem;
+  padding: 2rem 1.2rem 1rem 1.2rem;
+  box-shadow: 0 3px 14px #d5af4918;
+  margin-right: 2rem;
+  margin-bottom: 1.8rem;
+}
+.tienda-filtros h3 {
+  color: #d5af49;
+  font-weight: 800;
+  margin-bottom: 1.5rem;
+  font-size: 1.17rem;
+}
+.tienda-filtros label {
+  font-size: .98rem;
+  font-weight: 600;
+  margin-top: .8rem;
+  color: #222;
+  margin-bottom: .2rem;
+}
+.tienda-filtros input,
+.tienda-filtros select {
+  margin-bottom: .5rem;
+  border-radius: 8px;
+  border: 1.5px solid #d5af492c;
+  background: #fff;
+  box-shadow: 0 1px 7px #d5af4910;
+  font-size: .98rem;
+  padding: 0.45rem 0.85rem;
+  outline: none;
+}
+.tienda-filtros input:focus,
+.tienda-filtros select:focus {
+  border-color: #d5af49;
+  box-shadow: 0 2px 11px #d5af4921;
+}
+
+@media (max-width: 991px) {
+  .tienda-filtros {
+    min-width: 100%;
+    max-width: 100%;
+    margin-right: 0;
+    margin-bottom: 1.3rem;
+  }
+}
+@media (max-width: 768px) {
+  .tienda-filtros {
+    padding: 1rem 0.6rem 1rem 0.6rem;
+    border-radius: 0.8rem;
+  }
+  .tienda-curso-card {
+    border-radius: 0.8rem;
+  }
+}

@@ -1,38 +1,59 @@
-/* css/quienes-somos.css */
 
-#qs-container img {
-  /* Ajusta el tamaño del logo */
-  max-width: 180px;
+
+.gold-divider {
+  width: 78px;
+  height: 4px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #fff5cc 0, #d5af49 60%);
+  margin: 0 auto 0.6rem auto;
 }
 
-#qs-container h1 {
-  font-size: 2.5rem;
+.qs-box {
+  border-left: 6px solid #d5af49;
+  background: #fffefc;
 }
 
-#qs-container p.lead {
-  font-size: 1.25rem;
-  color: #555;
+.qs-text {
+  font-size: 1.07rem;
+  color: #444;
+  letter-spacing: 0.02em;
 }
 
-#qs-container .text-justify p {
-  margin-bottom: 1rem;
-  line-height: 1.7;
-  color: #333;
+.qs-card {
+  border-radius: 1.5rem;
+  transition: box-shadow 0.23s, transform 0.19s;
+}
+.qs-card:hover {
+  box-shadow: 0 10px 38px #d5af4944;
+  transform: translateY(-4px) scale(1.025);
 }
 
-
-/* Para las imágenes de Quiénes Somos */
-.quienes-img {
-  width: 100%;           /* ya lo fuerza w-100, pero lo repetimos por si acaso */
-  height: 100%;   /* altura grande, ajusta a tu gusto */
-  object-fit: cover;     /* recorta y mantiene proporción */
-  display: block;        /* evita espacios extra */
-  border-radius: 0.5rem; /* mantiene tu sombra/redondeo */
+.text-brand {
+  color: #d5af49 !important;
+  letter-spacing: 0.04em;
 }
 
-/* En pantallas más pequeñas, bajamos un poco la altura */
-@media (max-width: 768px) {
-  .quienes-img {
-    height: 250px;
-  }
+.qs-icon {
+  font-size: 2.2rem;
+  color: #d5af49;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 0.7rem;
+}
+.qs-icon.vision { color: #b99030; }
+.qs-icon.values { color: #9f8600; }
+
+.qs-val-list li {
+  font-size: 1.01rem;
+  margin-bottom: 0.3rem;
+  color: #444;
+}
+
+@media (max-width: 767px) {
+  .logo-circle { padding: 0.8rem; }
+  .gold-divider { height: 3px; width: 44px; }
+  .qs-card { border-radius: 1rem; }
+  .qs-box { padding: 1.1rem; }
+  .qs-val-list li { font-size: 0.95rem; }
 }

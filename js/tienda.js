@@ -10,23 +10,27 @@ const filtroPrecioMax  = document.getElementById("precio-max");
 function renderCursos(lista) {
   contenedorCursos.innerHTML = "";
   if (lista.length === 0) {
-    contenedorCursos.innerHTML = `<p class="mb-4 text-center">No se encontraron cursos.</p>`;
+    contenedorCursos.innerHTML = `<div class="alert alert-warning text-center my-5">No se encontraron cursos.</div>`;
     return;
   }
   lista.forEach(curso => {
     const fecha = new Date(curso.fecha)
       .toLocaleDateString("es-AR", { day: "numeric", month: "long", year: "numeric" });
+    // CARD MEJORADA
     const card = document.createElement("div");
-    card.className = "card-curso";
+    card.className = "tienda-curso-card shadow-sm";
     card.innerHTML = `
-      <img src="${curso.imagen}" alt="${curso.titulo}" class="curso-img">
-      <div class="contenido-curso">
-        <h4>${curso.titulo}</h4>
-        <p class="small mb-1"><strong>Profesor:</strong> ${curso.profesor}</p>
-        <p class="small mb-1"><strong>Modalidad:</strong> ${curso.modalidad}</p>
-        <p class="small mb-3"><strong>Fecha:</strong> ${fecha}</p>
-        <span class="precio-curso mb-3 fw-bold">$${curso.precio.toFixed(2)}</span>
-        <a href="curso.html?id=${curso.id}" class="btn btn-custom btn-sm">Inscribirse</a>
+      <div class="card-img-top-wrap">
+        <img src="${curso.imagen}" alt="${curso.titulo}" class="tienda-img-curso">
+        <span class="badge tienda-badge bg-warning text-dark">${curso.categoria}</span>
+        <span class="badge tienda-badge bg-primary text-white">${curso.modalidad}</span>
+      </div>
+      <div class="contenido-curso p-3 d-flex flex-column justify-content-between">
+        <h4 class="fw-bold mb-2">${curso.titulo}</h4>
+        <p class="small mb-1"><i class="bi bi-person-circle me-1"></i> ${curso.profesor}</p>
+        <p class="small mb-1"><i class="bi bi-calendar-event me-1"></i> ${fecha}</p>
+        <span class="precio-curso my-2 fw-bold h5">$${curso.precio.toFixed(2)}</span>
+        <a href="curso.html?id=${curso.id}" class="btn btn-custom btn-sm mt-2 align-self-center px-4">Inscribirse</a>
       </div>
     `;
     contenedorCursos.appendChild(card);

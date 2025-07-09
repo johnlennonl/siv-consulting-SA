@@ -130,6 +130,8 @@ async function renderActividadesNotas(idCurso, alumnoId) {
     const act = doc.data();
     const actId = doc.id;
 
+  
+
     // Formatear fecha de entrega
     let fechaEntrega = "No definida";
     if (act.fecha) {

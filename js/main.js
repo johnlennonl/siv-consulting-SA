@@ -1,17 +1,20 @@
 document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("main").innerHTML = `
     <!-- Sección Servicios -->
-   <section class="servicios text-center text-white position-relative">
-  <div class="overlay-servicios"></div>
-  <div class="container py-5 position-relative">
-    <h2 class="display-5 fw-bold" data-aos="fade-up">SERVICIOS PETROLEROS</h2>
-    <p class="lead parrafoServicios" data-aos="fade-up" data-aos-delay="100">
-      Contamos con un personal de experiencia para realizar servicios en la industria petrolera
-      con tecnología de vanguardia y altos estándares de calidad y desempeño.
-    </p>
-    <a href="#" class="btn btn-custom mt-3" data-aos="fade-up" data-aos-delay="200">Ver más</a>
-  </div>
-</section>
+   <section class="servicios siv-servicios text-center text-white position-relative overflow-hidden">
+      <div class="overlay-servicios"></div>
+      <div class="container py-5 position-relative z-2">
+        <h2 class="display-5 fw-bold mb-4" data-aos="fade-up">SERVICIOS PETROLEROS</h2>
+        <p class="lead parrafoServicios mb-4" data-aos="fade-up" data-aos-delay="100">
+          Contamos con un personal de experiencia para realizar servicios en la industria petrolera
+          con tecnología de vanguardia y altos estándares de calidad y desempeño.
+        </p>
+        <a href="#" class="btn btn-lg btn-custom px-5 mt-3 shadow-sm" data-aos="fade-up" data-aos-delay="200">
+          Ver más
+          <i class="bi bi-arrow-right ms-2"></i>
+        </a>
+      </div>
+    </section>
 
     <!-- Sección Próximos Cursos -->
     <section class="cursos bg-cursos py-5">

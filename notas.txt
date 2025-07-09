@@ -1,0 +1,568 @@
+Footer sin modificar , el antiguop 
+
+// js/nav.js
+// Inyección dinámica del navbar con rutas adaptativas
+
+document.addEventListener('DOMContentLoaded', () => {
+  const isPages = window.location.pathname.includes('/pages/');
+  const base = isPages ? '../' : '';
+
+  document.getElementById('navbar').innerHTML = `
+  <nav class="navbar navbar-expand-lg navbar-dark bg-black">
+    <div class="container">
+      <a class="navbar-brand" href="${base}index.html">
+        <img src="${base}images/LOGO-SIN-FONDO-min.png" alt="Logo" height="80">
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item"><a class="nav-link" href="${base}index.html">Inicio</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Nosotros</a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="${base}pages/quienes-somos.html">Quiénes Somos</a></li>
+              <li><a class="dropdown-item" href="${base}pages/profesionales.html">Nuestros Profesionales</a></li>
+              <li><a class="dropdown-item" href="${base}pages/politica-privacidad.html">Política de Privacidad</a></li>
+            </ul>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Servicios</a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="${base}pages/mantenimiento-industrial.html">Mantenimiento Industrial</a></li>
+             /** li><a class="dropdown-item" href="${base}pages/operaciones-produccion.html">Operaciones de Producción</a></li>
+              <li><a class="dropdown-item" href="${base}pages/ingenieria-tecnica.html">Ingeniería y Asistencia Técnica</a></li> < **/
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="${base}pages/cursos-tecnicos.html">Cursos Técnicos</a></li>
+          <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">Blog</a>
+            <ul class="dropdown-menu dropdown-menu-dark">
+              <li><a class="dropdown-item" href="${base}pages/blog-petroleo.html">Petróleo</a></li>
+              <li><a class="dropdown-item" href="${base}pages/blog-salud.html">Salud</a></li>
+              <li><a class="dropdown-item" href="${base}pages/blog-alumnos.html">Alumnos</a></li>
+            </ul>
+          </li>
+          <li class="nav-item"><a class="nav-link" href="${base}pages/contacto.html">Contacto</a></li>
+          <li class="nav-item"><a class="nav-link" href="${base}pages/tienda.html">Tienda</a></li>
+          <li class="nav-item"><a class="nav-link" href="${base}pages/login.html">Mi Cuenta</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+  `;
+});
+
+
+
+style.css : 
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+
+/* Loader Styles */
+#loader-wrapper {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100vh;
+  background-color: #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.loader2 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.bubble {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-image: linear-gradient(to right, #d5af49, #ff9a44);
+  margin: 0 5px;
+  animation: bubbleAnimation 1.5s ease-in-out infinite;
+}
+
+@keyframes bubbleAnimation {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(2);
+    opacity: 0.5;
+  }
+}
+
+
+/* Oculta contenido hasta cargar */
+.hidden {
+  display: none;
+}
+
+
+body {
+  font-family: 'Montserrat', sans-serif;
+}
+
+/************************************ NAV BAR ************************************/
+
+.navbar {
+  background-color: #000;
+}
+
+.navbar-nav .nav-link {
+  color: white !important;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.navbar-nav .nav-link:hover {
+  color: #d5af49 !important;
+}
+
+.dropdown-menu {
+  background-color: #000;
+  border: 1px solid #d5af49;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Se activa cuando Bootstrap aplica la clase .show */
+.dropdown-menu.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  color: white;
+}
+
+.dropdown-item:hover {
+  background-color: #d5af49;
+  color: #000;
+}
+
+.btn-custom {
+  background-color: #d5af49;
+  color: #000;
+  border: none;
+}
+
+.btn-custom:hover {
+  background-color: #b99030;
+  color: white;
+}
+
+@media (min-width: 992px) {
+  .dropdown:hover .dropdown-menu {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/************************************ HEADER ************************************/
+/************************************ HEADER ************************************/
+header {
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  background-color: black;
+}
+
+/* Carrusel: imagen ocupa todo el espacio */
+.carousel-item img {
+  width: 70%;
+  height: 70%;
+  object-fit: cover;
+  filter: brightness(0.4);
+}
+
+/* Contenedor de texto encima del carrusel */
+.header-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-shadow: 2px 2px 8px #000;
+  padding: 0 1rem;
+  text-align: center;
+}
+
+.header-overlay h1 {
+  font-size: 4rem;
+  font-weight: 800;
+  margin-bottom: 1rem;
+}
+
+.header-overlay p {
+  font-size: 1.5rem;
+  font-weight: 400;
+}
+
+/* Tendencias fijo abajo */
+.tendencias-container {
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  background-color: #000;
+  border-top: 1px solid #d5af49;
+  padding: 0.5rem 1rem;
+  font-size: 0.95rem;
+  z-index: 3;
+}
+
+/************************************ RESPONSIVE MOBILE ************************************/
+@media (max-width: 768px) {
+  header {
+    height: auto;
+    
+  }
+
+  .carousel-item img {
+    height: auto;
+    max-height: 100vh;
+    object-fit: contain;
+    object-position: top;
+  }
+
+  .header-overlay {
+    position: static;
+    padding-top: 3rem;
+    padding-bottom: 2rem;
+  }
+
+  .header-overlay h1 {
+    font-size: 2.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .header-overlay p {
+    font-size: 1.1rem;
+    line-height: 1.4;
+    padding: 0 1rem;
+  }
+
+  .tendencias-container {
+    position: static;
+    font-size: 0.85rem;
+    padding: 0.4rem 0.75rem;
+  }
+}
+
+
+/************************************ MAIN ************************************/
+
+/* Servicios */
+.servicios {
+  position: relative;
+  background: url('https://www.meritbrass.com//uploads/cover%20photos/Merit%20Brass%20-%20Oil%20-%20Gas%20-%201.jpg') center center / cover no-repeat;
+  padding: 4rem 0;
+  overflow: hidden;
+}
+
+.overlay-servicios {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.5); /* Oscurece el fondo */
+  z-index: 1;
+}
+
+.servicios .container {
+  position: relative;
+  z-index: 2; /* Por encima del overlay */
+}
+
+.servicios h2,
+.servicios p {
+  color: #f1f1f1;
+  font-weight: 500;
+}
+
+
+/* Cursos */
+/* .cursos {
+  background: url('../images/bg-cursos.jpg') center center / cover no-repeat;
+  background-attachment: fixed;
+} */
+
+.cursos h2 {
+  color: hsl(0, 0%, 1%);
+}
+
+.curso-card {
+  color: rgb(0, 0, 0);
+  border: none;
+  background-color: #f1f1f1;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  overflow: hidden;
+  border-bottom-right-radius: 50px;
+}
+
+.curso-card .card-body {
+  padding: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .curso-card .card-body {
+    padding: 1.5rem;
+  }
+
+  .curso-card img {
+    padding: 1rem;
+  }
+
+  .cursos h2 {
+    font-size: 1.5rem;
+  }
+}
+
+
+
+.fechaCurso{
+  color: #b99030a2;
+}
+
+/********************* CLIENTES *********************/
+.testimonios {
+  background-color: #f8f9fa;
+}
+
+.testimonial-card {
+  border-radius: 1rem;
+  background: #fff;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+}
+
+.testimonial-img img {
+  width: 90px;
+  height: 90px;
+  object-fit: cover;
+  border: 3px solid #d5af49;
+}
+
+.testimonial-text {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+/******************** FOOTER *********************/
+.footer {
+  background: #000;
+  color: #fff;
+}
+
+.footer-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: #d5af49;
+  margin-bottom: 1.2rem;
+}
+
+.footer-contact li {
+  margin-bottom: 0.75rem;
+  font-size: 1rem;
+  color: #ddd;
+}
+
+.footer-contact i {
+  color: #d5af49;
+}
+
+.map-responsive {
+  overflow: hidden;
+  padding-bottom: 56.25%;
+  position: relative;
+  height: 0;
+}
+
+.map-responsive iframe {
+  left: 0;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+}
+
+.footer-bottom {
+  background: #111;
+  font-size: 0.9rem;
+  border-top: 1px solid #222;
+}
+
+.footer-bottom a {
+  color: #d5af49;
+  text-decoration: none;
+}
+
+.footer-bottom a:hover {
+  text-decoration: underline;
+}
+
+
+
+html, body {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.video, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/********* SCROLL TO TOP *********/
+#scrollTopBtn {
+  position: fixed;
+  bottom: 90px;
+  right: 23px;
+  z-index: 999;
+  background-color: #d5af49;
+  color: black;
+  border: none;
+  border-radius: 50%;
+  padding: 11px 15px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+  display: none;
+  transition: all 0.3s ease;
+}
+
+#scrollTopBtn:hover {
+  background-color: #b99030;
+  color: white;
+}
+
+
+/* Quitar espacio negro entre header y tendencias */
+header {
+  margin-bottom: 0;
+  padding-bottom: 0;
+}
+
+.tendencias-container {
+  margin-top: 0;
+}
+
+.tendencias-section {
+  margin-top: 0;
+  padding-top: 3rem; /* o el valor que prefieras */
+}
+
+
+/**************** social media left ***************/
+.social-fixed-left {
+  position: fixed;
+  top: 25.5%;
+  left: 0;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  z-index: 999;
+  padding: 0.5rem;
+}
+.social-fixed-left a {
+  background-color: #000; /* Fondo uniforme */
+  font-size: 1.3rem;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0 5px 5px 0;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+/* Íconos individuales por red */
+.social-fixed-left a:nth-child(1) {
+  background-color: #e4405f;
+}
+.social-fixed-left a:nth-child(2) {
+  background-color: #1877f2;
+}
+.social-fixed-left a:nth-child(3) {
+  background-color: #d5af49;
+}
+.social-fixed-left a i {
+  color: #fff;
+}
+.social-fixed-left a:hover {
+  opacity: 0.8;
+  transform: translateX(5px);
+}
+
+
+
+.whatsapp_chat_support.wcs-show ~ #scrollTopBtn {
+  display: none !important;
+}
+
+
+/******Btnes card ***********/ 
+.card .btn {
+  background-color: #d5af49;
+  color: #000;
+  font-weight: 600;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.card .btn:hover {
+  background-color: #c79e36;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.3);
+}
+
+.card .btn:hover {
+  animation: pulse 0.4s ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+
+
+

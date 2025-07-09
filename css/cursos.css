@@ -1,0 +1,139 @@
+/* HERO BANNER */
+.siv-hero-banner {
+  min-height: 310px;
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  z-index: 1;
+}
+.siv-hero-overlay {
+  background: linear-gradient(120deg, #000c 85%, #d5af4925 120%);
+  width: 100%;
+  min-height: 310px;
+  position: relative;
+  z-index: 2;
+  padding-top: 2.5rem;
+  padding-bottom: 2.5rem;
+  text-shadow: 2px 6px 16px #000b;
+}
+.siv-hero-banner h1 {
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: 1.3px;
+  text-shadow: 2px 6px 16px #000b;
+}
+@media (max-width: 768px) {
+  .siv-hero-banner { min-height: 180px; }
+  .siv-hero-overlay { min-height: 180px; padding: 1rem 0; }
+  .siv-hero-banner h1 { font-size: 1.4rem; }
+}
+
+/* BUSCADOR */
+.search-group .form-control {
+  border-radius: 0 14px 14px 0;
+  border-left: none;
+  box-shadow: 0 2px 12px #d5af4916;
+}
+.search-group .input-group-text {
+  background: #fff;
+  border-radius: 14px 0 0 14px;
+  border-right: none;
+  color: #d5af49;
+  font-size: 1.2rem;
+}
+.search-group .form-control:focus {
+  box-shadow: 0 2px 24px #d5af4948;
+  border-color: #d5af49;
+}
+
+/* CARDS DE CURSOS */
+.curso-card-pro {
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 4px 24px #b5b5b516;
+  transition: box-shadow 0.27s, transform 0.18s;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+.curso-card-pro:hover {
+  box-shadow: 0 8px 40px #d5af4977;
+  transform: translateY(-7px) scale(1.022);
+}
+.curso-img-wrapper {
+  background: linear-gradient(100deg, #d5af4933 30%, #fffbe8 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 1.2rem 0 0.7rem 0;
+  border-bottom: 1px solid #f7e9be;
+}
+.img-curso-pro {
+  max-width: 88%;
+  max-height: 175px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 2px 14px #0003;
+  transition: transform 0.22s;
+}
+.curso-card-pro:hover .img-curso-pro {
+  transform: scale(1.06) rotate(-1.3deg);
+}
+.curso-card-pro .card-title {
+  font-size: 1.16rem;
+  font-weight: 800;
+  color: #181818;
+}
+.curso-card-pro .card-text {
+  color: #444;
+  font-size: 0.98rem;
+}
+.curso-card-pro ul {
+  padding-left: 0;
+}
+.curso-card-pro li {
+  margin-bottom: .23rem;
+  font-size: .95rem;
+  color: #444;
+  display: flex;
+  align-items: center;
+}
+.curso-card-pro .btn-custom {
+  background: #d5af49;
+  color: #000;
+  border-radius: 10px;
+  font-weight: 700;
+  box-shadow: 0 3px 12px #d5af4934;
+  border: none;
+  transition: background 0.15s, color 0.15s, transform 0.14s;
+}
+.curso-card-pro .btn-custom:hover {
+  background: #b99030;
+  color: #fff;
+  transform: translateY(-2px) scale(1.03);
+}
+
+/* BOTÓN "VER MÁS" */
+#btn-ver-mas {
+  background: #d5af49;
+  color: #000;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.16rem;
+  padding: 0.6rem 2.4rem;
+  box-shadow: 0 2px 12px #d5af4922;
+  border: none;
+  transition: background 0.14s, color 0.14s, transform 0.15s;
+}
+#btn-ver-mas:hover {
+  background: #b99030;
+  color: #fff;
+  transform: translateY(-1.5px) scale(1.03);
+}
+
+/* Responsive para cards */
+@media (max-width: 768px) {
+  .curso-card-pro { border-radius: 13px; }
+  .img-curso-pro { max-height: 98px; }
+  .curso-img-wrapper { padding: 0.5rem 0 0.4rem 0; }
+}
