@@ -305,22 +305,158 @@
 
 
 /*** Actividades ****/
-
+.modal-content{
+  background-color: #23232e;
+  color: #f1f1f1;
+  border-radius: 10px;
+}
 .form-control {
-  background: #191927;
+  background: #ececee;
   color: #0a0a0a;
-  border: 1.5px solid #fee084;
+  border: 1.5px solid #231240;
   border-radius: 14px;
   font-size: 1.06rem;
   box-shadow: none;
   transition: border 0.2s;
 }
 .form-control:focus {
-  border-color: #d6bb62;
+  border-color: #231240;
   outline: none;
-  background: #23232e;
+  background: #eaeaee;
   color: #0c0c0c;
 }
 
+.sidebar-img {
+  width: 200px;
+  max-width: 250px;
+  margin: auto;
+  display: block;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.nav-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1 1 auto;
+}
+.nav-list li {
+  margin-bottom: .3rem;
+}
+.nav-list li:last-child {
+  margin-bottom: 0;
+}
+.nav-list li a {
+  color: #f1f1f1;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  font-size: 1.07rem;
+  padding: 0.85em 2em 0.85em 1.5em;
+  border-radius: 12px 25px 25px 12px;
+  
+  position: relative;
+  gap: .85em;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.nav-list li a i {
+  width: 1.6em;
+  text-align: center;
+  font-size: 1.15em;
+  margin-right: .2em;
+  flex-shrink: 0;
+}
+.nav-list li a.active, .nav-list li a:hover, .nav-list li a:focus {
+  background: #e8bb3f;
+  color: #222;
+  font-weight: 700;
+  box-shadow: 0 1px 8px #23253a25;
+}
+
+
+
+
+#notifCountSidebar {
+  background: #d4382f;
+  color: #fff;
+  border-radius: 999px;
+  font-size: 1.14em;
+  min-width: 26px;
+  min-height: 24px;
+  display: inline-block;
+  text-align: center;
+  line-height: 23px;
+  font-weight: bold;
+  position: relative;
+  top: 2px;
+  box-shadow: 0 1px 5px #19192770;
+  transition: 0.15s;
+}
+
+.btnEliminarNotif{
+  width: 30px;
+  border-radius: 55%;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  margin-left: 10px;
+  color: #da1818;
+  font-size: 1.2rem;
+  
+}
+
+
+/* Tabs mobile mejorados */
+.tabs-custom {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  padding-bottom: 4px;
+  background: transparent;
+  border-bottom: none;
+  gap: 8px;
+  scrollbar-width: none; /* Firefox */
+}
+.tabs-custom::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+.tabs-custom .nav-link {
+  border: none !important;
+  border-radius: 18px !important;
+  background: #252836;
+  color: #f1f1f1;
+  padding: 10px 18px;
+  margin-right: 0;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 1px 6px #0001;
+  display: flex;
+  align-items: center;
+}
+.tabs-custom .nav-link.active {
+  background: #FFD600 !important;
+  color: #222 !important;
+  font-weight: bold;
+  box-shadow: 0 4px 16px #ffd60033;
+}
+.tabs-custom .nav-link:focus, .tabs-custom .nav-link:hover {
+  background: #ffe082;
+  color: #111;
+}
+@media (max-width: 575px) {
+  .tabs-custom .nav-link {
+    min-width: 170px;
+    justify-content: flex-start;
+    font-size: 0.99em;
+    padding: 9px 14px;
+  }
+  .tabs-custom {
+    gap: 7px;
+  }
+}
 
 

@@ -318,29 +318,110 @@ async function renderTabRecursos(idCurso) {
 
 
     // 5. Certificado
-    async function renderCertificado(idCurso, alumnoId) {
-      tabContenido.innerHTML = `<div class="alert alert-info">Certificado en construcción.</div>`;
+    // 5. Certificado
+async function renderCertificado(idCurso, alumnoId) {
+  const db = firebase.firestore();
+  const tabContenido = document.getElementById("contenidoTabAlumno");
+  tabContenido.innerHTML = `<div class="text-center text-muted">Cargando información del certificado...</div>`;
+
+  // --- Aquí revisa si el alumno ha terminado el curso ---
+  // Ejemplo: buscamos un campo 'finalizado: true' en la colección de alumnos inscritos
+  // Puedes cambiar esta lógica según tu modelo de datos
+
+  // Suponiendo que guardas en el doc del usuario, o tienes una subcolección de 'inscripciones' o algo similar.
+  let puedeDescargar = false;
+  let urlCertificado = null;
+
+  // OPCIÓN 1: Si el estado está en el doc del usuario
+  // const alumnoDoc = await db.collection("usuarios").doc(alumnoId).get();
+  // const inscripcion = (alumnoDoc.data().inscripciones || {})[idCurso];
+  // if (inscripcion && inscripcion.finalizado && inscripcion.certificadoUrl) {
+  //   puedeDescargar = true;
+  //   urlCertificado = inscripcion.certificadoUrl;
+  // }
+
+  // OPCIÓN 2: Si tienes una subcolección de "alumnos" dentro del curso:
+  const alumnoCursoDoc = await db
+    .collection("cursos").doc(idCurso)
+    .collection("alumnos").doc(alumnoId)
+    .get();
+
+  if (alumnoCursoDoc.exists) {
+    const datos = alumnoCursoDoc.data();
+    if (datos.finalizado && datos.certificadoUrl) {
+      puedeDescargar = true;
+      urlCertificado = datos.certificadoUrl;
     }
+  }
+
+  if (puedeDescargar && urlCertificado) {
+    tabContenido.innerHTML = `
+      <div class="card bg-dark text-white p-4 rounded-4 mb-4 text-center" style="max-width:440px;margin:2em auto">
+        <h3 style="color:#fee084;margin-bottom:15px"><i class="fas fa-certificate me-2"></i>¡Certificado disponible!</h3>
+        <p class="mb-4 fs-5">¡Felicidades! Has finalizado el curso y ahora puedes descargar tu certificado de culminación.</p>
+        <a href="${urlCertificado}" target="_blank" class="btn btn-success btn-lg px-4 py-3 fw-bold shadow" style="font-size:1.19em;border-radius:11px">
+          <i class="fas fa-download me-2"></i>Descargar certificado
+        </a>
+        <div class="mt-4">
+          <img src="https://cdn-icons-png.flaticon.com/512/3271/3271393.png" alt="Certificado" style="height:90px;opacity:.92">
+        </div>
+      </div>
+    `;
+  } else {
+    tabContenido.innerHTML = `
+      <div class="card bg-dark text-white p-4 rounded-4 mb-4 text-center" style="max-width:430px;margin:2em auto">
+        <h3 style="color:#bbb"><i class="fas fa-award me-2"></i>Certificado no disponible aún</h3>
+        <p class="fs-5 mb-3">Completa todas las actividades y espera la revisión de tu docente para poder descargar tu certificado de culminación.</p>
+        <div class="d-flex justify-content-center"> 
+          <img src="https://cdn-icons-png.flaticon.com/512/3271/3271393.png" alt="Certificado" style="height:90px;opacity:.92">
+        </div>
+      </div>
+    `;
+  }
+}
+
+
+
+
+
+
+    //6 TAB DE ASISTENCIAS 
 
     // Función para cambiar de tab
-    async function cargarTab(tab) {
-      if (tab === "resumen") await renderInfoCurso(cursoActual);
-      else if (tab === "temario") await renderTemario(cursoActual);
-      else if (tab === "actividades") await renderActividadesNotas(cursoActual, user.uid);
-      else if (tab === "recursos") await renderTabRecursos(cursoActual);
-      else if (tab === "certificados") await renderCertificado(cursoActual, user.uid);
-      else tabContenido.innerHTML = `<div class="alert alert-info">Tab en construcción: ${tab}</div>`;
-    }
+    // Función para cambiar de tab
+async function cargarTab(tab) {
+  const tabContenido = document.getElementById("contenidoTabAlumno");
+
+  if (tab === "resumen") {
+    await renderInfoCurso(cursoActual);
+  } else if (tab === "temario") {
+    await renderTemario(cursoActual);
+  } else if (tab === "actividades") {
+    await renderActividadesNotas(cursoActual, user.uid);
+  } else if (tab === "recursos") {
+    await renderTabRecursos(cursoActual);
+  } else if (tab === "asistencias") {
+    // IMPORTANTE: Agrega este div antes de llamar la función de asistencias
+    tabContenido.innerHTML = `<div id="tabAsistenciasAlumno"></div>`;
+    await cargarTabAsistenciasAlumno(cursoActual, user.uid);
+  } else if (tab === "certificados") {
+    await renderCertificado(cursoActual, user.uid);
+  } else {
+    tabContenido.innerHTML = `<div class="alert alert-info">Tab en construcción: ${tab}</div>`;
+  }
+}
+
 
     // Listeners de tabs
     document.querySelectorAll("#tabsAlumno .nav-link").forEach(tab => {
-      tab.addEventListener("click", function (e) {
-        e.preventDefault();
-        document.querySelectorAll("#tabsAlumno .nav-link").forEach(x => x.classList.remove("active"));
-        this.classList.add("active");
-        cargarTab(this.dataset.tab);
-      });
-    });
+  tab.addEventListener("click", function (e) {
+    e.preventDefault();
+    document.querySelectorAll("#tabsAlumno .nav-link").forEach(x => x.classList.remove("active"));
+    this.classList.add("active");
+    cargarTab(this.dataset.tab);
+  });
+});
+
 
     // Cambio de curso (si hay más de uno)
     const selectCurso = document.getElementById("selectCursoAlumno");
@@ -355,3 +436,68 @@ async function renderTabRecursos(idCurso) {
     cargarTab("resumen");
   });
 });
+
+
+async function cargarTabAsistenciasAlumno(idCurso, alumnoId) {
+  const db = firebase.firestore();
+  const contenedor = document.getElementById("tabAsistenciasAlumno");
+  contenedor.innerHTML = `<div class="text-center text-muted">Cargando asistencias...</div>`;
+
+  // Traer registros de asistencias para este curso
+  const asistSnap = await db
+    .collection("cursos").doc(idCurso)
+    .collection("asistencias")
+    .orderBy("fecha", "desc")
+    .get();
+
+  if (asistSnap.empty) {
+    contenedor.innerHTML = `<div class="alert alert-info mt-4 mb-0">No hay asistencias registradas aún.</div>`;
+    return;
+  }
+
+  const asistencias = asistSnap.docs.map(d => d.data());
+  let total = asistencias.length;
+  let asistio = 0;
+
+  let rows = asistencias.map(asist => {
+    const fecha = new Date(asist.fecha).toLocaleDateString('es-VE', { year: "numeric", month: "long", day: "numeric" });
+    const estado = asist.asistencias && asist.asistencias[alumnoId] === true;
+    if (estado) asistio++;
+    return `
+      <tr>
+        <td>${fecha}</td>
+        <td class="fw-bold" style="color:${estado ? "#2ecc40" : "#ff5252"}">
+          ${estado ? '<i class="fas fa-check-circle"></i> Asistió' : '<i class="fas fa-times-circle"></i> Ausente'}
+        </td>
+      </tr>
+    `;
+  }).join('');
+
+  let porcentaje = total ? ((asistio / total) * 100).toFixed(1) : 0;
+
+  contenedor.innerHTML = `
+    <div class="card mb-3 shadow-sm" style="border-radius:16px; background:#20212b;">
+      <div class="card-body">
+        <h4 class="mb-3" style="color:#fee084"><i class="fas fa-calendar-check me-2"></i>Mis Asistencias</h4>
+        <div class="mb-3">
+          <span class="badge bg-success" style="font-size:1.1em;padding:10px 22px;border-radius:13px;">
+            Asistencia acumulada: <b>${porcentaje}%</b>
+          </span>
+        </div>
+        <div class="table-responsive">
+          <table class="table table-bordered table-hover text-white mb-0" style="background:#232029;border-radius:9px;overflow:hidden;">
+            <thead style="background:#232029;">
+              <tr>
+                <th style="color:#fee084">Fecha</th>
+                <th style="color:#fee084">Estado</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${rows}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  `;
+}

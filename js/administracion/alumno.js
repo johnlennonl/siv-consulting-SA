@@ -32,7 +32,7 @@ window.addEventListener("load", () => {
   setInterval(tick, 1000);
 });
 
-// Auth, bienvenida y notificaciones
+// Auth, bienvenida y notificaciones (mejorado)
 firebase.auth().onAuthStateChanged(async user => {
   if (!user) return location.href = "login.html";
   const ud = await db.collection("usuarios").doc(user.uid).get();
@@ -54,47 +54,84 @@ firebase.auth().onAuthStateChanged(async user => {
   const notifList = document.getElementById("notifList");
   const notifCount = document.getElementById("notifCount");
 
+  // Mostrar/ocultar menú de notificaciones
   btnNotif.addEventListener("click", e => {
     e.stopPropagation();
     notifList.classList.toggle("show");
   });
-
   document.addEventListener("click", e => {
     if (!notifList.contains(e.target) && !btnNotif.contains(e.target)) {
       notifList.classList.remove("show");
     }
   });
 
-  const notifsSnap = await db
-    .collection("usuarios")
-    .doc(user.uid)
-    .collection("notificaciones")
-    .orderBy("fecha", "desc")
-    .limit(10)
-    .get();
+  // Función para renderizar notificaciones
+  async function renderNotificaciones() {
+    const notifsSnap = await db
+      .collection("usuarios")
+      .doc(user.uid)
+      .collection("notificaciones")
+      .orderBy("fecha", "desc")
+      .limit(10)
+      .get();
 
-  notifList.innerHTML = "";
+    notifList.innerHTML = "";
 
-  if (notifsSnap.empty) {
-    notifList.innerHTML = `<div class="text-center text-muted p-3">Sin notificaciones</div>`;
-  } else {
-    let unread = 0;
-    notifsSnap.forEach(doc => {
-      const n = doc.data();
-      if (!n.leido) unread++;
-      notifList.innerHTML += `
-        <div class="notificacion-item${!n.leido ? ' fw-bold' : ''}">
-          ${n.mensaje}
-          <small>${n.fecha?.toDate().toLocaleString("es-VE") || ''}</small>
-        </div>`;
-    });
+    if (notifsSnap.empty) {
+      notifList.innerHTML = `<div class="text-center text-muted p-3">Sin notificaciones</div>`;
+      notifCount.textContent = "";
+      notifCount.style.display = "none";
+    } else {
+      let unread = 0;
+      notifsSnap.forEach(doc => {
+        const n = doc.data();
+        const idNotif = doc.id;
+        if (!n.leido) unread++;
+        notifList.innerHTML += `
+          <div class="notificacion-item d-flex justify-content-between align-items-center ${!n.leido ? 'fw-bold' : ''}" data-id="${idNotif}" style="gap:8px; border-bottom:1px solid #eee; padding:8px 6px;">
+            <div>
+              ${n.mensaje}
+              <small class="d-block text-secondary">${n.fecha?.toDate().toLocaleString("es-VE") || ''}</small>
+              ${!n.leido ? `<span class="badge bg-success ms-2">Nuevo</span>` : ''}
+            </div>
+            <button class="btn btn-sm btn-outline-danger btnEliminarNotif" title="Eliminar"><i class="fas fa-trash"></i></button>
+          </div>
+        `;
+      });
 
-    if (unread > 0) {
-      notifCount.textContent = unread;
-      notifCount.style.display = "inline-block";
+      notifCount.textContent = unread > 0 ? unread : "";
+      notifCount.style.display = unread > 0 ? "inline-block" : "none";
     }
   }
 
+  // Render inicial
+  await renderNotificaciones();
+
+  // Delegación para eliminar notificación
+  notifList.addEventListener("click", async (e) => {
+    if (e.target.closest('.btnEliminarNotif')) {
+      const notifDiv = e.target.closest('.notificacion-item');
+      const notifId = notifDiv.getAttribute("data-id");
+      const res = await Swal.fire({
+        title: '¿Eliminar notificación?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+      });
+      if (res.isConfirmed) {
+        await db.collection("usuarios")
+          .doc(user.uid)
+          .collection("notificaciones")
+          .doc(notifId)
+          .delete();
+        notifDiv.remove();
+        await renderNotificaciones();
+      }
+    }
+  });
+
+  // Al abrir el menú, marcar todas como leídas
   btnNotif.addEventListener("click", async () => {
     const notifs = await db.collection("usuarios")
       .doc(user.uid)
@@ -102,13 +139,15 @@ firebase.auth().onAuthStateChanged(async user => {
       .where("leido", "==", false)
       .get();
 
+    // Marcar todas como leídas
     notifs.forEach(async doc => {
       await doc.ref.update({ leido: true });
     });
 
-    notifCount.style.display = "none";
+    setTimeout(renderNotificaciones, 400); // Refresca badge tras marcar como leídas
   });
 });
+
 
 // Logout
 document.querySelectorAll(".logout").forEach(btn => {
@@ -123,6 +162,10 @@ document.querySelectorAll(".changePwdBtn").forEach(btn => {
     Swal.fire({
       title: 'Confirma tu contraseña actual',
       input: 'password', inputLabel: 'Ingresar contraseña actual',
+    background: '#252836',
+    color: '#f1f1f1',
+    iconColor: '#00ffcc',
+    confirmButtonColor: '#00c2a8',
       showCancelButton: true, confirmButtonText: 'Continuar'
     }).then(r => {
       if (!r.isConfirmed || !r.value) return;
@@ -132,6 +175,10 @@ document.querySelectorAll(".changePwdBtn").forEach(btn => {
         .then(() => Swal.fire({
           title: 'Nueva contraseña',
           input: 'password', inputLabel: 'Ingresa nueva contraseña',
+          background: '#252836',
+    color: '#f1f1f1',
+    iconColor: '#00ffcc',
+    confirmButtonColor: '#00c2a8',
           showCancelButton: true, confirmButtonText: 'Actualizar'
         }).then(r2 => {
           if (r2.isConfirmed && r2.value) {

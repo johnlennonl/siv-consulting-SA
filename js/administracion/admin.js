@@ -63,14 +63,7 @@ fh.textContent = fechaFormateada + " | " + d.toLocaleTimeString('es-ES');
 
 
     let allCourses = [];
-  db.collection("cursos").get().then(snap=>{
-    snap.forEach(doc=>{
-      allCourses.push({ id: doc.id, titulo: doc.data().titulo });
-    });
-  });
 
-
-// Función global para recargar los cursos
 async function cargarCursos() {
   allCourses = [];
   const snapshot = await db.collection("cursos").get();
@@ -170,9 +163,14 @@ document.getElementById("btnEliminarCurso").addEventListener("click", async () =
 });
 
 
-     // Gestión de inscripciones
+      //Gestion de inscripciones 
+
+
   const modalIns = document.getElementById("modalGestionInscripciones");
-  modalIns.addEventListener("show.bs.modal", async ()=>{
+modalIns.addEventListener("show.bs.modal", async ()=>{
+    // 👉 Siempre recarga cursos frescos y SIN duplicados
+    await cargarCursos();
+
     const selAlumnoAsig = document.getElementById("selectAlumnoAsig"),
           selAlumnoDes  = document.getElementById("selectAlumnoDes"),
           selCursoAsig  = document.getElementById("selectCursoAsig"),
@@ -185,7 +183,7 @@ document.getElementById("btnEliminarCurso").addEventListener("click", async () =
     const users = await db.collection("usuarios").where("rol","==","alumno").get();
     users.forEach(d=>{
       const opt1 = document.createElement("option");
-      opt1.value = opt1.textContent = `${d.id}`;
+      opt1.value = d.id;
       opt1.textContent = `${d.data().nombre} (${d.data().email})`;
       const opt2 = opt1.cloneNode(true);
       selAlumnoAsig.appendChild(opt1);
@@ -225,7 +223,8 @@ document.getElementById("btnEliminarCurso").addEventListener("click", async () =
     // disparamos por primera vez
     selAlumnoAsig.dispatchEvent(new Event("change"));
     selAlumnoDes.dispatchEvent(new Event("change"));
-  });
+});
+
 
   // Asignar curso
   // Asignar curso

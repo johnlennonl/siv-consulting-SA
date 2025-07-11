@@ -48,15 +48,21 @@
       <div class="col-md-3 col-lg-2 sidebar d-none d-md-block">
        <div class="sidebar-logo">
       <div class="d-flex justify-content-center ">
-        <img src="https://cdn-icons-png.flaticon.com/512/9972/9972270.png
-        " class="logotipoAlumno img-fluid" alt="Logo Estudiante" />
+        <img src="https://cdn-icons-png.flaticon.com/512/354/354637.png
+        " class="sidebar-img img-fluid" alt="Logo Estudiante" />
       </div>
       <h4 class="text-center mb-4 ">Portal Estudiante</h4>
     </div>
-        <a href="#" class="active"><i class="fas fa-home"></i> Inicio</a>
-        <a href="#"><i class="fas fa-book-reader"></i> Mis Cursos</a>
-        <a href="#" class="changePwdBtn" ><i class="fas fa-key "></i> Cambiar contraseña</a>
-        <a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Salir</a>
+
+     <ul class="nav-list mt-3">
+    <li><a href="#" class="active"><i class="fas fa-home"></i> Inicio</a></li>
+    <li><a href="#"><i class="fas fa-book-reader"></i> Mis Cursos</a></li>
+    <li><a href="#" class="changePwdBtn" ><i class="fas fa-key "></i> Cambiar contraseña</a></li>
+    <li>
+
+    </li>
+    <li><a href="#" class="logout"><i class="fas fa-sign-out-alt"></i> Salir</a></li>
+  </ul>
       </div>
 
       <!-- Contenido principal -->
@@ -100,7 +106,7 @@
     <a class="nav-link" data-tab="actividades" href="#"><i class="fas fa-tasks me-1"></i>Actividades y Notas</a>
   </li>
   <li class="nav-item">
-    <a class="nav-link" data-tab="asistencias" href="#"><i class="fas fa-calendar-check me-1"></i>Asistencias</a>
+    <a  id="tabsAlumno" class="nav-link" data-tab="asistencias" href="#"><i class="fas fa-calendar-check me-1"></i>Asistencias</a>
   </li>
   <li class="nav-item">
     <a class="nav-link" data-tab="certificados" href="#"><i class="fas fa-certificate me-1"></i>Certificados</a>
@@ -168,7 +174,6 @@
 <script>
   emailjs.init('lG1j1fSNUvKU4_Upr'); // este ID lo consigues en tu dashboard
 </script>
-<script src="../js/administracion/notificaciones.js"></script>
 <script src="../js/administracion/panelAlumno.js"></script>
 
   

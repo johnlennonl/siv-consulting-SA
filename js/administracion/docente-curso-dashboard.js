@@ -42,6 +42,8 @@ async function mostrarDashboardCurso(cursoId) {
         <li class="nav-item"><a class="nav-link" data-tab="temario" href="#">Temario</a></li>
         <li class="nav-item"><a class="nav-link" data-tab="calificaciones" href="#">Calificaciones</a></li>
         <li class="nav-item"><a class="nav-link" data-tab="estadisticas" href="#">Estadísticas</a></li>
+        <li><a href="#" class="nav-link" data-tab="certificados">Certificados</a></li>
+
       </ul>
       <div id="tabContenido"></div>
     </div>
@@ -51,20 +53,21 @@ async function mostrarDashboardCurso(cursoId) {
   cargarTabEstudiantes(cursoId);
 
   // Listeners de tabs
-  document.querySelectorAll('#cursoTabs .nav-link').forEach(tab => {
-    tab.addEventListener('click', (e) => {
-      e.preventDefault();
-      document.querySelectorAll('#cursoTabs .nav-link').forEach(t => t.classList.remove('active'));
-      tab.classList.add('active');
-      const tabName = tab.getAttribute('data-tab');
-      if (tabName === 'estudiantes') cargarTabEstudiantes(cursoId);
-      else if (tabName === 'recursos') cargarTabRecursos(cursoId);
-      else if (tabName === 'temario') cargarTabTemario(cursoId);
-      else if (tabName === 'calificaciones') cargarTabCalificaciones(cursoId);
-      else if (tabName === 'estadisticas') cargarTabEstadisticas(cursoId);
-    });
+document.querySelectorAll('#cursoTabs .nav-link').forEach(tab => {
+  tab.addEventListener('click', (e) => {
+    e.preventDefault();
+    document.querySelectorAll('#cursoTabs .nav-link').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    const tabName = tab.getAttribute('data-tab');
+    if (tabName === 'estudiantes') cargarTabEstudiantes(cursoId);
+    else if (tabName === 'recursos') cargarTabRecursos(cursoId);
+    else if (tabName === 'temario') cargarTabTemario(cursoId);
+    else if (tabName === 'calificaciones') cargarTabCalificaciones(cursoId);
+    else if (tabName === 'estadisticas') cargarTabEstadisticas(cursoId);
+    else if (tabName === 'certificados') renderTabOtorgarCertificados(cursoId);  // SOLO esta línea
   });
-}
+});
+
 
 // Tab 1: Estudiantes
 async function cargarTabEstudiantes(cursoId) {
@@ -1038,4 +1041,160 @@ async function cargarTabEstadisticas(cursoId) {
     }
   };
 }
-// ¡Listo para usar!
+
+
+async function renderTabOtorgarCertificados(idCurso) {
+  const db = firebase.firestore();
+  const tabContenido = document.getElementById("tabContenido");
+  tabContenido.innerHTML = `<div class="text-center text-muted">Cargando alumnos...</div>`;
+
+  // Traer alumnos inscritos al curso
+  const alumnosSnap = await db.collection('usuarios')
+    .where('rol', '==', 'alumno')
+    .where('cursosInscritos', 'array-contains', idCurso)
+    .get();
+  const alumnos = alumnosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+  // Trae status de certificados
+  const subcolSnap = await db.collection('cursos').doc(idCurso).collection('alumnos').get();
+  const statusMap = {};
+  subcolSnap.forEach(d => statusMap[d.id] = d.data());
+
+  if (!alumnos.length) {
+    tabContenido.innerHTML = `<div class="alert alert-warning">No hay alumnos inscritos en este curso.</div>`;
+    return;
+  }
+
+  let html = `
+    <div class="card bg-dark text-white p-4 rounded-4 mb-4">
+      <h4 class="mb-4" style="color:#fee084"><i class="fas fa-certificate me-2"></i>Otorgar Certificados</h4>
+      <div class="table-responsive">
+        <table class="table table-dark table-bordered align-middle">
+          <thead>
+            <tr style="color:#fee084;">
+              <th>Alumno</th>
+              <th>Certificado</th>
+              <th>Enlace</th>
+              <th>Acción</th>
+            </tr>
+          </thead>
+          <tbody>
+  `;
+
+  for (const alumno of alumnos) {
+    const status = statusMap[alumno.id] || {};
+    html += `
+      <tr>
+        <td style="min-width:170px;">
+          <b>${alumno.nombre || alumno.email}</b>
+        </td>
+        <td>
+          ${status.finalizado && status.certificadoUrl 
+            ? `<span class="badge bg-success">Otorgado</span>` 
+            : `<span class="badge bg-secondary">Pendiente</span>`}
+        </td>
+        <td>
+          <div class="input-group">
+            <input type="text" class="form-control enlaceCertificadoInput" id="certUrl_${alumno.id}" placeholder="Pega enlace PDF aquí" value="${status.certificadoUrl || ""}" style="min-width:160px">
+            <button class="btn btn-outline-info btnCopiarEnlaceCert" data-alumno="${alumno.id}" type="button" title="Copiar enlace">
+              <i class="fas fa-copy"></i>
+            </button>
+          </div>
+        </td>
+        <td>
+  <button class="btn btn-warning btn-sm btnOtorgarCertificado" data-alumno="${alumno.id}" style="font-weight:600">
+    <i class="fas fa-award me-1"></i>Otorgar
+  </button>
+  <button class="btn btn-danger btn-sm btnEliminarCertificado ms-2" data-alumno="${alumno.id}" title="Eliminar certificado">
+    <i class="fas fa-trash"></i>
+  </button>
+</td>
+
+      </tr>
+    `;
+  }
+
+  html += `
+          </tbody>
+        </table>
+      </div>
+      <div class="mt-3 text-muted" style="font-size:1em">
+        * Recuerda pegar el enlace directo al PDF/Imagen del certificado personalizado.
+      </div>
+    </div>
+  `;
+
+  tabContenido.innerHTML = html;
+
+  // --- Botón copiar enlace ---
+  document.querySelectorAll('.btnCopiarEnlaceCert').forEach(btn => {
+    btn.onclick = function () {
+      const alumnoId = btn.dataset.alumno;
+      const input = document.getElementById(`certUrl_${alumnoId}`);
+      input.select();
+      document.execCommand('copy');
+      btn.innerHTML = `<i class="fas fa-check"></i>`;
+      setTimeout(() => btn.innerHTML = `<i class="fas fa-copy"></i>`, 1000);
+      Swal.fire({
+        toast: true,
+        icon: "success",
+        title: "¡Enlace copiado!",
+        timer: 900,
+        position: "top-end",
+        showConfirmButton: false,
+        background: "#fee084",
+        color: "#232029"
+      });
+    };
+  });
+
+  // --- Botón otorgar certificado ---
+  document.querySelectorAll('.btnOtorgarCertificado').forEach(btn => {
+    btn.onclick = async function () {
+      const alumnoId = this.dataset.alumno;
+      const input = document.getElementById(`certUrl_${alumnoId}`);
+      const url = input.value.trim();
+      if (!url) {
+        Swal.fire("Falta el enlace", "Pega el enlace al certificado antes de otorgar.", "warning");
+        return;
+      }
+
+      // Traer estado anterior para saber si es nuevo o solo editado
+      const statusPrevio = statusMap[alumnoId] || {};
+      const yaOtorgado = statusPrevio.finalizado && statusPrevio.certificadoUrl;
+
+      await db.collection('cursos').doc(idCurso).collection('alumnos').doc(alumnoId).set({
+        finalizado: true,
+        certificadoUrl: url
+      }, { merge: true });
+
+      // Notificación SOLO si no lo tenía antes
+      if (!yaOtorgado) {
+        await db.collection('usuarios').doc(alumnoId).collection('notificaciones').add({
+          tipo: "certificado_otorgado",
+          mensaje: `¡Felicidades! Has recibido tu certificado del curso.<br><a href="${url}" target="_blank" style="color:#1fa37a;text-decoration:underline"><b>Ver certificado</b></a>`,
+          cursoId: idCurso,
+          fecha: firebase.firestore.Timestamp.now(),
+          leida: false
+        });
+      }
+
+      // Feedback visual
+      this.closest('tr').querySelector('.badge').className = "badge bg-success";
+      this.closest('tr').querySelector('.badge').textContent = "Otorgado";
+      Swal.fire({
+        toast: true,
+        icon: "success",
+        title: "¡Certificado otorgado!",
+        timer: 1500,
+        position: "top-end",
+        showConfirmButton: false,
+        background: "#fee084",
+        color: "#232029"
+      });
+    }
+  });
+}
+
+}
+
