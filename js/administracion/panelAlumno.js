@@ -249,7 +249,7 @@ tabContenido.querySelectorAll(".enviar-respuesta-btn").forEach(btn => {
             actividadId: actId,
             actividadTitulo: actTitulo,
             fecha: firebase.firestore.Timestamp.now(),
-            leida: false   // OJO: "leida" para que cuente el badge
+            leido: false   // OJO: "leida" para que cuente el badge
           });
       }
     } catch (err) {

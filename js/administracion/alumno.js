@@ -31,8 +31,7 @@ window.addEventListener("load", () => {
   tick();
   setInterval(tick, 1000);
 });
-
-// Auth, bienvenida y notificaciones (mejorado)
+// Auth, bienvenida y notificaciones (final y limpio usando "leido")
 firebase.auth().onAuthStateChanged(async user => {
   if (!user) return location.href = "login.html";
   const ud = await db.collection("usuarios").doc(user.uid).get();
@@ -54,11 +53,34 @@ firebase.auth().onAuthStateChanged(async user => {
   const notifList = document.getElementById("notifList");
   const notifCount = document.getElementById("notifCount");
 
-  // Mostrar/ocultar menú de notificaciones
-  btnNotif.addEventListener("click", e => {
+  // Mostrar/ocultar menú de notificaciones + marcar como leídas
+  btnNotif.addEventListener("click", async (e) => {
     e.stopPropagation();
     notifList.classList.toggle("show");
+
+    // Solo si se está mostrando el menú, marcar como leídas y refrescar
+    if (notifList.classList.contains("show")) {
+      const notifs = await db.collection("usuarios")
+        .doc(user.uid)
+        .collection("notificaciones")
+        .where("leido", "==", false)
+        .get();
+
+      // Marca todas como leídas en paralelo si hay
+      if (!notifs.empty) {
+        const updates = [];
+        notifs.forEach(doc => {
+          updates.push(doc.ref.update({ leido: true }));
+        });
+        await Promise.all(updates);
+      }
+
+      // Espera breve para asegurar sincronización con Firestore
+      setTimeout(renderNotificaciones, 200);
+    }
   });
+
+  // Ocultar menú al hacer click fuera
   document.addEventListener("click", e => {
     if (!notifList.contains(e.target) && !btnNotif.contains(e.target)) {
       notifList.classList.remove("show");
@@ -86,6 +108,7 @@ firebase.auth().onAuthStateChanged(async user => {
       notifsSnap.forEach(doc => {
         const n = doc.data();
         const idNotif = doc.id;
+        // Contamos como "no leída" si leido es false o no existe
         if (!n.leido) unread++;
         notifList.innerHTML += `
           <div class="notificacion-item d-flex justify-content-between align-items-center ${!n.leido ? 'fw-bold' : ''}" data-id="${idNotif}" style="gap:8px; border-bottom:1px solid #eee; padding:8px 6px;">
@@ -131,22 +154,8 @@ firebase.auth().onAuthStateChanged(async user => {
     }
   });
 
-  // Al abrir el menú, marcar todas como leídas
-  btnNotif.addEventListener("click", async () => {
-    const notifs = await db.collection("usuarios")
-      .doc(user.uid)
-      .collection("notificaciones")
-      .where("leido", "==", false)
-      .get();
-
-    // Marcar todas como leídas
-    notifs.forEach(async doc => {
-      await doc.ref.update({ leido: true });
-    });
-
-    setTimeout(renderNotificaciones, 400); // Refresca badge tras marcar como leídas
-  });
 });
+
 
 
 // Logout
