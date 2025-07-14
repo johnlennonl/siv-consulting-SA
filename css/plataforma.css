@@ -111,11 +111,11 @@ body {
 
 .dashboard-card h2 {
   font-size: 2.5rem;
-  color: #d5af49;
+  color: #f5c518;
 }
 
 .card {
-  border-radius: 8px;
+  border-radius: 8px;;
 }
 
 canvas {
@@ -224,7 +224,7 @@ canvas {
 .dashboard-card h2 {
   font-size: 2.2rem;
   margin: 0;
-  color: #00ffcc;
+  color : #d5af49
 }
 
 .dashboard-card p {
@@ -354,7 +354,11 @@ canvas {
 
 
 .btnEditar{
-  background-color: #009f8b;
+  background-color: #d5af49;
+  border: none;
+  color: #fff;
+  border-radius: 3px;
+  transition: background-color 0.3s ease;
 }
 
 .btnEditar:hover{

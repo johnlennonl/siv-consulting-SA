@@ -109,168 +109,311 @@ temarioSnap.forEach((doc) => {
 }
 
 
-    // 3. Actividades y notas
-  // 3. Actividades y notas
+    /// 3. Actividades y notas
 async function renderActividadesNotas(idCurso, alumnoId) {
   const db = firebase.firestore();
   const tabContenido = document.getElementById("contenidoTabAlumno");
   tabContenido.innerHTML = `<div class="text-center text-muted">Cargando actividades...</div>`;
 
-  // Traer actividades
-  const actsSnap = await db.collection("cursos").doc(idCurso).collection("actividades").get();
+  // Traer actividades (ordenar por fecha descendente)
+  const actsSnap = await db.collection("cursos").doc(idCurso)
+    .collection("actividades").orderBy("fecha", "desc").get();
 
   if (actsSnap.empty) {
     tabContenido.innerHTML = `<div class="alert alert-warning">No hay actividades asignadas aún.</div>`;
     return;
   }
 
-  let html = '<div class="list-group">';
-  // Usamos Promise.all para traer respuestas por cada actividad (en paralelo)
-  const acts = await Promise.all(actsSnap.docs.map(async doc => {
-    const act = doc.data();
-    const actId = doc.id;
+  // Armar tabs
+ // 1. Trae actividades y respuestas (ordenadas)
+const actsArr = actsSnap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+let actividadRespuestas = {};
 
-  
-
-    // Formatear fecha de entrega
-    let fechaEntrega = "No definida";
-    if (act.fecha) {
-      if (typeof act.fecha === "object" && act.fecha.seconds) {
-        const date = new Date(act.fecha.seconds * 1000);
-        fechaEntrega = date.toLocaleDateString("es-VE", { year: "numeric", month: "long", day: "numeric" });
-      } else if (typeof act.fecha === "string") {
-        fechaEntrega = new Date(act.fecha).toLocaleDateString("es-VE", { year: "numeric", month: "long", day: "numeric" });
-      }
-    }
-
-    // Buscar si ya tiene respuesta
+// Trae si el alumno ya respondió cada actividad (promesas en paralelo)
+await Promise.all(
+  actsArr.map(async (act) => {
     const respSnap = await db.collection("cursos").doc(idCurso)
-      .collection("actividades").doc(actId)
-      .collection("notas").doc(alumnoId).get();  // <-- Cambiado aquí!
-    const respuesta = respSnap.exists ? respSnap.data() : null;
+      .collection("actividades").doc(act.id)
+      .collection("notas").doc(alumnoId).get();
+    actividadRespuestas[act.id] = respSnap.exists ? respSnap.data() : null;
+  })
+);
 
-    // Estado de la respuesta (si ya envió, textarea disabled)
-    const yaRespondio = !!respuesta?.respuesta;
-    const nota = respuesta?.nota ?? null;
-    const retro = respuesta?.retroalimentacion ?? null;
-
-    return `
-  <div class="list-group-item bg-dark text-white mb-4 border rounded-3 shadow-sm" style="position:relative;padding:1.5em">
-    <h5 class="fw-bold mb-2"><i class="fas fa-file-alt me-2"></i>${(act.titulo || "Sin título").toUpperCase()}</h5>
-    <p class="mb-2">${act.descripcion || "Sin descripción"}</p>
-    <div class="d-flex flex-wrap align-items-center mb-1" style="gap:1.2em;">
-      <small class="text-info" style="font-size:1.07em">Fecha de entrega: ${fechaEntrega}</small>
-      ${
-        nota !== null 
-        ? `<span class="badge border-0" style="
-              background:#d7fbe9;
-              color:#169151;
-              padding:8px 20px;
-              font-size:1.15em;
-              font-weight:600;
-              border-radius:10px;
-              box-shadow:0 1px 9px #1fa37a22;
-              margin-left:7px;
-              letter-spacing:0.2px;
-              vertical-align:middle;
-          ">
-            <i class="fas fa-medal me-1 text-warning"></i> Nota: <span style="font-size:1.19em">${nota}</span>
-          </span>`
-        : ''
-      }
-    </div>
-    ${
-      retro 
-        ? `<div style="background:#2d2d39;padding:10px 15px;border-radius:9px;margin-bottom:6px;margin-top:3px;color:#ffc107;font-size:1.06em;display:flex;align-items:center;gap:6px;">
-              <i class="fas fa-comment-dots"></i>
-              <span><b>Observación:</b> ${retro}</span>
-          </div>`
-        : ''
-    }
-    <div class="mt-3">
-      <label for="respuesta_${actId}" class="form-label fw-bold">Tu respuesta:</label>
-      <textarea id="respuesta_${actId}" rows="4" class="form-control bg-light" placeholder="Escribe tu respuesta aquí..." ${yaRespondio ? "disabled" : ""}>${respuesta?.respuesta || ""}</textarea>
-      <button class="btn btn-warning mt-2 fw-bold enviar-respuesta-btn" style="float:right" data-actid="${actId}" ${yaRespondio ? "disabled" : ""}>${yaRespondio ? "Respuesta enviada" : "Enviar respuesta"}</button>
-    </div>
+// 2. Render select numerado con estado
+let selectHTML = `
+<div class="actividad-selector-container">
+  <label for="actividadSelect" class="actividad-label">
+    <i class="fas fa-tasks me-2"></i>Selecciona una actividad:
+  </label>
+  <select id="actividadSelect" class="actividad-select">
+      ${actsArr.map((act, idx) => {
+        const resp = actividadRespuestas[act.id];
+        const yaRespondio = !!resp?.respuesta;
+        return `
+       <option value="${act.id}" ${idx === 0 ? 'selected' : ''}>
+  Actividad ${actsArr.length - idx} - ${(act.titulo || "Sin título").substring(0, 32)}
+  ${yaRespondio ? " (realizada)" : ""}
+</option>
+      `;
+      }).join('')}
+    </select>
   </div>
 `;
 
-  }));
+// 3. Renderiza el contenido de actividades (solo muestra una, la seleccionada)
+let actividadContenidos = {};
 
-  html += acts.join("") + "</div>";
-  tabContenido.innerHTML = html;
+for (let idx = 0; idx < actsArr.length; idx++) {
+  const act = actsArr[idx];
+  const actId = act.id;
+  const respuesta = actividadRespuestas[actId];
+  const yaRespondio = !!respuesta?.respuesta;
+  const nota = respuesta?.nota ?? null;
+  const retro = respuesta?.retroalimentacion ?? null;
+
+  // Fecha de entrega (igual)
+  let fechaEntrega = "No definida";
+  if (act.fecha) {
+    if (typeof act.fecha === "object" && act.fecha.seconds) {
+      const date = new Date(act.fecha.seconds * 1000);
+      fechaEntrega = date.toLocaleDateString("es-VE", { year: "numeric", month: "long", day: "numeric" });
+    } else if (typeof act.fecha === "string") {
+      fechaEntrega = new Date(act.fecha).toLocaleDateString("es-VE", { year: "numeric", month: "long", day: "numeric" });
+    }
+  }
+
+  // Video (igual, con contenedor)
+  let videoHTML = '';
+  if (act.videoUrl) {
+    const url = act.videoUrl;
+    if (url.includes('youtube.com') || url.includes('youtu.be')) {
+      let videoId = '';
+      if (url.includes('v=')) videoId = url.split('v=')[1].split('&')[0];
+      else if (url.includes('youtu.be/')) videoId = url.split('youtu.be/')[1].split('?')[0];
+      if (videoId) videoHTML = `<div class="actividad-video-contenedor"><iframe width="100%" height="315" src="https://www.youtube.com/embed/${videoId}" frameborder="0" allowfullscreen></iframe></div>`;
+    } else if (url.includes('vimeo.com')) {
+      let videoId = url.split('vimeo.com/')[1];
+      videoHTML = `<div class="actividad-video-contenedor"><iframe src="https://player.vimeo.com/video/${videoId}" width="100%" height="320" frameborder="0" allowfullscreen></iframe></div>`;
+    } else if (url.match(/\.(mp4|webm|ogg)($|\?)/)) {
+      let videoSrc = url;
+      if (videoSrc.includes('dropbox.com')) {
+        const mp4Index = videoSrc.indexOf('.mp4');
+        if (mp4Index !== -1) videoSrc = videoSrc.substring(0, mp4Index + 4) + '?raw=1';
+      }
+      videoHTML = `<div class="actividad-video-contenedor"><video controls><source src="${videoSrc}" type="video/mp4">Tu navegador no soporta la reproducción de video.</video></div>`;
+    } else if (url.includes('drive.google.com')) {
+      let match = url.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+      let fileId = match ? match[1] : null;
+      if (fileId) {
+        let embedUrl = `https://drive.google.com/file/d/${fileId}/preview`;
+        videoHTML = `<div class="actividad-video-contenedor"><iframe src="${embedUrl}" width="100%" height="320" allow="autoplay"></iframe></div>`;
+      } else {
+        videoHTML = `<a href="${url}" target="_blank" style="color:#1fa37a;font-weight:bold;display:block;margin-bottom:13px;"><i class="fas fa-video"></i> Ver video</a>`;
+      }
+    } else {
+      videoHTML = `<a href="${url}" target="_blank" style="color:#1fa37a;font-weight:bold;display:block;margin-bottom:13px;"><i class="fas fa-video"></i> Ver video</a>`;
+    }
+  }
+
+  // Contenido de la actividad (igual que antes)
+  actividadContenidos[actId] = `
+    <div class="actividad-alumno-detalle">
+      <h5 class="fw-bold mb-2"><i class="fas fa-file-alt me-2"></i>${(act.titulo || "Sin título").toUpperCase()}</h5>
+      <p class="mb-2">${act.descripcion || "Sin descripción"}</p>
+      ${videoHTML}
+      <div class="d-flex flex-wrap align-items-center mb-1" style="gap:1.2em;">
+        <small class="text-info" style="font-size:1.07em">Fecha de entrega: ${fechaEntrega}</small>
+        ${nota !== null 
+          ? `<span class="badge border-0" style="background:#d7fbe9;color:#169151;padding:8px 20px;font-size:1.15em;font-weight:600;border-radius:10px;box-shadow:0 1px 9px #1fa37a22;margin-left:7px;letter-spacing:0.2px;vertical-align:middle;">
+              <i class="fas fa-medal me-1 text-warning"></i> Nota: <span style="font-size:1.19em">${nota}</span>
+            </span>` 
+          : ''
+        }
+      </div>
+      ${
+        retro 
+          ? `<div style="background:#2d2d39;padding:10px 15px;border-radius:9px;margin-bottom:6px;margin-top:3px;color:#ffc107;font-size:1.06em;display:flex;align-items:center;gap:6px;">
+              <i class="fas fa-comment-dots"></i>
+              <span><b>Observación:</b> ${retro}</span>
+            </div>`
+          : ''
+      }
+      <div class="mt-3">
+        <label for="respuesta_${actId}" class="form-label fw-bold">Tu respuesta:</label>
+        <textarea id="respuesta_${actId}" rows="4" class="form-control bg-light" placeholder="Escribe tu respuesta aquí..." ${yaRespondio ? "disabled" : ""}>${respuesta?.respuesta || ""}</textarea>
+        <div class="d-flex flex-wrap align-items-center gap-2 mt-2 justify-content-between">
+          <div>
+            <button class="btn btn-warning fw-bold enviar-respuesta-btn" data-actid="${actId}" ${yaRespondio ? "disabled" : ""}>
+              ${yaRespondio ? "Respuesta enviada" : "Enviar respuesta"}
+            </button>
+            <!-- Botón Adjuntar archivo -->
+<input type="file" id="fileInput_${actId}" style="display:none" />
+
+<button class="btn btn-secondary ms-2 btn-adjuntar-archivo" type="button" onclick="Swal.fire('Función próximamente disponible', 'Esta función estará disponible en breve. Actualiza tu plataforma para ver las novedades.', 'info'; 
+)
+">
+  <i class="fas fa-paperclip"></i> Adjuntar archivo <span style="font-size:0.85em;">(Próximamente)</span>
+</button>
+
+
+<span class="archivo-nombre" id="archivoNombre_${actId}" style="font-size:0.93em; margin-left:7px;color:#fee084;"></span>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// 4. Renderiza el select y el primer contenido
+tabContenido.innerHTML = selectHTML + `<div id="actividadContenido">${actividadContenidos[actsArr[0].id]}</div>`;
+
+// 5. Listener para cambiar contenido según el select
+document.getElementById('actividadSelect').onchange = function () {
+  const actId = this.value;
+  document.getElementById('actividadContenido').innerHTML = actividadContenidos[actId];
+  // Aquí puedes volver a activar listeners para el botón enviar respuesta (si fuera necesario)
+  // O haz delegation por id/clase
+};
+
+// ...El resto de tu código (listeners de botón enviar, función archivo pendiente, etc) va igual
+
+
+  // Activar tab Bootstrap (si usas Bootstrap 5)
+  if (window.bootstrap) {
+    var triggerTabList = [].slice.call(tabContenido.querySelectorAll('.nav-link'));
+    triggerTabList.forEach(function (triggerEl) {
+      var tabTrigger = new bootstrap.Tab(triggerEl);
+      triggerEl.addEventListener('click', function (event) {
+        event.preventDefault();
+        tabTrigger.show();
+      });
+    });
+  }
 
   // Listener a los botones de enviar respuesta
-// Listener a los botones de enviar respuesta
-tabContenido.querySelectorAll(".enviar-respuesta-btn").forEach(btn => {
-  btn.onclick = async function () {
-    const actId = this.dataset.actid;
-    const textarea = document.getElementById(`respuesta_${actId}`);
-    const value = textarea.value.trim();
-    if (!value) {
-      Swal.fire("Responde la actividad antes de enviar");
-      return;
-    }
-    this.disabled = true;
-    textarea.disabled = true;
-
-    // GUARDAR la respuesta del alumno
-    await db.collection("cursos").doc(idCurso)
-      .collection("actividades").doc(actId)
-      .collection("notas").doc(alumnoId)
-      .set({
-        respuesta: value,
-        fechaEnvio: firebase.firestore.FieldValue.serverTimestamp()
-      }, { merge: true });
-
-    // --- NOTIFICAR AL DOCENTE ---
-    try {
-      // 1. Trae info del curso y docente
-      const cursoDoc = await db.collection("cursos").doc(idCurso).get();
-      const docenteId = cursoDoc.data().docenteId; // Debe existir este campo
-
-      if (docenteId) {
-        // 2. Info del alumno y actividad
-        const alumnoDoc = await db.collection("usuarios").doc(alumnoId).get();
-        const alumnoNombre = alumnoDoc.data().nombre || alumnoDoc.data().email;
-
-        const actDoc = await db.collection("cursos").doc(idCurso)
-            .collection("actividades").doc(actId).get();
-        const actTitulo = actDoc.data().titulo || "Actividad";
-
-        // 3. Agrega la notificación SOLO AQUÍ
-        await db.collection("usuarios").doc(docenteId)
-          .collection("notificaciones").add({
-            tipo: "respuesta_actividad",
-            mensaje: `El alumno <b>${alumnoNombre}</b> respondió la actividad <b>${actTitulo}</b>.`,
-            alumnoId,
-            alumnoNombre,
-            cursoId: idCurso,
-            actividadId: actId,
-            actividadTitulo: actTitulo,
-            fecha: firebase.firestore.Timestamp.now(),
-            leido: false   // OJO: "leida" para que cuente el badge
-          });
+  tabContenido.querySelectorAll(".enviar-respuesta-btn").forEach(btn => {
+    btn.onclick = async function () {
+      const actId = this.dataset.actid;
+      const textarea = document.getElementById(`respuesta_${actId}`);
+      const value = textarea.value.trim();
+      if (!value) {
+        Swal.fire("Responde la actividad antes de enviar");
+        return;
       }
-    } catch (err) {
-      console.error("Error enviando notificación a docente:", err);
-    }
-    // --------------------------
+      this.disabled = true;
+      textarea.disabled = true;
 
-    Swal.fire({
-      icon: "success",
-      title: "¡Respuesta enviada!",
-      text: "Tu respuesta fue enviada correctamente.",
-      timer: 1600,
-      showConfirmButton: false,
-      toast: true,
-      position: "top-end",
-      background: "#25242f",
-      color: "#fee084"
-    });
-    this.textContent = "Respuesta enviada";
+      // GUARDAR la respuesta del alumno
+      await db.collection("cursos").doc(idCurso)
+        .collection("actividades").doc(actId)
+        .collection("notas").doc(alumnoId)
+        .set({
+          respuesta: value,
+          fechaEnvio: firebase.firestore.FieldValue.serverTimestamp()
+        }, { merge: true });
+
+      // --- NOTIFICAR AL DOCENTE ---
+      try {
+        const cursoDoc = await db.collection("cursos").doc(idCurso).get();
+        const docenteId = cursoDoc.data().docenteId;
+        if (docenteId) {
+          const alumnoDoc = await db.collection("usuarios").doc(alumnoId).get();
+          const alumnoNombre = alumnoDoc.data().nombre || alumnoDoc.data().email;
+          const actDoc = await db.collection("cursos").doc(idCurso)
+              .collection("actividades").doc(actId).get();
+          const actTitulo = actDoc.data().titulo || "Actividad";
+          await db.collection("usuarios").doc(docenteId)
+            .collection("notificaciones").add({
+              tipo: "respuesta_actividad",
+              mensaje: `El alumno <b>${alumnoNombre}</b> respondió la actividad <b>${actTitulo}</b>.`,
+              alumnoId,
+              alumnoNombre,
+              cursoId: idCurso,
+              actividadId: actId,
+              actividadTitulo: actTitulo,
+              fecha: firebase.firestore.Timestamp.now(),
+              leido: false
+            });
+        }
+      } catch (err) {
+        console.error("Error enviando notificación a docente:", err);
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "¡Respuesta enviada!",
+        text: "Tu respuesta fue enviada correctamente.",
+        timer: 1600,
+        showConfirmButton: false,
+        toast: true,
+        position: "top-end",
+        background: "#25242f",
+        color: "#fee084"
+      });
+      this.textContent = "Respuesta enviada";
+    };
+  });
+
+  // Función de archivo pendiente (solo placeholder)
+window.subirArchivoPendiente = function(actId, idCurso, alumnoId) {
+  const input = document.getElementById(`fileInput_${actId}`);
+  if (!input) return;
+
+  input.click();
+
+  input.onchange = async function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const fileNameSpan = document.getElementById(`archivoNombre_${actId}`);
+    if (fileNameSpan) {
+      fileNameSpan.innerHTML = `<span class="archivo-loader"></span> Subiendo archivo...`;
+      fileNameSpan.classList.remove('success', 'error');
+    }
+
+    const storageRef = firebase.storage().ref();
+    const fileRef = storageRef.child(`cursos/${idCurso}/actividades/${actId}/alumnos/${alumnoId}/${file.name}`);
+
+    try {
+      await fileRef.put(file);
+      const url = await fileRef.getDownloadURL();
+
+      if (fileNameSpan) {
+        fileNameSpan.innerHTML = `<i class="fas fa-check-circle" style="color:#34b352"></i> <b>${file.name}</b>`;
+        fileNameSpan.classList.add('success');
+        // Opcional: nombre clickable para descargarlo
+        // fileNameSpan.innerHTML = `<i class="fas fa-check-circle" style="color:#34b352"></i> <a href="${url}" target="_blank" style="color:#34b352"><b>${file.name}</b></a>`;
+      }
+
+      Swal.fire({
+        icon: "success",
+        title: "Archivo subido",
+        text: "El archivo fue subido correctamente.",
+        timer: 1600,
+        showConfirmButton: false,
+        toast: true,
+        position: "top-end",
+        background: "#25242f",
+        color: "#fee084"
+      });
+
+      // (opcional) guardar la url en Firestore si no lo haces al enviar respuesta:
+      // await db.collection("cursos").doc(idCurso)
+      //   .collection("actividades").doc(actId)
+      //   .collection("notas").doc(alumnoId)
+      //   .set({ archivoURL: url }, { merge: true });
+
+    } catch (err) {
+      console.error("Error subiendo archivo:", err);
+      if (fileNameSpan) {
+        fileNameSpan.textContent = "❌ Error al subir archivo";
+        fileNameSpan.classList.add('error');
+      }
+      Swal.fire("Error", "No se pudo subir el archivo. Intenta de nuevo.", "error");
+    }
   };
-});
+};
 
 
 }

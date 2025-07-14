@@ -40,7 +40,7 @@ body, html {
   margin-bottom: .7rem;
 }
 .sidebar-img {
-  width: 200px;
+  width: 250px;
   max-width: 250px;
 }
 .sidebar-title {
@@ -92,23 +92,6 @@ body, html {
   box-shadow: 0 1px 8px #23253a25;
 }
 
-/* Badge Notificaciones */
-/* #notifCountSidebar { */
-  /* margin-left: .3em;
-  font-size: .93em;
-  padding: .25em .65em;
-  background: #111111;
-  color: #fff;
-  font-weight: 700;
-  box-shadow: 0 2px 8px #0002;
-}
-
-/* Ajuste para que el badge no desborde en mobile */
-/* #linkNotificaciones {
-  min-width: 0;
-  justify-content: space-between;
-  gap: .7em;
-} */ 
 
 /* ================= HEADER MOBILE =============== */
 .admin-mobile-header {

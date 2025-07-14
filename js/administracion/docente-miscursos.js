@@ -170,8 +170,7 @@ const modalBody = `
     <p class="mb-2">${curso.descripcion || 'Sin descripción.'}</p>
     ${datosCursoHtml}
     <hr class="bg-light opacity-50">
-    <h5 class="mt-2"><i class="fas fa-user-graduate me-1 text-warning"></i> Estudiantes Inscritos</h5>
-    ${alumnosHTML}
+    
     <div class=" d-flex justify-content-between   mt-4 text-end">
       <button class="btn btn-warning btnIrAlCurso mt-2 w-100" data-id="${curso.id}">
   <i class="fas fa-arrow-right"></i> Ir al curso

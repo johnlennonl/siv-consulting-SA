@@ -311,7 +311,7 @@ async function cargarTabTemario(cursoId) {
   });
 }
 
-// Tab 4: Calificaciones y Resumen
+// Tab 4: Calificaciones y 
 async function cargarTabCalificaciones(cursoId) {
   const db = window.db || firebase.firestore();
 
@@ -330,47 +330,30 @@ async function cargarTabCalificaciones(cursoId) {
   } else {
     actsHTML = actividades.map(act => `
       <div class="actividad-card mb-3 p-3 rounded-3 shadow-sm" style="background:#232029; border-left: 4px solid #fee084;">
-        <div class="d-flex justify-content-between align-items-start">
-          <div>
-            <b style="font-size:1.16rem; color:#fee084;">${act.titulo}</b>
-            <p class="mb-1" style="color:#e1e1e1">${act.descripcion || ''}</p>
-          </div>
-          <div>
-            <button class="btn btn-sm btnCalificarActividad" 
-                    style="background:#1fa37a;color:#fff;font-weight:600;box-shadow:0 1px 8px #2222"
-                    data-id="${act.id}" data-titulo="${act.titulo}">
-              <i class="fas fa-pen"></i> Calificar
+        <div>
+          <b style="font-size:1.15rem; color:#fee084; display:block; margin-bottom:2px;">${act.titulo}</b>
+          <div style="color:#e1e1e1; margin-bottom:8px; font-size:1.03rem;">${act.descripcion || ''}</div>
+          ${act.videoUrl ? `<div style="margin-bottom:8px;">
+            <span style="color:#fee084;font-size:0.98em"><i class="fas fa-video me-1"></i>Video:</span>
+            <span style="color:#1fa37a;font-size:0.98em;word-break:break-all">${act.videoUrl}</span>
+          </div>` : ''}
+          <div class="d-flex gap-2 flex-wrap mt-2" style="justify-content: flex-start;">
+            <button class="btn btn-outline-warning btn-sm btnEditarActividad"
+              data-id="${act.id}" data-titulo="${act.titulo}" data-desc="${act.descripcion || ''}" data-video="${act.videoUrl || ''}" style="font-weight:600;">
+              <i class="fas fa-edit"></i> Editar ejercicio
             </button>
-            <button class="btn btn-sm btn-danger btnEliminarActividad" 
-                    style="margin-left:6px;" data-id="${act.id}" data-titulo="${act.titulo}">
-              <i class="fas fa-trash"></i>
+            <button class="btn btn-success btn-sm btnCalificarActividad"
+              data-id="${act.id}" data-titulo="${act.titulo}" style="font-weight:600;">
+              <i class="fas fa-user-graduate"></i> Calificar estudiantes
+            </button>
+            <button class="btn btn-danger btn-sm btnEliminarActividad"
+              data-id="${act.id}" data-titulo="${act.titulo}" style="font-weight:600;">
+              <i class="fas fa-trash"></i> Eliminar ejercicio
             </button>
           </div>
         </div>
       </div>
-    `).join('');actsHTML = actividades.map(act => `
-  <div class="actividad-card mb-3 p-3 rounded-3 shadow-sm" style="background:#232029; border-left: 4px solid #fee084;">
-    <div>
-      <b style="font-size:1.15rem; color:#fee084; display:block; margin-bottom:2px;">${act.titulo}</b>
-      <div style="color:#e1e1e1; margin-bottom:8px; font-size:1.03rem;">${act.descripcion || ''}</div>
-      <div class="d-flex gap-2 flex-wrap mt-2" style="justify-content: flex-start;">
-        <button class="btn btn-outline-warning btn-sm btnEditarActividad" 
-          data-id="${act.id}" data-titulo="${act.titulo}" style="font-weight:600;">
-          <i class="fas fa-edit"></i> Editar ejercicio
-        </button>
-        <button class="btn btn-success btn-sm btnCalificarActividad"
-          data-id="${act.id}" data-titulo="${act.titulo}" style="font-weight:600;">
-          <i class="fas fa-user-graduate"></i> Calificar estudiantes
-        </button>
-        <button class="btn btn-danger btn-sm btnEliminarActividad"
-          data-id="${act.id}" data-titulo="${act.titulo}" style="font-weight:600;">
-          <i class="fas fa-trash"></i> Eliminar ejercicio
-        </button>
-      </div>
-    </div>
-  </div>
-`).join('');
-
+    `).join('');
   }
 
   // 3. Render general del tab (¡Agregamos el resumen aquí!)
@@ -383,62 +366,127 @@ async function cargarTabCalificaciones(cursoId) {
     <div id="resumenNotas"></div>
   `;
 
- document.getElementById('btnAgregarActividad').onclick = async () => {
-  const { value: formValues } = await Swal.fire({
-    title: '<span style="color:#e8bb3f;font-size:1.1em;font-weight:800"><i class="fas fa-file-alt me-2"></i>Nueva Actividad</span>',
-    html: `
-      <div style="text-align:left;">
-        
-        <input id="tituloActividad" class="swal2-input " placeholder="Ej: Ejercicio de bombas" style=" margin-bottom:17px;border-radius:10px;border:1.5px solid #1fa37a;background:#232029;color:#fff;font-size:1.08em;">
-
-        
-        <textarea id="descActividad" class="swal2-textarea" placeholder="Describe la actividad (opcional)" rows="3" style=";border-radius:10px;border:1.5px solid #1fa37a;background:#232029;color:#fff;font-size:1.07em;"></textarea>
-      </div>
-    `,
-    background: "#191927",
-    color: "#f1f1f1",
-    confirmButtonText: "<i class='fas fa-plus'></i> Agregar",
-    cancelButtonText: "<i class='fas fa-times'></i> Cancelar",
-    showCancelButton: true,
-    focusConfirm: false,
-    customClass: {
-      popup: 'rounded-4 montserrat-font',
-      confirmButton: 'btn btn-success fw-bold px-4 py-2 rounded-3',
-      cancelButton: 'btn btn-secondary fw-bold px-4 py-2 rounded-3'
-    },
-    preConfirm: () => {
-      const titulo = document.getElementById('tituloActividad').value.trim();
-      const descripcion = document.getElementById('descActividad').value.trim();
-      if (!titulo) {
-        Swal.showValidationMessage('El título es obligatorio');
-        return false;
+  // CREAR ACTIVIDAD
+  document.getElementById('btnAgregarActividad').onclick = async () => {
+    const { value: formValues } = await Swal.fire({
+      title: '<span style="color:#e8bb3f;font-size:1.1em;font-weight:800"><i class="fas fa-file-alt me-2"></i>Nueva Actividad</span>',
+      html: `
+        <div style="text-align:left;">
+          <input id="tituloActividad" class="swal2-input" placeholder="Ej: Ejercicio de bombas" style="margin-bottom:17px;border-radius:10px;border:1.5px solid #1fa37a;background:#232029;color:#fff;font-size:1.08em;">
+          <textarea id="descActividad" class="swal2-textarea" placeholder="Describe la actividad (opcional)" rows="3" style="border-radius:10px;border:1.5px solid #1fa37a;background:#232029;color:#fff;font-size:1.07em;"></textarea>
+          <input id="videoUrl" class="swal2-input" placeholder="Enlace de video (opcional)" style="margin-top:12px;border-radius:10px;border:1.5px solid #1fa37a;background:#232029;color:#fff;font-size:1.05em;">
+        </div>
+      `,
+      background: "#191927",
+      color: "#f1f1f1",
+      width: '500px',
+      heightAuto: false,
+      confirmButtonText: "<i class='fas fa-plus'></i> Agregar",
+      cancelButtonText: "<i class='fas fa-times'></i> Cancelar",
+      showCancelButton: true,
+      focusConfirm: false,
+      customClass: {
+        popup: 'rounded-4 montserrat-font',
+        confirmButton: 'btn btn-success fw-bold px-4 py-2 rounded-3',
+        cancelButton: 'btn btn-secondary fw-bold px-4 py-2 rounded-3'
+      },
+      preConfirm: () => {
+        const titulo = document.getElementById('tituloActividad').value.trim();
+        const descripcion = document.getElementById('descActividad').value.trim();
+        const videoUrl = document.getElementById('videoUrl').value.trim();
+        if (!titulo) {
+          Swal.showValidationMessage('El título es obligatorio');
+          return false;
+        }
+        return [titulo, descripcion, videoUrl];
       }
-      return [titulo, descripcion];
+    });
+
+    if (formValues && formValues[0]) {
+      await db.collection('cursos').doc(cursoId).collection('actividades').add({
+        titulo: formValues[0],
+        descripcion: formValues[1],
+        videoUrl: formValues[2],
+        fecha: firebase.firestore.Timestamp.now()
+      });
+      Swal.fire({
+        icon: 'success',
+        title: '¡Actividad agregada!',
+        background: "#232029",
+        color: "#fff",
+        timer: 1200,
+        toast: true,
+        position: "top-end",
+        showConfirmButton: false
+      });
+      cargarTabCalificaciones(cursoId);
     }
+  };
+
+  // EDITAR ACTIVIDAD
+  document.querySelectorAll('.btnEditarActividad').forEach(btn => {
+    btn.onclick = async function () {
+      const actId = btn.getAttribute('data-id');
+      const titulo = btn.getAttribute('data-titulo') || '';
+      const descripcion = btn.getAttribute('data-desc') || '';
+      const videoUrl = btn.getAttribute('data-video') || '';
+
+      const { value: formValues } = await Swal.fire({
+        title: '<span style="color:#e8bb3f;font-size:1.1em;font-weight:800"><i class="fas fa-edit me-2"></i>Editar Actividad</span>',
+        html: `
+          <div style="text-align:left;">
+            <input id="tituloActividadEdit" class="swal2-input" value="${titulo}" placeholder="Ej: Ejercicio de bombas" style="margin-bottom:17px;border-radius:10px;border:1.5px solid #1fa37a;background:#232029;color:#fff;font-size:1.08em;">
+            <textarea id="descActividadEdit" class="swal2-textarea" placeholder="Describe la actividad (opcional)" rows="3" style="border-radius:10px;border:1.5px solid #1fa37a;background:#232029;color:#fff;font-size:1.07em;">${descripcion}</textarea>
+            <input id="videoUrlEdit" class="swal2-input" placeholder="Enlace de video (opcional)" value="${videoUrl}" style="margin-top:12px;border-radius:10px;border:1.5px solid #1fa37a;background:#232029;color:#fff;font-size:1.05em;">
+          </div>
+        `,
+        background: "#191927",
+        color: "#f1f1f1",
+        width: '500px',
+        heightAuto: false,
+        confirmButtonText: "<i class='fas fa-save'></i> Guardar",
+        cancelButtonText: "<i class='fas fa-times'></i> Cancelar",
+        showCancelButton: true,
+        focusConfirm: false,
+        customClass: {
+          popup: 'rounded-4 montserrat-font',
+          confirmButton: 'btn btn-success fw-bold px-4 py-2 rounded-3',
+          cancelButton: 'btn btn-secondary fw-bold px-4 py-2 rounded-3'
+        },
+        preConfirm: () => {
+          const titulo = document.getElementById('tituloActividadEdit').value.trim();
+          const descripcion = document.getElementById('descActividadEdit').value.trim();
+          const videoUrl = document.getElementById('videoUrlEdit').value.trim();
+          if (!titulo) {
+            Swal.showValidationMessage('El título es obligatorio');
+            return false;
+          }
+          return [titulo, descripcion, videoUrl];
+        }
+      });
+
+      if (formValues && formValues[0]) {
+        await db.collection('cursos').doc(cursoId).collection('actividades').doc(actId).update({
+          titulo: formValues[0],
+          descripcion: formValues[1],
+          videoUrl: formValues[2]
+        });
+        Swal.fire({
+          icon: 'success',
+          title: '¡Actividad actualizada!',
+          background: "#232029",
+          color: "#fff",
+          timer: 1200,
+          toast: true,
+          position: "top-end",
+          showConfirmButton: false
+        });
+        cargarTabCalificaciones(cursoId);
+      }
+    };
   });
 
-  if (formValues && formValues[0]) {
-    await db.collection('cursos').doc(cursoId).collection('actividades').add({
-      titulo: formValues[0],
-      descripcion: formValues[1],
-      fecha: firebase.firestore.Timestamp.now()
-    });
-    Swal.fire({
-      icon: 'success',
-      title: '¡Actividad agregada!',
-      background: "#232029",
-      color: "#fff",
-      timer: 1200,
-      toast: true,
-      position: "top-end",
-      showConfirmButton: false
-    });
-    cargarTabCalificaciones(cursoId);
-  }
-};
-
-
-  // Eliminar actividad (¡Elimina actividad y TODAS sus notas!)
+  // ELIMINAR ACTIVIDAD (igual que antes)
   document.querySelectorAll('.btnEliminarActividad').forEach(btn => {
     btn.onclick = async function () {
       const actId = btn.getAttribute('data-id');
@@ -454,14 +502,12 @@ async function cargarTabCalificaciones(cursoId) {
         color: "#fee084"
       });
       if (confirm.isConfirmed) {
-        // Borra las notas de la actividad
         const notasSnap = await db.collection('cursos').doc(cursoId)
           .collection('actividades').doc(actId)
           .collection('notas').get();
         const batch = db.batch();
         notasSnap.forEach(doc => batch.delete(doc.ref));
         await batch.commit();
-        // Borra la actividad
         await db.collection('cursos').doc(cursoId)
           .collection('actividades').doc(actId).delete();
         Swal.fire({
@@ -479,6 +525,8 @@ async function cargarTabCalificaciones(cursoId) {
     };
   });
 
+
+
   // Calificar actividad (por alumno)
   document.querySelectorAll('.btnCalificarActividad').forEach(btn => {
   btn.onclick = async function () {
@@ -495,71 +543,93 @@ async function cargarTabCalificaciones(cursoId) {
     const alumnos = alumnosSnap.docs.map(d => ({ id: d.id, ...d.data() }));
 
     // Traer notas y respuestas
-    const notasSnap = await db
-      .collection('cursos').doc(cursoId)
-      .collection('actividades').doc(actId)
-      .collection('notas').get();
-    const notas = {};
-    const respuestas = {};
-    notasSnap.forEach(n => {
-      notas[n.id] = n.data().nota;
-      respuestas[n.id] = n.data().respuesta || '';
-    });
+    // Traer notas y respuestas
+const notasSnap = await db
+  .collection('cursos').doc(cursoId)
+  .collection('actividades').doc(actId)
+  .collection('notas').get();
 
-    // Tabla HTML
-    let html = `
-      <div class="swal-tabla-calif" style="max-height:400px;overflow-y:auto">
-        <table style="width:100%;">
-          <thead>
-            <tr style="border-bottom:1px solid #333">
-              <th style="color:#fee084;text-align:left;">Alumno</th>
-              <th style="color:#fee084;">Respuesta</th>
-              <th style="color:#fee084;">Nota</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-    `;
-    for (const alumno of alumnos) {
-      let tieneRespuesta = !!respuestas[alumno.id];
-      const respuestaTexto = respuestas[alumno.id] || "";
-      html += `
-        <tr>
-          <td style="color:#fff;font-weight:500;min-width:120px">${alumno.nombre || alumno.email}</td>
-          <td style="font-size:0.97rem;max-width:220px;word-break:break-word;color:#fee084;">
-            <div style="background:#191927;border-radius:7px;padding:5px 8px;text-align:center;">
-              ${
-                tieneRespuesta
-                  ? `<button class="btn btn-link btn-sm verRespuestaBtn" data-respuesta="${encodeURIComponent(respuestaTexto)}" data-alumno="${alumno.nombre || alumno.email}" style="color:#fee084;padding:0 6px;font-weight:bold;text-decoration:underline"><i class="fas fa-eye"></i> Ver</button>`
-                  : '<span style="color:#888">No enviado</span>'
-              }
-            </div>
-          </td>
-          <td>
-            <input type="number" min="0" max="20" step="0.1"
-              class="nota-alumno-input"
-              style="width:70px;background:#181927;color:#fee084;border:1px solid #444;border-radius:7px;text-align:center"
-              value="${notas[alumno.id] !== undefined ? notas[alumno.id] : ''}"
-              data-alum="${alumno.id}">
-          </td>
-          <td class="d-flex align-items-center gap-2">
-            <button class="btn btn-primary btn-sm btnDescargarRespuesta d-flex align-items-center"
-                    title="Descargar" data-respuesta="${encodeURIComponent(respuestaTexto)}" data-alumno="${alumno.nombre || alumno.email}">
-              <i class="fas fa-download me-1"></i> Descargar
-            </button>
-            <button class="btn btn-warning btn-sm btnGuardarNota d-flex align-items-center"
-                    title="Guardar nota" data-alum="${alumno.id}">
-              <i class="fas fa-save me-1"></i>
-            </button>
-            <button class="btn btn-danger btn-sm btnEliminarNota d-flex align-items-center"
-                    title="Eliminar nota" data-alum="${alumno.id}">
-              <i class="fas fa-trash"></i>
-            </button>
-          </td>
+const notas = {};
+const respuestas = {};
+const archivos = {}; // <-- Nuevo
+
+notasSnap.forEach(n => {
+  notas[n.id] = n.data().nota;
+  respuestas[n.id] = n.data().respuesta || '';
+  archivos[n.id] = {
+    url: n.data().archivoURL || "",
+    nombre: n.data().nombreArchivo || ""
+  };
+});
+
+// Tabla HTML
+let html = `
+  <div class="swal-tabla-calif" style="max-height:400px;overflow-y:auto">
+    <table style="width:100%;">
+      <thead>
+        <tr style="border-bottom:1px solid #333">
+          <th style="color:#fee084;text-align:left;">Alumno</th>
+          <th style="color:#fee084;">Respuesta</th>
+          <th style="color:#fee084;">Archivo</th> <!-- Nueva columna -->
+          <th style="color:#fee084;">Nota</th>
+          <th></th>
         </tr>
-      `;
-    }
-    html += `</tbody></table></div>`;
+      </thead>
+      <tbody>
+`;
+
+for (const alumno of alumnos) {
+  let tieneRespuesta = !!respuestas[alumno.id];
+  const respuestaTexto = respuestas[alumno.id] || "";
+  const archivo = archivos[alumno.id];
+  html += `
+    <tr>
+      <td style="color:#fff;font-weight:500;min-width:120px">${alumno.nombre || alumno.email}</td>
+      <td style="font-size:0.97rem;max-width:220px;word-break:break-word;color:#fee084;">
+        <div style="background:#191927;border-radius:7px;padding:5px 8px;text-align:center;">
+          ${
+            tieneRespuesta
+              ? `<button class="btn btn-link btn-sm verRespuestaBtn" data-respuesta="${encodeURIComponent(respuestaTexto)}" data-alumno="${alumno.nombre || alumno.email}" style="color:#fee084;padding:0 6px;font-weight:bold;text-decoration:underline"><i class="fas fa-eye"></i> Ver</button>`
+              : '<span style="color:#888">No enviado</span>'
+          }
+        </div>
+      </td>
+      <td>
+        ${
+          archivo && archivo.url
+            ? `<a href="${archivo.url}" target="_blank" download="${archivo.nombre}"
+                class="btn btn-success btn-sm" style="font-size:1em;">
+                <i class="fas fa-download"></i> Descargar
+              </a>`
+            : '<span style="color:#888">Sin archivo</span>'
+        }
+      </td>
+      <td>
+        <input type="number" min="0" max="20" step="0.1"
+          class="nota-alumno-input"
+          style="width:70px;background:#181927;color:#fee084;border:1px solid #444;border-radius:7px;text-align:center"
+          value="${notas[alumno.id] !== undefined ? notas[alumno.id] : ''}"
+          data-alum="${alumno.id}">
+      </td>
+      <td class="d-flex align-items-center gap-2">
+        <button class="btn btn-primary btn-sm btnDescargarRespuesta d-flex align-items-center"
+                title="Descargar" data-respuesta="${encodeURIComponent(respuestaTexto)}" data-alumno="${alumno.nombre || alumno.email}">
+          <i class="fas fa-download me-1"></i> Descargar
+        </button>
+        <button class="btn btn-warning btn-sm btnGuardarNota d-flex align-items-center"
+                title="Guardar nota" data-alum="${alumno.id}">
+          <i class="fas fa-save me-1"></i>
+        </button>
+        <button class="btn btn-danger btn-sm btnEliminarNota d-flex align-items-center"
+                title="Eliminar nota" data-alum="${alumno.id}">
+          <i class="fas fa-trash"></i>
+        </button>
+      </td>
+    </tr>
+  `;
+}
+html += `</tbody></table></div>`;
+
 
     // Modal de SweetAlert
     Swal.fire({

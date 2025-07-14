@@ -55,8 +55,8 @@ const totalDocentes = docentesSnap.size;
         datasets: [{
           label: "Inscripciones por día",
           data: inscripcionesPorSemana,
-          borderColor: '#00c2a8',
-          backgroundColor: 'rgba(0,194,168,0.2)',
+          borderColor: 'white',
+          backgroundColor: '#d5af49',
           pointBackgroundColor: '#00ffcc',
           pointBorderColor: '#1f242f',
           borderWidth: 2,
@@ -71,7 +71,7 @@ const totalDocentes = docentesSnap.size;
         plugins: {
           title: {
             display: true,
-            color: '#f1f1f1',
+            color: '#d5af49',
             font: { size: 16, family: 'Montserrat' }
           },
           legend: { display: false },
