@@ -333,7 +333,7 @@ document.getElementById('actividadSelect').onchange = function () {
               actividadId: actId,
               actividadTitulo: actTitulo,
               fecha: firebase.firestore.Timestamp.now(),
-              leido: false
+              leida: false
             });
         }
       } catch (err) {
